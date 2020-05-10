@@ -19,7 +19,7 @@ docker image build . --tag easyconnect
 
 ## Usage
 
-** 参数里的`--device /dev/net/tun --cap-add NET_ADMIN`是不可少的。** 因为 EasyConnect 要创建虚拟网络设备`tun0`。
+**参数里的`--device /dev/net/tun --cap-add NET_ADMIN`是不可少的。** 因为 EasyConnect 要创建虚拟网络设备`tun0`。
 
 ### 环境变量
 
