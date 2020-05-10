@@ -10,11 +10,18 @@
 
 其它 TODO...
 
-## Build
-
+## Pull or build
+直接获取：
 ```
-wget http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb -O docker-files/EasyConnect.deb
+docker pull hagb/docker-easyconnect
+````
+或
+```
 docker image build . --tag easyconnect
+```
+x86 的系统（32 位）上构建请加上`--build-arg arch=x86`参数。
+```
+docker image build . --tag easyconnect --build-arg arch=x86
 ```
 
 ## Usage
