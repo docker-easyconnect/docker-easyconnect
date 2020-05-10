@@ -17,11 +17,13 @@ docker pull hagb/docker-easyconnect
 ````
 或
 ```
-docker image build . --tag easyconnect
+git clone https://github.com/hagb/docker-easyconnect.git
+docker image build . --tag hagb/docker-easyconnect docker-easyconnect
 ```
 x86 的系统（32 位）上构建请加上`--build-arg arch=x86`参数。
 ```
-docker image build . --tag easyconnect --build-arg arch=x86
+git clone https://github.com/hagb/docker-easyconnect.git
+docker image build . --tag hagb/docker-easyconnect --build-arg arch=x86 docker-easyconnect
 ```
 
 ## Usage
@@ -65,13 +67,13 @@ EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。�
 ### X11 socket
 
 ```
-docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/.Xauthority:/root/.Xauthority -e DISPLAY=$DISPLAY -e TYPE=x11 -v $HOME/.ecdata:/root -p 127.0.0.1:1080:1080 easyconnect
+docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/.Xauthority:/root/.Xauthority -e DISPLAY=$DISPLAY -e TYPE=x11 -v $HOME/.ecdata:/root -p 127.0.0.1:1080:1080 hagb/docker-easyconnect
 ```
 
 ### vnc 
 
 ```
-docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 easyconnect
+docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect
 ```
 
 ## 已知问题
