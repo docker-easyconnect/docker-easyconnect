@@ -1,6 +1,8 @@
 FROM debian:buster
 
-COPY docker-files/EasyConnect.deb /tmp/
+ARG arch=x64
+
+ADD http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_${arch}.deb /tmp/EasyConnect.deb
 
 RUN sed -i s/deb.debian.org/mirrors.cqu.edu.cn/ /etc/apt/sources.list &&\
 apt-get update && \
