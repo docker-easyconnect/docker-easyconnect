@@ -71,6 +71,10 @@ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HO
 
 vnc 下代理软件的图表上右键菜单会在第一次调出以后失灵，直到软件被关闭。
 
+## 参考资料
+
+登陆过程的一个 hack ([docker-files/start-sangfor.sh](docker-files/start-sangfor.sh))参考了这篇文章：<https://blog.51cto.com/13226459/2476193>。对作者表示感谢。
+
 ## 版权及许可证
 
 > Copyright © 2020 Hagb (Guo Junyu) <hagb_green@qq.com>
