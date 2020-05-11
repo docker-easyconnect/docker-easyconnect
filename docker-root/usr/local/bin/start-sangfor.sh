@@ -12,6 +12,9 @@ do
 	
 	# 下面这行代码启动 EasyConnect 的前端。
 	/usr/share/sangfor/EasyConnect/EasyConnect --enable-transparent-visuals --disable-gpu
+	
+	# 是否自动重启
+	[ -n "$EXIT" ] && exit
 
 	# 清除的残余进程，它们可能会妨碍下次的启动。
 	killall CSClient svpnservice

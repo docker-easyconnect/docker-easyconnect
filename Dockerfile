@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends --no-install-su
 busybox wget "http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb" -O /tmp/EasyConnect.deb &&\
 dpkg -i /tmp/EasyConnect.deb && rm /tmp/EasyConnect.deb && apt-get purge -y busybox --auto-remove
 
-#ENV TYPE="" PASSWORD=""
+#ENV TYPE="" PASSWORD="" LOOP=""
 #ENV DISPLAY
 
 VOLUME /root/

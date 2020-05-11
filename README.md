@@ -27,21 +27,17 @@ docker image build --tag hagb/docker-easyconnect docker-easyconnect
 
 ### 环境变量
 
-`TYPE`: 如何显示 EasyConnect 前端（目前没有找到纯 cli 的办法）。有以下两种选项:
+- `TYPE`: 如何显示 EasyConnect 前端（目前没有找到纯 cli 的办法）。有以下两种选项:
 
-- `x11`或`X11`: 将直接通过`DISPLAY`环境变量的值显示 EasyConnect 前端，请同时设置`DISPLAY`环境变量。
+`x11`或`X11`: 将直接通过`DISPLAY`环境变量的值显示 EasyConnect 前端，请同时设置`DISPLAY`环境变量。这种办法
 
-这个可能更适合于桌面用户。
+其它任何值（包括默认值）: 将在`5901`端口开放 vnc 服务以操作 EasyConnect 前端。
 
-- 其它任何值（包括默认值）: 将在`5901`端口开放 vnc 服务以操作 EasyConnect 前端。
+- `DISPLAY`: `$TYPE`为`x11`时通过该变量来现实 EasyConnect 界面。
 
-`DISPLAY`: `$TYPE`为`x11`时通过该变量来现实 EasyConnect 界面。
+- `PASSWORD`: 用于设置 vnc 服务的密码，该变量的值默认为空字符串，表示密码不作改变。变量不为空时，密码（应小于或等于 8 位）就会被更新到变量的值。默认密码是`password`.
 
-`PASSWORD`: 用于设置 vnc 服务的密码，该变量的值默认为空字符串，表示密码不作改变。
-
-给变量赋值（空字符串除外），密码（应小于或等于 8 位）就会被更新到所赋的值。
-
-默认密码是`password`.
+- `EXIT`: 默认为空，此时前端退出后会自动重启。不为空时，前端退出后不自动重启。
 
 ### Socks5
 
@@ -67,7 +63,7 @@ EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。�
 
 ```
 xhost +LOCAL:
-docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/.Xauthority:/root/.Xauthority -e DISPLAY=$DISPLAY -e TYPE=x11 -v $HOME/.ecdata:/root -p 127.0.0.1:1080:1080 hagb/docker-easyconnect
+docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/.Xauthority:/root/.Xauthority -e EXIT=1 -e DISPLAY=$DISPLAY -e TYPE=x11 -v $HOME/.ecdata:/root -p 127.0.0.1:1080:1080 hagb/docker-easyconnect
 xhost -LOCAL:
 ```
 

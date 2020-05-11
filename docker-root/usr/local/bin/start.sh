@@ -15,13 +15,14 @@ ln -s ~/easy_connect.json /usr/share/sangfor/EasyConnect/resources/conf/easy_con
 
 export DISPLAY
 
+# 拒绝 tun0 侧主动请求的连接.
+iptables -I INPUT -p tcp -j REJECT
+iptables -I INPUT -i eth0 -p tcp -j ACCEPT
+iptables -I INPUT -i lo -p tcp -j ACCEPT
+iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
 if [ "$TYPE" != "X11" -a "$TYPE" != "x11" ]
 then
-	# 安全起见 vnc 不能从 tun0 处访问
-	iptables -I INPUT  -p tcp --dport 5901 -j REJECT
-	iptables -I INPUT  -i eth0 -p tcp --dport 5901 -j ACCEPT
-	iptables -I INPUT  -i lo -p tcp --dport 5901 -j ACCEPT
-	
 	# $PASSWORD 不为空时，更新 vnc 密码
 	[ -e ~/.vnc/passwd ] || (mkdir -p ~/.vnc && (echo password | tigervncpasswd -f > ~/.vnc/passwd)) 
 	[ -n "$PASSWORD" ] && printf %s "$PASSWORD" | tigervncpasswd -f > ~/.vnc/passwd
