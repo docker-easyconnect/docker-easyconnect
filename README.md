@@ -29,7 +29,7 @@ docker image build --tag hagb/docker-easyconnect docker-easyconnect
 
 - `TYPE`: 如何显示 EasyConnect 前端（目前没有找到纯 cli 的办法）。有以下两种选项:
 
-`x11`或`X11`: 将直接通过`DISPLAY`环境变量的值显示 EasyConnect 前端，请同时设置`DISPLAY`环境变量。这种办法
+`x11`或`X11`: 将直接通过`DISPLAY`环境变量的值显示 EasyConnect 前端，请同时设置`DISPLAY`环境变量。
 
 其它任何值（包括默认值）: 将在`5901`端口开放 vnc 服务以操作 EasyConnect 前端。
 
@@ -57,9 +57,11 @@ EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。�
 
 ## 例子
 
+以下例子中，登录信息均保存在`~/.ecdata/`文件夹（`-v $HOME/.ecdata:/root`），开放的 Socks5 在`127.0.0.1:1080`（`-p 127.0.0.1:1080:1080`）。
+
 ### X11 socket
 
-下面这个例子可以在当前桌面环境中启动 EasyConnect 前端
+下面这个例子可以在当前桌面环境中启动 EasyConnect 前端，并且该前端退出后不会自动重启（`-e EXIT=1`）。
 
 ```
 xhost +LOCAL:
@@ -68,6 +70,8 @@ xhost -LOCAL:
 ```
 
 ### vnc 
+
+下面这个例子中，前端退出会自动重启前端，VNC 服务器在`127.0.0.1:5901`（-p 127.0.0.1:5901:5901），密码为`xxxx`（`-e PASSWORD=xxxx`）。
 
 ```
 docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect
@@ -80,6 +84,7 @@ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HO
 ## 版权及许可证
 
 > Copyright © 2020 Hagb (Guo Junyu) <hagb_green@qq.com>  
+>
 > This work is free. You can redistribute it and/or modify it under the  
 > terms of the Do What The Fuck You Want To Public License, Version 2,  
 > as published by Sam Hocevar. See the COPYING file for more details. 
