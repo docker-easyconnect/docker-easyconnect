@@ -17,4 +17,4 @@ dpkg -i /tmp/EasyConnect.deb && rm /tmp/EasyConnect.deb && apt-get purge -y busy
 
 VOLUME /root/
 
-ENTRYPOINT start.sh
+CMD ["start.sh"]
