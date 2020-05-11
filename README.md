@@ -71,7 +71,7 @@ xhost -LOCAL:
 
 ### vnc 
 
-下面这个例子中，前端退出会自动重启前端，VNC 服务器在`127.0.0.1:5901`（-p 127.0.0.1:5901:5901），密码为`xxxx`（`-e PASSWORD=xxxx`）。
+下面这个例子中，前端退出会自动重启前端，VNC 服务器在`127.0.0.1:5901`（`-p 127.0.0.1:5901:5901`），密码为`xxxx`（`-e PASSWORD=xxxx`）。
 
 ```
 docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect
@@ -79,7 +79,7 @@ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HO
 
 ## 参考资料
 
-登陆过程的一个 hack ([docker-easyconnect/tree/master/docker-root/usr/local/bin/start-sangfor.sh](docker-easyconnect/tree/master/docker-root/usr/local/bin/start-sangfor.sh))参考了这篇文章：<https://blog.51cto.com/13226459/2476193>。在此对该文作者表示感谢。
+登陆过程的一个 hack ([docker-root/usr/local/bin/start-sangfor.sh](docker-root/usr/local/bin/start-sangfor.sh))参考了这篇文章：<https://blog.51cto.com/13226459/2476193>。在此对该文作者表示感谢。
 
 ## 版权及许可证
 
