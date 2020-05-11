@@ -79,27 +79,27 @@ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HO
 
 ## 参考资料
 
-登陆过程的一个 hack ([docker-files/start-sangfor.sh](docker-files/start-sangfor.sh))参考了这篇文章：<https://blog.51cto.com/13226459/2476193>。对作者表示感谢。
+登陆过程的一个 hack ([docker-easyconnect/tree/master/docker-root/usr/local/bin/start-sangfor.sh](docker-easyconnect/tree/master/docker-root/usr/local/bin/start-sangfor.sh))参考了这篇文章：<https://blog.51cto.com/13226459/2476193>。在此对该文作者表示感谢。
 
 ## 版权及许可证
 
-> Copyright © 2020 Hagb (Guo Junyu) <hagb_green@qq.com> 
-> This work is free. You can redistribute it and/or modify it under the 
-> terms of the Do What The Fuck You Want To Public License, Version 2, 
+> Copyright © 2020 Hagb (Guo Junyu) <hagb_green@qq.com>  
+> This work is free. You can redistribute it and/or modify it under the  
+> terms of the Do What The Fuck You Want To Public License, Version 2,  
 > as published by Sam Hocevar. See the COPYING file for more details. 
 
 可以对这份东西做任何事情。
 
->        DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE 
->                    Version 2, December 2004 
+>        DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE  
+>                    Version 2, December 2004  
 >
-> Copyright (C) 2004 Sam Hocevar <sam@hocevar.net> 
+> Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>  
 >
-> Everyone is permitted to copy and distribute verbatim or modified 
-> copies of this license document, and changing it is allowed as long 
-> as the name is changed. 
->
->            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE 
->   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION 
->
+> Everyone is permitted to copy and distribute verbatim or modified  
+> copies of this license document, and changing it is allowed as long  
+> as the name is changed.  
+>  
+>            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE  
+>   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION  
+>  
 >  0. You just DO WHAT THE FUCK YOU WANT TO. 
