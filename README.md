@@ -18,12 +18,12 @@ docker pull hagb/docker-easyconnect
 或
 ```
 git clone https://github.com/hagb/docker-easyconnect.git
-docker image build . --tag hagb/docker-easyconnect docker-easyconnect
+docker image build --tag hagb/docker-easyconnect docker-easyconnect
 ```
 x86 的系统（32 位）上构建请加上`--build-arg arch=x86`参数。
 ```
 git clone https://github.com/hagb/docker-easyconnect.git
-docker image build . --tag hagb/docker-easyconnect --build-arg arch=x86 docker-easyconnect
+docker image build --tag hagb/docker-easyconnect --build-arg arch=x86 docker-easyconnect
 ```
 
 ## Usage
