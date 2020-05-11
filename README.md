@@ -12,7 +12,7 @@
 
 ### 已经过测试的版本
 
-`7.6.3.0.86415`版.
+`7.6.3.0.86415`版（<http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb>）.
 
 其它 TODO...
 
