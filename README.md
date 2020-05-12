@@ -17,29 +17,39 @@
 其它 TODO...
 
 ## Pull or build
-直接获取：
+### 从 Docker Hub 上直接获取：
+带 vnc 服务器的 image:
 ```
 docker pull hagb/docker-easyconnect
-````
-或
+```
+或使用不带 vnc 服务器的 image（vnc 服务端程序要占百来 MB，估计大部分桌面用户不需要用到这里的 vnc 服务器？）:
+```
+docker pull hagb/docker-easyconnect:vncless
+```
+### 从 Dockerfile 构建
 ```
 git clone https://github.com/hagb/docker-easyconnect.git
 docker image build --tag hagb/docker-easyconnect docker-easyconnect
 ```
-
+或无 vnc 版：
+```
+git clone https://github.com/hagb/docker-easyconnect.git
+cd docker-easyconnect
+docker image build --tag hagb/docker-easyconnect:vncless -f Dockerfile.vncless .
+```
 ## Usage
 
 **参数里的`--device /dev/net/tun --cap-add NET_ADMIN`是不可少的。** 因为 EasyConnect 要创建虚拟网络设备`tun0`。
 
 ### 环境变量
 
-- `TYPE`: 如何显示 EasyConnect 前端（目前没有找到纯 cli 的办法）。有以下两种选项:
+- `TYPE`（仅适用于带 vnc 的 image）: 如何显示 EasyConnect 前端（目前没有找到纯 cli 的办法）。有以下两种选项:
 
 `x11`或`X11`: 将直接通过`DISPLAY`环境变量的值显示 EasyConnect 前端，请同时设置`DISPLAY`环境变量。
 
-其它任何值（包括默认值）: 将在`5901`端口开放 vnc 服务以操作 EasyConnect 前端。
+其它任何值（默认值）: 将在`5901`端口开放 vnc 服务以操作 EasyConnect 前端。
 
-- `DISPLAY`: `$TYPE`为`x11`时通过该变量来现实 EasyConnect 界面。
+- `DISPLAY`: `$TYPE`为`x11`或无 vnc 的 image 时通过该变量来显示 EasyConnect 界面。
 
 - `PASSWORD`: 用于设置 vnc 服务的密码，该变量的值默认为空字符串，表示密码不作改变。变量不为空时，密码（应小于或等于 8 位）就会被更新到变量的值。默认密码是`password`.
 
