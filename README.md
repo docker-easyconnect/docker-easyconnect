@@ -4,7 +4,7 @@
 
 这个 image 基于 EasyConnect 官方“Linux”版的 deb 包。
 
-[doc/run-linux-easyconnect-how-to.md](doc/run-linux-easyconnect-how-to.md)是这次折腾的总结。
+[如何运行“Linux”版 EasyConnect (doc/run-linux-easyconnect-how-to.md)](doc/run-linux-easyconnect-how-to.md)是这次折腾的总结。
 
 望批评、指正。欢迎提交 issue、PR。
 

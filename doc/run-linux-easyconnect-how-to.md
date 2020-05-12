@@ -20,7 +20,7 @@ apt-get install -y --no-install-recommends --no-install-suggests \
 /usr/share/sangfor/EasyConnect/resources/bin/EasyMonitor
 ```
 
-用`/usr/share/sangfor/EasyConnect/EasyConnect --enable-transparent-visuals --disable-gpu`或安装包自带的图标可以启动前端。
+用`/usr/share/sangfor/EasyConnect/EasyConnect --enable-transparent-visuals --disable-gpu`或安装包自带的图标可以启动前端，前端不需要 root 权限。
 
 普遍反映的一个问题是，前端登录后，vpn 没有生效就退出了。<https://blog.51cto.com/13226459/2476193>中说明了需要在登录过程中运行（不能提前运行，否则会被识别为已登录）`/usr/share/sangfor/EasyConnect/resources/shell/sslservice.sh`。
 
@@ -48,3 +48,15 @@ done
 可以和`/usr/share/sangfor/EasyConnect/resources/bin/EasyMonitor`一同在启动前端前以 root 权限运行。
 
 正确登录的前端退出后，`CSClient`和`svpnservice`也会自行关闭，不影响下一次的使用。
+
+## 在 docker 中运行的权限问题
+
+一开始测试时，发现 EasyConnect 没有权限创建`tun0`，遂加`--privileged`参数运行，创建成功。
+
+可以用`--device /dev/net/tun --cap-add NET_ADMIN`来代替`--privileged`，这样给的权限不至于过大。
+
+## 其它坑
+
+EasyConnect 的日志存放在`/usr/share/sangfor/EasyConnect/resources/logs`，部分登录信息存放在`/usr/share/sangfor/EasyConnect/resources/conf/easy_connect.json`，该文件由前端创建，保存了登录凭据。
+
+`/usr/share/sangfor/EasyConnect/resources/conf/`目录的权限默认为`rwxrwxrwx`，但默认情况下`easy_connect.json`文件创建时权限为`rw-r--r--`。在某些情形下这可能会存在权限问题。
