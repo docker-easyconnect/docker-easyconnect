@@ -2,7 +2,7 @@
 
 让深信服开发的**非自由**的 EasyConnect 代理软件运行在 docker 中，并开放 Socks5 供宿主机连接以使用代理。
 
-这个 image 基于 EasyConnect 官方”Linux“版的 deb 包。
+这个 image 基于 EasyConnect 官方“Linux”版的 deb 包。
 
 [doc/run-linux-easyconnect-how-to.md](doc/run-linux-easyconnect-how-to.md)是这次折腾的总结。
 
