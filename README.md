@@ -6,7 +6,7 @@
 
 [如何运行“Linux”版 EasyConnect (doc/run-linux-easyconnect-how-to.md)](doc/run-linux-easyconnect-how-to.md)是这次折腾的总结。
 
-望批评、指正。欢迎提交 issue、PR。
+望批评、指正。欢迎提交 issue、PR，包括但不仅限于 bug、各种疑问、代码和文档（最近有点语无伦次）的改进。
 
 ## Status
 
