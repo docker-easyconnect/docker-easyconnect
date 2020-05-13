@@ -53,6 +53,8 @@ docker image build --tag hagb/docker-easyconnect:vncless -f Dockerfile.vncless .
 
 - `PASSWORD`: 用于设置 vnc 服务的密码，该变量的值默认为空字符串，表示密码不作改变。变量不为空时，密码（应小于或等于 8 位）就会被更新到变量的值。默认密码是`password`.
 
+- `URLWIN`: 默认为空，此时当 EasyConnect 想要调用浏览器时，不会弹窗，若该变量设为任何非空值，则会弹出一个包含链接文本框。
+
 - `EXIT`: 默认为空，此时前端退出后会自动重启。不为空时，前端退出后不自动重启。
 
 ### Socks5
@@ -62,6 +64,10 @@ EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。�
 ### VNC 服务器
 
 带 VNC 时，默认情况下，环境变量`TYPE`留空会在`5901`端口开启 VNC 服务器。
+
+### 处理 EasyConnect 的浏览器弹窗
+
+处理成将链接（追加）写入`/root/open-urls`，如果设置了`URLWIN`环境变量为非空值，还会弹出一个包含链接的文本框。
 
 ### 配置、登陆信息持久化
 
