@@ -1,4 +1,6 @@
-# 如何运行“Linux”版 EasyConnect
+# 如何运行“Linux”版 EasyConnect (`7.6.3.0.86415`版)
+
+这是对“Linux”版 EasyConnect `7.6.3.0.86415`版（<http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb>）的折腾记录，听说在更新的版本里面有一些问题已经被修复了，但是我没有测试条件。欢迎使用其他版本的朋友进行反馈。
 
 以下内容在容器中测试过。其他情况下应该也行得通，但是没有测试过。（欢迎在别的环境下成功以这种方法运行的朋友提交 PR）
 
