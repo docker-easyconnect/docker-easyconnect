@@ -1,3 +1,3 @@
 #!/bin/bash
-print '%s\n' "$2" >> /root/open-urls
-[ -n "$URLWIN" ] && xmessage "$2" 
+printf '%s\n' "$2" >> /root/open-urls
+[ -n "$URLWIN" ] && xmessage "$2" &
