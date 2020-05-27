@@ -45,9 +45,9 @@ docker image build --tag hagb/docker-easyconnect:vncless -f Dockerfile.vncless .
 
 - `TYPE`（仅适用于带 vnc 的 image）: 如何显示 EasyConnect 前端（目前没有找到纯 cli 的办法）。有以下两种选项:
 
-	`x11`或`X11`: 将直接通过`DISPLAY`环境变量的值显示 EasyConnect 前端，请同时设置`DISPLAY`环境变量。
+	- `x11`或`X11`: 将直接通过`DISPLAY`环境变量的值显示 EasyConnect 前端，请同时设置`DISPLAY`环境变量。
 
-	其它任何值（默认值）: 将在`5901`端口开放 vnc 服务以操作 EasyConnect 前端。
+	- 其它任何值（默认值）: 将在`5901`端口开放 vnc 服务以操作 EasyConnect 前端。
 
 - `DISPLAY`: `$TYPE`为`x11`或使用无 vnc 的 image 时通过该变量来显示 EasyConnect 界面。
 
