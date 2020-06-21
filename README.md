@@ -57,6 +57,8 @@ docker image build --tag hagb/docker-easyconnect:vncless -f Dockerfile.vncless .
 
 - `EXIT`: 默认为空，此时前端退出后会自动重启。不为空时，前端退出后不自动重启。
 
+- `DANTED`: 默认为空。不为空时提供 socks5 代理的`danted`将不会启动（可用于和`--net host`参数配合，提供全局透明代理）。
+
 ### Socks5
 
 EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。这可用`-p`参数转发到`127.0.0.1`上。
