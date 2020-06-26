@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 在虚拟网络设备 tun0 打开时运行 proxy 代理服务器
-[ -n "$DANTED" ] || (while true
+[ -n "$NODANTED" ] || (while true
 do
 sleep 5
 [ -d /sys/class/net/tun0 ] && danted
