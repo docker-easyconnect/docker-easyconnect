@@ -6,6 +6,8 @@
 
 [如何运行“Linux”版 EasyConnect (`7.6.3.0.86415`版) (doc/run-linux-easyconnect-how-to.md)](doc/run-linux-easyconnect-how-to.md)是这次折腾的总结。
 
+另外如果希望使用全局代理，最直接的方式大概是使用`--net host -e NODANTED=1`参数，将虚拟机与宿主机置于同一网络环境。但个人不太推荐此种方式，经过折腾过后又写了[记折腾容器化 EasyConnect 的全局透明代理](https://hagb.name/2020/06/26/easyconnect-proxy.html)一文总结（但仍觉不甚方便，希望能有更好的方式）。
+
 望批评、指正。欢迎提交 issue、PR，包括但不仅限于 bug、各种疑问、代码和文档（最近有点语无伦次）的改进。
 
 ## Status
