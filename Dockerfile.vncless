@@ -1,15 +1,16 @@
-FROM debian:buster
+FROM debian:buster-slim
 
 RUN sed -i s/deb.debian.org/mirrors.cqu.edu.cn/ /etc/apt/sources.list &&\
-apt-get update && \
-apt-get install -y --no-install-recommends --no-install-suggests \
+    apt-get update && \
+    apt-get install -y --no-install-recommends --no-install-suggests \
 	libgtk2.0-0 libx11-xcb1 libxtst6 libnss3 libasound2 libdbus-glib-1-2 iptables \
-	dante-server psmisc libxaw7 xclip
+	dante-server psmisc libxaw7 xclip busybox &&\
+        ln -s "$(which busybox)" /usr/local/bin/ip
 
-RUN cd tmp && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests busybox &&\
-busybox wget "http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb" -O EasyConnect.deb &&\
-dpkg -i EasyConnect.deb && apt download x11-utils && dpkg -x x11-utils_*.deb x11-utils && mkdir -p /usr/local/bin &&\
-cp x11-utils/usr/bin/xmessage /usr/local/bin && rm -r x11-utils* /tmp/EasyConnect.deb && apt-get purge -y busybox --auto-remove
+RUN cd tmp && apt-get update && \
+    busybox wget "http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb" -O EasyConnect.deb &&\
+    dpkg -i EasyConnect.deb && apt download x11-utils && dpkg -x x11-utils_*.deb x11-utils && mkdir -p /usr/local/bin &&\
+    cp x11-utils/usr/bin/xmessage /usr/local/bin && rm -r x11-utils* /tmp/EasyConnect.deb
 
 COPY ./docker-root /
 
