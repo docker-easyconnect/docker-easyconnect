@@ -10,7 +10,8 @@ done
 
 # 登陆信息持久化处理
 rm /usr/share/sangfor/EasyConnect/resources/conf/easy_connect.json
-touch ~/easy_connect.json
+## 默认使用英语：感谢 @forest0 https://github.com/Hagb/docker-easyconnect/issues/2#issuecomment-658205504
+[ -e ~/easy_connect.json ] || echo '{"language": "en_US"}' > ~/easy_connect.json
 ln -s ~/easy_connect.json /usr/share/sangfor/EasyConnect/resources/conf/easy_connect.json
 
 export DISPLAY
