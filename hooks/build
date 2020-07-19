@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ "${DOCKER_TAG}" = latest -o "${DOCKER_TAG}" = vncless ]
+then
+	EC_VER=7.6.3
+else
+	EC_VER="$( echo "${DOCKER_TAG}" | sed -E 's/^(latest|vncless)-//' )"
+fi
+docker build --build-arg EC_URL="$(cat "ec_urls/${EC_VER}.txt")"  -f $DOCKERFILE_PATH -t $IMAGE_NAME .

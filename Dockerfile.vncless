@@ -7,10 +7,14 @@ RUN sed -i s/deb.debian.org/mirrors.cqu.edu.cn/ /etc/apt/sources.list &&\
 	dante-server psmisc libxaw7 xclip busybox &&\
         ln -s "$(which busybox)" /usr/local/bin/ip
 
-RUN cd tmp && apt-get update && \
-    busybox wget "http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb" -O EasyConnect.deb &&\
-    dpkg -i EasyConnect.deb && apt download x11-utils && dpkg -x x11-utils_*.deb x11-utils && mkdir -p /usr/local/bin &&\
-    cp x11-utils/usr/bin/xmessage /usr/local/bin && rm -r x11-utils* /tmp/EasyConnect.deb
+RUN cd tmp && apt update && apt download x11-utils && dpkg -x x11-utils_*.deb x11-utils &&\
+    mkdir -p /usr/local/bin && cp x11-utils/usr/bin/xmessage /usr/local/bin && rm -r x11-utils* 
+
+ARG EC_URL
+
+RUN cd tmp && \
+    busybox wget "${ec_url}" -O EasyConnect.deb &&\
+    dpkg -i EasyConnect.deb && rm EasyConnect.deb
 
 COPY ./docker-root /
 

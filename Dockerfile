@@ -8,8 +8,11 @@ RUN sed -i s/deb.debian.org/mirrors.cqu.edu.cn/ /etc/apt/sources.list &&\
         busybox && \
     ln -s "$(which busybox)" /usr/local/bin/ip
 
-RUN busybox wget "http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb" -O /tmp/EasyConnect.deb &&\
-    dpkg -i /tmp/EasyConnect.deb && rm /tmp/EasyConnect.deb
+ARG EC_URL
+
+RUN cd tmp &&\
+    busybox wget "${ec_url}" -O EasyConnect.deb &&\
+    dpkg -i EasyConnect.deb && rm EasyConnect.deb
 
 COPY ./docker-root /
 
