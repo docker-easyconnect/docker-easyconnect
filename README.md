@@ -10,35 +10,61 @@
 
 望批评、指正。欢迎提交 issue、PR，包括但不仅限于 bug、各种疑问、代码和文档（最近有点语无伦次）的改进。
 
-## Status
+## 版本
+
+[`ec_urls`](ec_urls) 目录中以`版本号.txt`为文件名的文本文件保存了下载链接。（欢迎提交 issue 或 PR）
 
 ### 已经过测试的版本
 
-`7.6.3.0.86415`版（<http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb>）.
+`7.6.3`版（<http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb>）.
 
-其它 TODO...
+### 待测试的版本（欢迎提交 issue 或 PR）
+
+`7.6.7`版（<http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_767/EasyConnect_x64_7_6_7_3.deb>）.
+
+### 其他
+
+请通过设置下文叙述的`EC_URL`变量进行测试，欢迎提交 issue 或 PR.
 
 ## Pull or build
+
 ### 从 Docker Hub 上直接获取：
-带 vnc 服务器的 image:
+
 ```
-docker pull hagb/docker-easyconnect
+docker pull hagb/docker-easyconnect:TAG
 ```
-或使用不带 vnc 服务器的 image（vnc 服务端程序要占百来 MB，估计大部分桌面用户不需要用到这里的 vnc 服务器？）:
-```
-docker pull hagb/docker-easyconnect:vncless
-```
+
+其中 TAG 可以是如下值（不带 VNC 服务端的 image 比带 VNC 服务端的 image 小）：
+
+- `latest`: 默认值，带 VNC 服务端的`7.6.3`版 image，
+- `vncless`: 不带 VNC 服务端的`7.6.3`版 image
+- `7.6.3`: 带 VNC 服务端的`7.6.3`版 image
+- `vncless-7.6.3`: 不带 VNC 服务端的`7.6.3`版 image
+- `7.6.7`: 带 VNC 服务端的`7.6.7`版 image
+- `vncless-7.6.7`: 不带 VNC 服务端的`7.6.7`版 image
+
 ### 从 Dockerfile 构建
-```
-git clone https://github.com/hagb/docker-easyconnect.git
-docker image build --tag hagb/docker-easyconnect docker-easyconnect
-```
-或无 vnc 版：
+
+带 VNC 服务端：
+
 ```
 git clone https://github.com/hagb/docker-easyconnect.git
 cd docker-easyconnect
-docker image build --tag hagb/docker-easyconnect:vncless -f Dockerfile.vncless .
+EC_VER=7.6.3  # 此变量填写 ec_urls 文件夹中的版本，`7.6.3`或`7.6.7`
+docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/docker-easyconnect -f Dockerfile .
 ```
+
+无 VNC 服务端：
+
+```
+git clone https://github.com/hagb/docker-easyconnect.git
+cd docker-easyconnect
+EC_VER=7.6.3  # 此变量填写 ec_urls 文件夹中的版本，`7.6.3`或`7.6.7`
+docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/docker-easyconnect -f Dockerfile.vncless .
+```
+
+如果需要测试[`ec_urls`](ec_urls)目录中尚未包含的 EasyConnect 版本，可以将该版本的 deb 安装包下载地址写入到文本文件`ec_urls/版本号.txt`中，或者直接将地址赋予编译变量`EC_URL`（以上文为例则是用该地址替换`$(cat ec_urls/${EC_VER}.txt)`）
+
 ## Usage
 
 **参数里的`--device /dev/net/tun --cap-add NET_ADMIN`是不可少的。** 因为 EasyConnect 要创建虚拟网络设备`tun0`。
