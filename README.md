@@ -143,7 +143,7 @@ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HO
 
 原因是 image 内无中文字体。可以通过修改 EasyConnect 前端的语言为英语来绕过中文显示的问题。也可以安装或挂载中文字体进容器中。
 
-详见 #2。
+详见 [#2](https://github.com/Hagb/docker-easyconnect/issues/2)。
 
 ## 参考资料
 
