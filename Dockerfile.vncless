@@ -13,7 +13,7 @@ RUN cd tmp && apt update && apt download x11-utils && dpkg -x x11-utils_*.deb x1
 ARG EC_URL
 
 RUN cd tmp && \
-    busybox wget "${ec_url}" -O EasyConnect.deb &&\
+    busybox wget "${EC_URL}" -O EasyConnect.deb &&\
     dpkg -i EasyConnect.deb && rm EasyConnect.deb
 
 COPY ./docker-root /

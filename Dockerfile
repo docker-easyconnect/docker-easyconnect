@@ -11,7 +11,7 @@ RUN sed -i s/deb.debian.org/mirrors.cqu.edu.cn/ /etc/apt/sources.list &&\
 ARG EC_URL
 
 RUN cd tmp &&\
-    busybox wget "${ec_url}" -O EasyConnect.deb &&\
+    busybox wget "${EC_URL}" -O EasyConnect.deb &&\
     dpkg -i EasyConnect.deb && rm EasyConnect.deb
 
 COPY ./docker-root /
