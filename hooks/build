@@ -1,4 +1,5 @@
 #!/bin/bash
+echo hooks/build hook works!
 if [ "${DOCKER_TAG}" = latest -o "${DOCKER_TAG}" = vncless ]
 then
 	EC_VER=7.6.3
