@@ -24,6 +24,11 @@ iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 if [ "$TYPE" != "X11" -a "$TYPE" != "x11" ]
 then
+	# container 再次运行时清除 /tmp 中的锁，使 container 能够反复使用。
+	# 感谢 @skychan https://github.com/Hagb/docker-easyconnect/issues/4#issuecomment-660842149
+	rm -rf /tmp
+	mkdir /tmp
+
 	# $PASSWORD 不为空时，更新 vnc 密码
 	[ -e ~/.vnc/passwd ] || (mkdir -p ~/.vnc && (echo password | tigervncpasswd -f > ~/.vnc/passwd)) 
 	[ -n "$PASSWORD" ] && printf %s "$PASSWORD" | tigervncpasswd -f > ~/.vnc/passwd
