@@ -27,6 +27,8 @@ ln -s ~/easy_connect.json /usr/share/sangfor/EasyConnect/resources/conf/easy_con
 
 export DISPLAY
 
+iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
+
 # 拒绝 tun0 侧主动请求的连接.
 iptables -I INPUT -p tcp -j REJECT
 iptables -I INPUT -i eth0 -p tcp -j ACCEPT
