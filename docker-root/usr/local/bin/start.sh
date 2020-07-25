@@ -36,7 +36,7 @@ iptables -I INPUT -i lo -p tcp -j ACCEPT
 iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 # issue#6
-while true; do sleep 5 ; iptables -D SANGFOR_VIRTUAL -j DROP ; done
+( while true; do sleep 5 ; iptables -D SANGFOR_VIRTUAL -j DROP ; done )&
 
 if [ "$TYPE" != "X11" -a "$TYPE" != "x11" ]
 then
