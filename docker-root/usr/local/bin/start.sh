@@ -35,6 +35,10 @@ iptables -I INPUT -i eth0 -p tcp -j ACCEPT
 iptables -I INPUT -i lo -p tcp -j ACCEPT
 iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
+# 删除深信服可能生成的一条 iptables 规则，防止其丢弃传出到宿主机的连接
+# 感谢 @stingshen https://github.com/Hagb/docker-easyconnect/issues/6
+( while true; do sleep 5 ; iptables -D SANGFOR_VIRTUAL -j DROP 2>/dev/null ; done )&
+
 if [ "$TYPE" != "X11" -a "$TYPE" != "x11" ]
 then
 	# container 再次运行时清除 /tmp 中的锁，使 container 能够反复使用。
