@@ -4,7 +4,7 @@
 
 请注意，在有其他设备登录时此处也会自动断线重连。
 
-原 README 可见 [Hagb/docker-easyconnect/README.md](https://github.com/Swung0x48/docker-easyconnect/blob/master/README.md)
+原 README 可见 [Hagb/docker-easyconnect/README.md](https://github.com/Hagb/docker-easyconnect/blob/master/README.md)
 
 欢迎提交 issue、PR，包括但不仅限于 提出bug、对各种疑问、代码和文档的改进。
 
