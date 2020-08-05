@@ -54,4 +54,8 @@ then
 	DISPLAY=:1
 fi
 
+# 模拟按下 Enter， 实现自动登录
+export XAUTHORITY=/root/.Xauthority
+[ -n "$AUTOLOGIN" ] && xdotool keydown Return
+
 exec start-sangfor.sh
