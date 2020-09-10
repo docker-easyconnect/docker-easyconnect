@@ -52,6 +52,9 @@ then
 
 	tigervncserver :1 -geometry 800x600 -localhost no -passwd ~/.vnc/passwd -xstartup flwm
 	DISPLAY=:1
+
+	# 将 easyconnect 的密码放入粘贴板中，应对密码复杂且无法保存的情况 (eg: 需要短信验证登陆)
+	echo "$ECPASSWORD" | DISPLAY=:1 xclip -selection c
 fi
 
 exec start-sangfor.sh
