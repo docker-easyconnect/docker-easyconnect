@@ -87,6 +87,8 @@ docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/do
 
 - `NODANTED`: 默认为空。不为空时提供 socks5 代理的`danted`将不会启动（可用于和`--net host`参数配合，提供全局透明代理）。
 
+- `ECPASSWORD`: 默认为空，使用 vnc 时用于将密码放入粘帖板，应对密码复杂且无法保存的情况 (eg: 需要短信验证登陆)。
+
 ### Socks5
 
 EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。这可用`-p`参数转发到`127.0.0.1`上。

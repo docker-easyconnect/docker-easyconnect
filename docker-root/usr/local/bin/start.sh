@@ -54,6 +54,7 @@ then
 	DISPLAY=:1
 
 	# 将 easyconnect 的密码放入粘贴板中，应对密码复杂且无法保存的情况 (eg: 需要短信验证登陆)
+	# 感谢 @yakumioto https://github.com/Hagb/docker-easyconnect/pull/8
 	echo "$ECPASSWORD" | DISPLAY=:1 xclip -selection c
 fi
 
