@@ -153,7 +153,7 @@ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HO
 
 ## 版权及许可证
 
-> Copyright © 2020 Hagb (Guo Junyu) <hagb_green@qq.com>  
+> Copyright © 2020 contributors
 >
 > This work is free. You can redistribute it and/or modify it under the  
 > terms of the Do What The Fuck You Want To Public License, Version 2,  
