@@ -19,9 +19,11 @@ sleep 5
 done
 )&
 
-## 默认使用英语：感谢 @forest0 https://github.com/Hagb/docker-easyconnect/issues/2#issuecomment-658205504
+# 登陆信息持久化处理
+## 持久化配置文件夹 感谢 @hexid26 https://github.com/Hagb/docker-easyconnect/issues/21
 [ -d ~/conf ] || cp -a /usr/share/sangfor/EasyConnect/resources/conf_backup ~/conf
 [ -e ~/easy_connect.json ] && mv ~/easy_connect.json ~/conf/easy_connect.json # 向下兼容
+## 默认使用英语：感谢 @forest0 https://github.com/Hagb/docker-easyconnect/issues/2#issuecomment-658205504
 [ -e ~/conf/easy_connect.json ] || echo '{"language": "en_US"}' > ~/conf/easy_connect.json
 
 export DISPLAY
