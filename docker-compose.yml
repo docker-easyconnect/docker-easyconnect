@@ -13,7 +13,7 @@ services:
           - $HOME/.ecdata:/root
         environment:
           - DISPLAY=unix$DISPLAY
-          - URLWINE=1
+          - URLWIN=1
           - TYPE=X11
 #          - PASSWORD=password
 #          - NODANTED=
