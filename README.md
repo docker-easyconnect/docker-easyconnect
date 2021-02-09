@@ -12,7 +12,7 @@
 
 ## 简明使用步骤
 
-1. [安装Docker并运行]（https://docs.docker.com/get-docker/）；
+1. [安装Docker并运行](https://docs.docker.com/get-docker/)；
 2. 在终端输入： `docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect` ；
 3. 使用vnc客户端连接vnc， 地址：127.0.0.1, 端口: 5901, 密码 xxxx ;
 4. 成功连上后你应该能看到easyconnect的登陆窗口，填写并登陆easyconnect；
