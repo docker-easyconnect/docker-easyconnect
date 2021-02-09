@@ -19,8 +19,28 @@ sleep 5
 done
 )&
 
+# https://github.com/Hagb/docker-easyconnect/issues/20
+# https://serverfault.com/questions/302936/configuring-route-to-use-the-same-interface-for-outbound-traffic-as-that-of-inbo
+iptables -t mangle -I OUTPUT -m state --state ESTABLISHED,RELATED -j CONNMARK --restore-mark
+iptables -t mangle -I PREROUTING -m connmark ! --mark 0 -j CONNMARK --save-mark
+iptables -t mangle -I PREROUTING -m connmark --mark 1 -j MARK --set-mark 1
+iptables -t mangle -I PREROUTING -i eth0 -j CONNMARK --set-mark 1
+(
+IFS="
+"
+for i in $(ip route show); do
+	IFS=' '
+	ip route add $i table 2
+done
+ip rule add fwmark 1 table 2
+)
+
+# 登陆信息持久化处理
+## 持久化配置文件夹 感谢 @hexid26 https://github.com/Hagb/docker-easyconnect/issues/21
+[ -d ~/conf ] || cp -a /usr/share/sangfor/EasyConnect/resources/conf_backup ~/conf
+[ -e ~/easy_connect.json ] && mv ~/easy_connect.json ~/conf/easy_connect.json # 向下兼容
 ## 默认使用英语：感谢 @forest0 https://github.com/Hagb/docker-easyconnect/issues/2#issuecomment-658205504
-[ -e ~/easy_connect.json ] || echo '{"language": "en_US"}' > ~/easy_connect.json
+[ -e ~/conf/easy_connect.json ] || echo '{"language": "en_US"}' > ~/conf/easy_connect.json
 
 export DISPLAY
 
