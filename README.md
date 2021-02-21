@@ -101,6 +101,8 @@ docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/do
 
 - `ECPASSWORD`: 默认为空，使用 vnc 时用于将密码放入粘帖板，应对密码复杂且无法保存的情况 (eg: 需要短信验证登陆)。
 
+- `IPTABLES_LEGACY`: 默认为空。设为非空值时强制要求 `iptables-legacy`。
+
 ### Socks5
 
 EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。这可用`-p`参数转发到`127.0.0.1`上。

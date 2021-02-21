@@ -2,7 +2,7 @@
 
 # 不支持 nftables 时使用 iptables-legacy
 # 感谢 @BoringCat https://github.com/Hagb/docker-easyconnect/issues/5
-if { iptables-nft -L 1>/dev/null 2>/dev/null ;}
+if { [ -z "$IPTABLES_LEGACY" ] && iptables-nft -L 1>/dev/null 2>/dev/null ;}
 then
 	update-alternatives --set iptables /usr/sbin/iptables-nft
 	update-alternatives --set ip6tables /usr/sbin/ip6tables-nft
