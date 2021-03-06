@@ -35,15 +35,6 @@ done
 ip rule add fwmark 1 table 2
 )
 
-# 登陆信息持久化处理
-## 持久化配置文件夹 感谢 @hexid26 https://github.com/Hagb/docker-easyconnect/issues/21
-[ -d ~/conf ] || cp -a /usr/share/sangfor/EasyConnect/resources/conf_backup ~/conf
-[ -e ~/easy_connect.json ] && mv ~/easy_connect.json ~/conf/easy_connect.json # 向下兼容
-## 默认使用英语：感谢 @forest0 https://github.com/Hagb/docker-easyconnect/issues/2#issuecomment-658205504
-[ -e ~/conf/easy_connect.json ] || echo '{"language": "en_US"}' > ~/conf/easy_connect.json
-
-export DISPLAY
-
 iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
 
 # 拒绝 tun0 侧主动请求的连接.
@@ -55,6 +46,17 @@ iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 # 删除深信服可能生成的一条 iptables 规则，防止其丢弃传出到宿主机的连接
 # 感谢 @stingshen https://github.com/Hagb/docker-easyconnect/issues/6
 ( while true; do sleep 5 ; iptables -D SANGFOR_VIRTUAL -j DROP 2>/dev/null ; done )&
+
+[ -n "$_EC_CLI" ] && exec start-sangfor.sh
+
+# 登陆信息持久化处理
+## 持久化配置文件夹 感谢 @hexid26 https://github.com/Hagb/docker-easyconnect/issues/21
+[ -d ~/conf ] || cp -a /usr/share/sangfor/EasyConnect/resources/conf_backup ~/conf
+[ -e ~/easy_connect.json ] && mv ~/easy_connect.json ~/conf/easy_connect.json # 向下兼容
+## 默认使用英语：感谢 @forest0 https://github.com/Hagb/docker-easyconnect/issues/2#issuecomment-658205504
+[ -e ~/conf/easy_connect.json ] || echo '{"language": "en_US"}' > ~/conf/easy_connect.json
+
+export DISPLAY
 
 if [ "$TYPE" != "X11" -a "$TYPE" != "x11" ]
 then

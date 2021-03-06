@@ -10,7 +10,7 @@
 
 另外如果希望使用全局代理，最直接的方式大概是使用`--net host -e NODANTED=1`参数，将虚拟机与宿主机置于同一网络环境。但个人不太推荐此种方式，经过折腾过后又写了[记折腾容器化 EasyConnect 的全局透明代理](https://hagb.name/2020/06/26/easyconnect-proxy.html)一文总结（但仍觉不甚方便，希望能有更好的方式）。
 
-望批评、指正。欢迎提交 issue、PR，包括但不仅限于 bug、各种疑问、代码和文档（最近有点语无伦次）的改进。
+望批评、指正。欢迎提交 issue、PR，包括但不仅限于 bug、各种疑问、代码和文档的改进。
 
 ## 简明使用步骤
 
@@ -59,18 +59,38 @@ docker pull hagb/docker-easyconnect:TAG
 
 ### 从 Dockerfile 构建
 
-带 VNC 服务端：
+#### 纯命令行
 
+``` bash
+git clone https://github.com/hagb/docker-easyconnect.git --branch cli
+cd docker-easyconnect
+EC_VER=7.6.3  # 此变量填写 ec_urls 文件夹中的版本，`7.6.3`或`7.6.7`
+docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) \
+	--build-arg NO_HEARTBEAT=1 --tag hagb/docker-easyconnect -f Dockerfile.cli .
+	# NO_HEARTBEAT=1 阻止心跳包的发送，因为 7.6.3 版上心跳包会导致掉线，7.6.7 未知
+	# NO_HEARTBEAT 为空值（删掉 --build-arg NO_HEARTBEAT=1 或改为 --build-arg NO_HEARTBEAT= ）不阻止心跳包发送
 ```
+
+或 `7.6.8` 版：
+
+``` bash
+git clone https://github.com/hagb/docker-easyconnect.git --branch cli
+cd docker-easyconnect
+docker image build --tag hagb/docker-easyconnect -f Dockerfile.cli .
+```
+
+#### 带 VNC 服务端
+
+``` bash
 git clone https://github.com/hagb/docker-easyconnect.git
 cd docker-easyconnect
 EC_VER=7.6.3  # 此变量填写 ec_urls 文件夹中的版本，`7.6.3`或`7.6.7`
 docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/docker-easyconnect -f Dockerfile .
 ```
 
-无 VNC 服务端：
+#### 使用 X11 socket 而无 VNC 服务端
 
-```
+``` bash
 git clone https://github.com/hagb/docker-easyconnect.git
 cd docker-easyconnect
 EC_VER=7.6.3  # 此变量填写 ec_urls 文件夹中的版本，`7.6.3`或`7.6.7`
@@ -91,19 +111,21 @@ docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/do
 
 	- 其它任何值（默认值）: 将在`5901`端口开放 vnc 服务以操作 EasyConnect 前端。
 
-- `DISPLAY`: `$TYPE`为`x11`或使用无 vnc 的 image 时通过该变量来显示 EasyConnect 界面。
+- `DISPLAY`（仅适用于图形界面版）: `$TYPE`为`x11`或使用无 vnc 的 image 时通过该变量来显示 EasyConnect 界面。
 
-- `PASSWORD`: 用于设置 vnc 服务的密码，该变量的值默认为空字符串，表示密码不作改变。变量不为空时，密码（应小于或等于 8 位）就会被更新到变量的值。默认密码是`password`.
+- `PASSWORD`（仅适用于图形界面版）: 用于设置 vnc 服务的密码，该变量的值默认为空字符串，表示密码不作改变。变量不为空时，密码（应小于或等于 8 位）就会被更新到变量的值。默认密码是`password`.
 
-- `URLWIN`: 默认为空，此时当 EasyConnect 想要调用浏览器时，不会弹窗，若该变量设为任何非空值，则会弹出一个包含链接文本框。
+- `URLWIN`（仅适用于图形界面版）: 默认为空，此时当 EasyConnect 想要调用浏览器时，不会弹窗，若该变量设为任何非空值，则会弹出一个包含链接文本框。
 
 - `EXIT`: 默认为空，此时前端退出后会自动重启。不为空时，前端退出后不自动重启。
 
 - `NODANTED`: 默认为空。不为空时提供 socks5 代理的`danted`将不会启动（可用于和`--net host`参数配合，提供全局透明代理）。
 
-- `ECPASSWORD`: 默认为空，使用 vnc 时用于将密码放入粘帖板，应对密码复杂且无法保存的情况 (eg: 需要短信验证登陆)。
+- `ECPASSWORD`（仅适用于图形界面版）: 默认为空，使用 vnc 时用于将密码放入粘帖板，应对密码复杂且无法保存的情况 (eg: 需要短信验证登陆)。
 
 - `IPTABLES_LEGACY`: 默认为空。设为非空值时强制要求 `iptables-legacy`。
+
+- `NO_HEARTBEAT`（仅适用于纯命令行版）: 默认值在编译时指定，不为空时不会发送心跳包（在 `7.6.3` 上，（多次）发送心跳包会导致掉线）
 
 ### Socks5
 
@@ -113,11 +135,11 @@ EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。�
 
 带 VNC 时，默认情况下，环境变量`TYPE`留空会在`5901`端口开启 VNC 服务器。
 
-### 处理 EasyConnect 的浏览器弹窗
+### 处理 EasyConnect 的浏览器弹窗（仅限图形界面版）
 
 处理成将链接（追加）写入`/root/open-urls`，如果设置了`URLWIN`环境变量为非空值，还会弹出一个包含链接的文本框。
 
-### 配置、登陆信息持久化
+### 配置、登陆信息持久化（仅限图形界面版）
 
 只需要用`-v`参数将宿主机的目录挂载到容器的 /root 。
 
@@ -127,13 +149,21 @@ EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。�
 
 ## 例子
 
-以下例子中，登录信息均保存在`~/.ecdata/`文件夹（`-v $HOME/.ecdata:/root`），开放的 Socks5 在`127.0.0.1:1080`（`-p 127.0.0.1:1080:1080`）。
+以下例子中，开放的 Socks5 在`127.0.0.1:1080`（`-p 127.0.0.1:1080:1080`）。图形界面（X11 socket 和 vnc）两例中，登录信息均保存在`~/.ecdata/`文件夹（`-v $HOME/.ecdata:/root`）
+
+### 纯命令行
+
+下列例子可启动纯命令行的 EasyConnect，并且退出后不会自动重启（`-e EXIT=1`）。
+
+``` bash
+docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e EXIT=1 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect
+```
 
 ### X11 socket
 
 下面这个例子可以在当前桌面环境中启动 EasyConnect 前端，并且该前端退出后不会自动重启（`-e EXIT=1`），EasyConnect 要进行浏览器弹窗时会弹出含链接的文本框（`-e URLWIN=1`）。
 
-```
+``` bash
 xhost +LOCAL:
 docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/.Xauthority:/root/.Xauthority -e EXIT=1 -e DISPLAY=$DISPLAY -e URLWIN=1 -e TYPE=x11 -v $HOME/.ecdata:/root -p 127.0.0.1:1080:1080 hagb/docker-easyconnect
 xhost -LOCAL:
@@ -143,7 +173,7 @@ xhost -LOCAL:
 
 下面这个例子中，前端退出会自动重启前端，VNC 服务器在`127.0.0.1:5901`（`-p 127.0.0.1:5901:5901`），密码为`xxxx`（`-e PASSWORD=xxxx`）。
 
-```
+``` bash
 docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect
 ```
 

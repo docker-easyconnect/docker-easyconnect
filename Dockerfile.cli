@@ -1,0 +1,31 @@
+FROM debian:buster-slim
+
+RUN sed -i s/deb.debian.org/mirrors.cqu.edu.cn/ /etc/apt/sources.list &&\
+    apt-get update && \
+    apt-get install -y --no-install-recommends --no-install-suggests iptables \
+	dante-server psmisc busybox && \
+        ln -s "$(which busybox)" /usr/local/bin/ip
+
+ARG EC_URL=""
+ARG EC_CLI_URL="https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb"
+
+RUN { [ -n "${EC_URL}" ] && \
+        cd tmp && \
+        busybox wget "${EC_URL}" -O EasyConnect.deb && \
+        busybox wget "${EC_CLI_URL}" -O easyconn.deb && \
+        dpkg -i EasyConnect.deb && mkdir easyconn && dpkg -x easyconn.deb easyconn && \
+        cp easyconn/usr/share/sangfor/EasyConnect/resources/bin/ECAgent /usr/share/sangfor/EasyConnect/resources/bin/ECAgent && \
+        cp easyconn/usr/share/sangfor/EasyConnect/resources/bin/easyconn /usr/local/bin/ && \
+        rm -rf /tmp/* && \
+        cd /usr/share/sangfor/EasyConnect/ && { rm -f * ; true ; } && rm -fr locales/ ec/ && \
+        cd resources/ && rm -rf *.asar *.png re/ && \
+        cd lib64 && rm libf* libg* libnssckbi.so libnsssysinit.so libnssdbm3.so libsoftokn3.so libsqlite3.so libssl3.so ; } ||\
+    { [ -z "${EC_URL}" ] && \
+        cd tmp && busybox wget "${EC_CLI_URL}" -O easyconn.deb && dpkg -i easyconn.deb && rm easyconn.deb ; }
+
+COPY ./docker-root /
+
+ARG NO_HEARTBEAT=""
+ENV NO_HEARTBEAT="$NO_HEARTBEAT"
+
+CMD _EC_CLI=1 start.sh
