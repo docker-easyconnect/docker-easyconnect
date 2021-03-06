@@ -131,7 +131,7 @@ docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/do
 	```
 	-d vpn address, make sure it's assigned and the format is right, like "199.201.73.191:443"
 	-t login type, "pwd" means username/password authentication
-					"cert" means certificate authentication
+	               "cert" means certificate authentication
 	-u username
 	-p password
 	-c certificate path
