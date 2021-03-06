@@ -23,7 +23,11 @@ RUN { [ -n "${EC_URL}" ] && \
     { [ -z "${EC_URL}" ] && \
         cd tmp && busybox wget "${EC_CLI_URL}" -O easyconn.deb && dpkg -i easyconn.deb && rm easyconn.deb ; }
 
+RUN ln -s /root/.easyconn /usr/share/sangfor/EasyConnect/resources/conf/.easyconn
+
 COPY ./docker-root /
+
+VOLUME /root/
 
 ARG NO_HEARTBEAT=""
 ENV NO_HEARTBEAT="$NO_HEARTBEAT"

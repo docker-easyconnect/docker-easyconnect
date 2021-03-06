@@ -127,6 +127,18 @@ docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/do
 
 - `NO_HEARTBEAT`（仅适用于纯命令行版）: 默认值在编译时指定，不为空时不会发送心跳包（在 `7.6.3` 上，（多次）发送心跳包会导致掉线）
 
+- `CLI_OPTS`（仅适用于纯命令行版）：默认为空，给 `easyconn login` 加上的额外参数，可用参数如下：
+	```
+	-d vpn address, make sure it's assigned and the format is right, like "199.201.73.191:443"
+	-t login type, "pwd" means username/password authentication
+					"cert" means certificate authentication
+	-u username
+	-p password
+	-c certificate path
+	-m password for certificate
+	-l certificate used to be authentication
+	```
+	例如 `CLI_OPTS="-d 服务器地址 -u 用户名 -p 密码"` 可实现原登陆信息失效时自动登陆。
 ### Socks5
 
 EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。这可用`-p`参数转发到`127.0.0.1`上。
@@ -139,8 +151,12 @@ EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。�
 
 处理成将链接（追加）写入`/root/open-urls`，如果设置了`URLWIN`环境变量为非空值，还会弹出一个包含链接的文本框。
 
-### 配置、登陆信息持久化（仅限图形界面版）
+### 配置、登陆信息持久化
 
+#### 纯命令行版
+用 `-v` 参数将宿主机的目录挂载到容器的 `/root`，如 `-v $HOME/.ec_cli_data:/root` .
+
+#### 图形界面版
 只需要用`-v`参数将宿主机的目录挂载到容器的 /root 。
 
 如`-v $HOME/.ecdata:/root`。
@@ -156,7 +172,7 @@ EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。�
 下列例子可启动纯命令行的 EasyConnect，并且退出后不会自动重启（`-e EXIT=1`）。
 
 ``` bash
-docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e EXIT=1 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect
+docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.ec_cli_data:/root -e EXIT=1 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect
 ```
 
 ### X11 socket
