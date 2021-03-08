@@ -14,12 +14,8 @@ do
 		# 下面这行代码启动 EasyConnect 的前端。
 		/usr/share/sangfor/EasyConnect/EasyConnect --enable-transparent-visuals --disable-gpu
 	else
-		/usr/share/sangfor/EasyConnect/resources/bin/ECAgent > /dev/null 2> /dev/null  &
+		/usr/share/sangfor/EasyConnect/resources/bin/ECAgent &
 		sleep 1
-		[ -n "$NO_HEARTBEAT" ] && {
-			tail -n 0 -f /usr/share/sangfor/EasyConnect/resources/logs/ECAgent.log | grep "<Type>HEARTBEAT</Type>" -m 1 > /dev/null
-			busybox killall ECAgent
-		} &
 		easyconn login -t autologin
 		pidof svpnservice > /dev/null || bash -c "exec easyconn login $CLI_OPTS"
 		while pidof svpnservice > /dev/null ; do

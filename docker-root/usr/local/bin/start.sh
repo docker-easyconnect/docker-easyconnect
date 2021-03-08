@@ -15,7 +15,7 @@ fi
 [ -n "$NODANTED" ] || (while true
 do
 sleep 5
-[ -d /sys/class/net/tun0 ] && danted
+[ -d /sys/class/net/tun0 ] && su daemon -s /usr/sbin/danted
 done
 )&
 
@@ -47,7 +47,10 @@ iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 # 感谢 @stingshen https://github.com/Hagb/docker-easyconnect/issues/6
 ( while true; do sleep 5 ; iptables -D SANGFOR_VIRTUAL -j DROP 2>/dev/null ; done )&
 
-[ -n "$_EC_CLI" ] && exec start-sangfor.sh
+if [ -n "$_EC_CLI" ]; then
+	ln -s /usr/share/sangfor/EasyConnect/resources/{conf_${EC_VER},conf}
+	exec start-sangfor.sh
+fi
 
 # 登陆信息持久化处理
 ## 持久化配置文件夹 感谢 @hexid26 https://github.com/Hagb/docker-easyconnect/issues/21

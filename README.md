@@ -32,8 +32,6 @@
 
 `7.6.3`版（<http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb>）.
 
-### 待测试的版本（欢迎提交 issue 或 PR）
-
 `7.6.7`版（<http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_767/EasyConnect_x64_7_6_7_3.deb>）.
 
 ### 其他
@@ -60,18 +58,6 @@ docker pull hagb/docker-easyconnect:TAG
 ### 从 Dockerfile 构建
 
 #### 纯命令行
-
-``` bash
-git clone https://github.com/hagb/docker-easyconnect.git --branch cli
-cd docker-easyconnect
-EC_VER=7.6.3  # 此变量填写 ec_urls 文件夹中的版本，`7.6.3`或`7.6.7`
-docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) \
-	--build-arg NO_HEARTBEAT=1 --tag hagb/docker-easyconnect -f Dockerfile.cli .
-	# NO_HEARTBEAT=1 阻止心跳包的发送，因为 7.6.3 版上心跳包会导致掉线，7.6.7 未知
-	# NO_HEARTBEAT 为空值（删掉 --build-arg NO_HEARTBEAT=1 或改为 --build-arg NO_HEARTBEAT= ）不阻止心跳包发送
-```
-
-或 `7.6.8` 版：
 
 ``` bash
 git clone https://github.com/hagb/docker-easyconnect.git --branch cli
@@ -103,6 +89,13 @@ docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/do
 
 **参数里的`--device /dev/net/tun --cap-add NET_ADMIN`是不可少的。** 因为 EasyConnect 要创建虚拟网络设备`tun0`。
 
+### 构建参数
+
+- `EC_URL`（仅适用于图形界面版）: EasyConnect 的 deb 包下载地址
+- `EC_763_URL`（仅适用于命令行版）: `7.6.3` 版 EasyConnect 的 deb 包下载地址，默认为 `http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb`，将其设为空值时构建的镜像不包含 `7.6.3` 版的配置文件
+- `EC_767_URL`（仅适用于命令行版）: `7.6.7` 版 EasyConnect 的 deb 包下载地址，默认为 `http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_767/EasyConnect_x64_7_6_7_3.deb`，将其设为空值时构建的镜像不包含 `7.6.7` 版的配置文件
+- `EC_CLI_URL`（仅适用于命令行版）: [@shmilee](https://github.com/shmilee) 提供的命令行 `7.6.8` 版 deb 包的下载地址，默认为 `https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb`
+
 ### 环境变量
 
 - `TYPE`（仅适用于带 vnc 的 image）: 如何显示 EasyConnect 前端（目前没有找到纯 cli 的办法）。有以下两种选项:
@@ -125,9 +118,9 @@ docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/do
 
 - `IPTABLES_LEGACY`: 默认为空。设为非空值时强制要求 `iptables-legacy`。
 
-- `NO_HEARTBEAT`（仅适用于纯命令行版）: 默认值在编译时指定，不为空时不会发送心跳包（在 `7.6.3` 上，（多次）发送心跳包会导致掉线）
+- `EC_VER`（仅适用于纯命令行版）: 指定运行的 EasyConnect 版本，必填
 
-- `CLI_OPTS`（仅适用于纯命令行版）：默认为空，给 `easyconn login` 加上的额外参数，可用参数如下：
+- `CLI_OPTS`（仅适用于纯命令行版）: 默认为空，给 `easyconn login` 加上的额外参数，可用参数如下：
 	```
 	-d vpn address, make sure it's assigned and the format is right, like "199.201.73.191:443"
 	-t login type, "pwd" means username/password authentication
@@ -154,7 +147,7 @@ EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。�
 ### 配置、登陆信息持久化
 
 #### 纯命令行版
-用 `-v` 参数将宿主机的目录挂载到容器的 `/root`，如 `-v $HOME/.ec_cli_data:/root` .
+用 `-v` 参数将宿主机的登陆信息**文件**（请确定该文件已存在）挂载到容器的 `/root/.easyconn`，如 `-v $HOME/.easyconn:/root/.easyconn` .
 
 #### 图形界面版
 只需要用`-v`参数将宿主机的目录挂载到容器的 /root 。
@@ -169,10 +162,11 @@ EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。�
 
 ### 纯命令行
 
-下列例子可启动纯命令行的 EasyConnect，并且退出后不会自动重启（`-e EXIT=1`）。
+下列例子可启动纯命令行的 EasyConnect `7.6.3`（`-e EC_VER=7.6.3`），并且退出后不会自动重启（`-e EXIT=1`）。
 
 ``` bash
-docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.ec_cli_data:/root -e EXIT=1 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect
+touch ~/.easyconn
+docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/root/.easyconn -e EC_VER=7.6.3 -e EXIT=1 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect
 ```
 
 ### X11 socket
