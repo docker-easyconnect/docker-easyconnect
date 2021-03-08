@@ -1,6 +1,10 @@
 #!/bin/bash
 echo hooks/build hook works!
 echo IMAGE_NAME: $IMAGE_NAME
+if [ "${DOCKER_TAG}" = cli ]; then
+	docker build --cache-from $IMAGE_NAME --build-arg BUILDKIT_INLINE_CACHE=1 -f $DOCKERFILE_PATH -t $IMAGE_NAME .
+	exit
+fi
 if [ "${DOCKER_TAG}" = latest -o "${DOCKER_TAG}" = vncless ]
 then
 	EC_VER=7.6.3
