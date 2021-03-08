@@ -23,6 +23,6 @@ RUN rm -f /usr/share/sangfor/EasyConnect/resources/conf/easy_connect.json &&\
 #ENV TYPE="" PASSWORD="" LOOP=""
 #ENV DISPLAY
 
-VOLUME /root/
+VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
 CMD ["start.sh"]
