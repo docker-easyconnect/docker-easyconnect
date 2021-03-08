@@ -2,7 +2,7 @@
 
 让深信服开发的**非自由**的 EasyConnect 代理软件运行在 docker 中，并开放 Socks5 供宿主机连接以使用代理。
 
-这个 image 基于 EasyConnect 官方“Linux”版的 deb 包。
+这个 image 基于 EasyConnect 官方“Linux”版的 deb 包以及 [@shmille](https://github.com/shmilee) 提供的[命令行版客户端](https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb)。
 
 [如何运行“Linux”版 EasyConnect (`7.6.3.0.86415`版) (doc/run-linux-easyconnect-how-to.md)](doc/run-linux-easyconnect-how-to.md)是这次折腾的总结。
 
@@ -34,6 +34,8 @@
 
 `7.6.7`版（<http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_767/EasyConnect_x64_7_6_7_3.deb>）.
 
+`7.6.8`版（<https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb>）
+
 ### 其他
 
 请通过设置下文叙述的`EC_URL`变量进行测试，欢迎提交 issue 或 PR.
@@ -49,6 +51,7 @@ docker pull hagb/docker-easyconnect:TAG
 其中 TAG 可以是如下值（不带 VNC 服务端的 image 比带 VNC 服务端的 image 小）：
 
 - `latest`: 默认值，带 VNC 服务端的`7.6.3`版 image，
+- `cli`: 多版本（`7.6.3`, `7.6.7`, `7.6.8`）纯命令行版
 - `vncless`: 不带 VNC 服务端的`7.6.3`版 image
 - `7.6.3`: 带 VNC 服务端的`7.6.3`版 image
 - `vncless-7.6.3`: 不带 VNC 服务端的`7.6.3`版 image
