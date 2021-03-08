@@ -24,8 +24,8 @@ RUN EC_DIR=/usr/share/sangfor/EasyConnect/resources && cd tmp && \
     ln -s ${EC_DIR}/bin/easyconn /usr/local/bin/ && \
     cp -r easyconn/${EC_DIR}/conf ${EC_DIR}/conf_7.6.8 && rm -r *
 
-ARG EC_763_URL="http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb" \
-    EC_767_URL="http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_767/EasyConnect_x64_7_6_7_3.deb"
+ARG EC_763_URL="http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb"
+ARG EC_767_URL="http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_767/EasyConnect_x64_7_6_7_3.deb"
 
 RUN cd /tmp && \
     for ver in 7.6.3 7.6.7 ; do { \
@@ -43,8 +43,5 @@ RUN for i in /usr/share/sangfor/EasyConnect/resources/conf_*/; do \
 COPY ./docker-root /
 
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
-
-ARG NO_HEARTBEAT=""
-ENV NO_HEARTBEAT="$NO_HEARTBEAT"
 
 CMD _EC_CLI=1 start.sh
