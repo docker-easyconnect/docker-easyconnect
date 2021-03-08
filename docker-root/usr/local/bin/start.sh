@@ -15,7 +15,7 @@ fi
 [ -n "$NODANTED" ] || (while true
 do
 sleep 5
-[ -d /sys/class/net/tun0 ] && su daemon -s /usr/sbin/danted
+[ -d /sys/class/net/tun0 ] && { chmod a+w /tmp ; su daemon -s /usr/sbin/danted; }
 done
 )&
 
