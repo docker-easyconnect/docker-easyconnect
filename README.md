@@ -30,11 +30,12 @@
 ### 图形界面版
 
 1. [安装Docker并运行](https://docs.docker.com/get-docker/)；
-2. 在终端输入： `docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect:7.6.3`（末尾 EasyConnect 版本号 `7.6.3` 请根据实际情况修改）；
+2. 在终端输入： `docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 -p 127.0.0.1:8118:8118 hagb/docker-easyconnect:7.6.3`（末尾 EasyConnect 版本号 `7.6.3` 请根据实际情况修改）；
 3. 使用vnc客户端连接vnc， 地址：127.0.0.1, 端口: 5901, 密码 xxxx ;
 4. 成功连上后你应该能看到easyconnect的登陆窗口，填写并登陆easyconnect；
 5. 浏览器单独配置socks5代理（可以通过插件配置），地址: 127.0.0.1, 端口: 1080
 6. 此时你应该就可以通过浏览器连接到内网了。
+7. 对于只支持http代理的应用程序可以使用http代理，地址: 127.0.0.1, 端口: 8118
 
 **注意：如果你要将系统代理设置为127.0.0.1:1080而不是单独配置浏览器，请保证docker engine本身不会通过系统代理联网。**
 

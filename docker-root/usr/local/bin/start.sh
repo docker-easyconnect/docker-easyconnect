@@ -19,6 +19,17 @@ sleep 5
 done
 )&
 
+# 在虚拟网络设备 tun0 打开时运行 proxy 代理服务器
+[ -n "$NODANTED" ] || (
+address=`ip addr show | grep inet | grep global | grep -v tun | grep -v 127.0.0 | awk '{print $2}' | cut -d '/' -f 1`
+sed -i s/HOSTIP/$address/g /etc/privoxy/config
+while true
+do
+sleep 5
+[ -d /sys/class/net/tun0 ] && {  /usr/sbin/privoxy --no-daemon /etc/privoxy/config; }
+done
+)&
+
 # https://github.com/Hagb/docker-easyconnect/issues/20
 # https://serverfault.com/questions/302936/configuring-route-to-use-the-same-interface-for-outbound-traffic-as-that-of-inbo
 iptables -t mangle -I OUTPUT -m state --state ESTABLISHED,RELATED -j CONNMARK --restore-mark
