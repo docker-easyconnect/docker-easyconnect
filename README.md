@@ -209,7 +209,7 @@ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HO
 
 ### 出现多条报错：`Couldn't load match 'state':No such file or directory` 或 `ip: RTNETLINK answers: Operation not permitted`
 
-此为运行环境不支持 ntf 且未被容器脚本检测出来所致。可以通过设置环境变量 `IPTABLES_LEGACY` 为 `1` 明确让容器使用 legacy iptables 来解决。
+此为运行环境不支持 nft 且未被容器脚本检测出来所致。可以通过设置环境变量 `IPTABLES_LEGACY` 为 `1` 明确让容器使用 legacy iptables 来解决。
 
 ### `Failed to login in with this user account, for a user is online!`
 
