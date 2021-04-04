@@ -134,7 +134,7 @@ docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/do
 
 - `ECPASSWORD`（仅适用于图形界面版）: 默认为空，使用 vnc 时用于将密码放入粘帖板，应对密码复杂且无法保存的情况 (eg: 需要短信验证登陆)。
 
-- `IPTABLES_LEGACY`: 默认为空。设为非空值时强制要求 `iptables-legacy`。
+- `IPTABLES_LEGACY`: 默认为空。设为非空值时强制要求 `iptables-legacy`。**在 Windows 的 docker 和部分其他环境下须开启，详见[已知问题](#已知问题)**
 
 - `EC_VER`（仅适用于纯命令行版）: 指定运行的 EasyConnect 版本，必填
 
@@ -206,6 +206,10 @@ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HO
 ```
 
 ## 已知问题
+
+### 出现多条报错：`Couldn't load match 'state':No such file or directory` 或 `ip: RTNETLINK answers: Operation not permitted`
+
+此为运行环境不支持 ntf 且未被容器脚本检测出来所致。可以通过设置环境变量 `IPTABLES_LEGACY` 为 `1` 明确让容器使用 legacy iptables 来解决。
 
 ### `Failed to login in with this user account, for a user is online!`
 
