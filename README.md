@@ -128,7 +128,9 @@ docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/do
 
 - `URLWIN`（仅适用于图形界面版）: 默认为空，此时当 EasyConnect 想要调用浏览器时，不会弹窗，若该变量设为任何非空值，则会弹出一个包含链接文本框。
 
-- `EXIT`: 默认为空，此时前端退出后会自动重启。不为空时，前端退出后不自动重启。
+- `EXIT`: 默认为空，此时前端退出后会自动重连。不为空时，前端退出后不自动重启。
+
+- `MAX_RETRY`: 最大重连次数，默认为空。
 
 - `NODANTED`: 默认为空。不为空时提供 socks5 代理的`danted`将不会启动（可用于和`--net host`参数配合，提供全局透明代理）。
 

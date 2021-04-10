@@ -24,8 +24,10 @@ do
 		echo svpn stop!
 	fi
 
-	# 是否自动重启
-	[ -n "$EXIT" ] && exit
+	[ -n "$MAX_RETRY" ] && ((MAX_RETRY--))
+
+	# 自动重连
+	((MAX_RETRY<0)) && exit
 
 	# 清除的残余进程，它们可能会妨碍下次的启动。
 	killall CSClient svpnservice 2> /dev/null
