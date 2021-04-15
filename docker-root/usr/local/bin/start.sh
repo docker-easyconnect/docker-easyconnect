@@ -22,9 +22,9 @@ done
 # https://github.com/Hagb/docker-easyconnect/issues/20
 # https://serverfault.com/questions/302936/configuring-route-to-use-the-same-interface-for-outbound-traffic-as-that-of-inbo
 iptables -t mangle -I OUTPUT -m state --state ESTABLISHED,RELATED -j CONNMARK --restore-mark
-iptables -t mangle -I PREROUTING -m connmark ! --mark 0 -j CONNMARK --save-mark
-iptables -t mangle -I PREROUTING -m connmark --mark 1 -j MARK --set-mark 1
-iptables -t mangle -I PREROUTING -i eth0 -j CONNMARK --set-mark 1
+iptables -t mangle -I INPUT -m connmark ! --mark 0 -j CONNMARK --save-mark
+iptables -t mangle -I INPUT -m connmark --mark 1 -j MARK --set-mark 1
+iptables -t mangle -I INPUT -i eth0 -j CONNMARK --set-mark 1
 (
 IFS="
 "
