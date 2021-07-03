@@ -11,29 +11,21 @@ else
 	update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 fi
 
+. "$(which detect-route.sh)"
+[ -n "DETECT_ROUTE_ONLY" ] && exit
+
 # 在虚拟网络设备 tun0 打开时运行 proxy 代理服务器
 [ -n "$NODANTED" ] || (while true
 do
 sleep 5
-[ -d /sys/class/net/tun0 ] && { chmod a+w /tmp ; su daemon -s /usr/sbin/danted; }
+[ -d /sys/class/net/tun0 ] && {
+	chmod a+w /tmp
+	open_port 1080
+	su daemon -s /usr/sbin/danted
+	close_port 1080
+}
 done
 )&
-
-# https://github.com/Hagb/docker-easyconnect/issues/20
-# https://serverfault.com/questions/302936/configuring-route-to-use-the-same-interface-for-outbound-traffic-as-that-of-inbo
-iptables -t mangle -I OUTPUT -m state --state ESTABLISHED,RELATED -j CONNMARK --restore-mark
-iptables -t mangle -I INPUT -m connmark ! --mark 0 -j CONNMARK --save-mark
-iptables -t mangle -I INPUT -m connmark --mark 1 -j MARK --set-mark 1
-iptables -t mangle -I INPUT -i eth0 -j CONNMARK --set-mark 1
-(
-IFS="
-"
-for i in $(ip route show); do
-	IFS=' '
-	ip route add $i table 2
-done
-ip rule add fwmark 1 table 2
-)
 
 iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
 
@@ -74,6 +66,7 @@ then
 	[ -e ~/.vnc/passwd ] || (mkdir -p ~/.vnc && (echo password | tigervncpasswd -f > ~/.vnc/passwd)) 
 	[ -n "$PASSWORD" ] && printf %s "$PASSWORD" | tigervncpasswd -f > ~/.vnc/passwd
 
+	open_port 5901
 	tigervncserver :1 -geometry 800x600 -localhost no -passwd ~/.vnc/passwd -xstartup flwm
 	DISPLAY=:1
 
