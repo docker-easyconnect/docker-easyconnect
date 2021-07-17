@@ -23,7 +23,7 @@
 	docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/root/.easyconn -p 127.0.0.1:1080:1080 -e EC_VER=7.6.3 hagb/docker-easyconnect:cli
 	```
 	其中 `-e EC_VER=7.6.3` 表示使用 `7.6.3` 版本的 EasyConnect，请根据实际情况修改版本号；
-3. 根据提示输入服务器地址、登陆凭据；
+3. 根据提示输入服务器地址、登录凭据；
 4. 浏览器单独配置socks5代理（可以通过插件配置），地址: 127.0.0.1, 端口: 1080
 5. 此时你应该就可以通过浏览器连接到内网了。
 
@@ -32,7 +32,7 @@
 1. [安装Docker并运行](https://docs.docker.com/get-docker/)；
 2. 在终端输入： `docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect:7.6.3`（末尾 EasyConnect 版本号 `7.6.3` 请根据实际情况修改）；
 3. 使用vnc客户端连接vnc， 地址：127.0.0.1, 端口: 5901, 密码 xxxx ;
-4. 成功连上后你应该能看到easyconnect的登陆窗口，填写并登陆easyconnect；
+4. 成功连上后你应该能看到easyconnect的登录窗口，填写并登录easyconnect；
 5. 浏览器单独配置socks5代理（可以通过插件配置），地址: 127.0.0.1, 端口: 1080
 6. 此时你应该就可以通过浏览器连接到内网了。
 
@@ -134,7 +134,7 @@ docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/do
 
 - `NODANTED`: 默认为空。不为空时提供 socks5 代理的`danted`将不会启动（可用于和`--net host`参数配合，提供全局透明代理）。
 
-- `ECPASSWORD`（仅适用于图形界面版）: 默认为空，使用 vnc 时用于将密码放入粘帖板，应对密码复杂且无法保存的情况 (eg: 需要短信验证登陆)。
+- `ECPASSWORD`（仅适用于图形界面版）: 默认为空，使用 vnc 时用于将密码放入粘帖板，应对密码复杂且无法保存的情况 (eg: 需要短信验证登录)。
 
 - `IPTABLES_LEGACY`: 默认为空。设为非空值时强制要求 `iptables-legacy`。**在 Windows 的 docker 和部分其他环境下须开启，详见[已知问题](#已知问题)**
 
@@ -151,7 +151,7 @@ docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/do
 	-m password for certificate
 	-l certificate used to be authentication
 	```
-	例如 `CLI_OPTS="-d 服务器地址 -u 用户名 -p 密码"` 可实现原登陆信息失效时自动登陆。
+	例如 `CLI_OPTS="-d 服务器地址 -u 用户名 -p 密码"` 可实现原登录信息失效时自动登录。
 ### Socks5
 
 EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。这可用`-p`参数转发到`127.0.0.1`上。
@@ -164,17 +164,17 @@ EasyConnect 创建`tun0`后，Socks5 代理会在容器的`1080`端口开启。�
 
 处理成将链接（追加）写入`/root/open-urls`，如果设置了`URLWIN`环境变量为非空值，还会弹出一个包含链接的文本框。
 
-### 配置、登陆信息持久化
+### 配置、登录信息持久化
 
 #### 纯命令行版
-用 `-v` 参数将宿主机的登陆信息**文件**（请确定该文件已存在）挂载到容器的 `/root/.easyconn`，如 `-v $HOME/.easyconn:/root/.easyconn` .
+用 `-v` 参数将宿主机的登录信息**文件**（请确定该文件已存在）挂载到容器的 `/root/.easyconn`，如 `-v $HOME/.easyconn:/root/.easyconn` .
 
 #### 图形界面版
 只需要用`-v`参数将宿主机的目录挂载到容器的 /root 。
 
 如`-v $HOME/.ecdata:/root`。
 
-由此还能实现全自动登陆。
+由此还能实现全自动登录。
 
 ## 例子
 
@@ -217,7 +217,7 @@ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HO
 
 该问题在`7.6.3`版上有出现，`7.6.7`版上未知。
 
-有时登陆时卡一小会儿，然后弹出`Failed to login in with this user account, for a user is online!`的窗口，但实际上同一账号并没有其他客户端同时在线。点击`OK`后 EasyConnect 退出。
+有时登录时卡一小会儿，然后弹出`Failed to login in with this user account, for a user is online!`的窗口，但实际上同一账号并没有其他客户端同时在线。点击`OK`后 EasyConnect 退出。
 
 在 docker 命令行内临时删去设置`EXIT`环境变量的`-e EXIT=`参数（如果有），在弹窗发生后点击`OK`，使客户端重启，重启后问题消失。
 
@@ -229,7 +229,7 @@ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HO
 
 ## 参考资料
 
-登陆过程的一个 hack ([docker-root/usr/local/bin/start-sangfor.sh](docker-root/usr/local/bin/start-sangfor.sh))参考了这篇文章：<https://blog.51cto.com/13226459/2476193>。在此对该文作者表示感谢。
+登录过程的一个 hack ([docker-root/usr/local/bin/start-sangfor.sh](docker-root/usr/local/bin/start-sangfor.sh))参考了这篇文章：<https://blog.51cto.com/13226459/2476193>。在此对该文作者表示感谢。
 
 ## 版权及许可证
 
