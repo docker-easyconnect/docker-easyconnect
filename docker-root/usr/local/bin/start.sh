@@ -2,7 +2,7 @@
 
 # 不支持 nftables 时使用 iptables-legacy
 # 感谢 @BoringCat https://github.com/Hagb/docker-easyconnect/issues/5
-if { iptables-nft -L 1>/dev/null 2>/dev/null ;}
+if { [ -z "$IPTABLES_LEGACY" ] && iptables-nft -L 1>/dev/null 2>/dev/null ;}
 then
 	update-alternatives --set iptables /usr/sbin/iptables-nft
 	update-alternatives --set ip6tables /usr/sbin/ip6tables-nft
@@ -15,16 +15,16 @@ fi
 [ -n "$NODANTED" ] || (while true
 do
 sleep 5
-[ -d /sys/class/net/tun0 ] && danted
+[ -d /sys/class/net/tun0 ] && { chmod a+w /tmp ; su daemon -s /usr/sbin/danted; }
 done
 )&
 
 # https://github.com/Hagb/docker-easyconnect/issues/20
 # https://serverfault.com/questions/302936/configuring-route-to-use-the-same-interface-for-outbound-traffic-as-that-of-inbo
 iptables -t mangle -I OUTPUT -m state --state ESTABLISHED,RELATED -j CONNMARK --restore-mark
-iptables -t mangle -I PREROUTING -m connmark ! --mark 0 -j CONNMARK --save-mark
-iptables -t mangle -I PREROUTING -m connmark --mark 1 -j MARK --set-mark 1
-iptables -t mangle -I PREROUTING -i eth0 -j CONNMARK --set-mark 1
+iptables -t mangle -I INPUT -m connmark ! --mark 0 -j CONNMARK --save-mark
+iptables -t mangle -I INPUT -m connmark --mark 1 -j MARK --set-mark 1
+iptables -t mangle -I INPUT -i eth0 -j CONNMARK --set-mark 1
 (
 IFS="
 "
@@ -34,15 +34,6 @@ for i in $(ip route show); do
 done
 ip rule add fwmark 1 table 2
 )
-
-# 登陆信息持久化处理
-## 持久化配置文件夹 感谢 @hexid26 https://github.com/Hagb/docker-easyconnect/issues/21
-[ -d ~/conf ] || cp -a /usr/share/sangfor/EasyConnect/resources/conf_backup ~/conf
-[ -e ~/easy_connect.json ] && mv ~/easy_connect.json ~/conf/easy_connect.json # 向下兼容
-## 默认使用英语：感谢 @forest0 https://github.com/Hagb/docker-easyconnect/issues/2#issuecomment-658205504
-[ -e ~/conf/easy_connect.json ] || echo '{"language": "en_US"}' > ~/conf/easy_connect.json
-
-export DISPLAY
 
 iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
 
@@ -55,6 +46,22 @@ iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 # 删除深信服可能生成的一条 iptables 规则，防止其丢弃传出到宿主机的连接
 # 感谢 @stingshen https://github.com/Hagb/docker-easyconnect/issues/6
 ( while true; do sleep 5 ; iptables -D SANGFOR_VIRTUAL -j DROP 2>/dev/null ; done )&
+
+if [ -n "$_EC_CLI" ]; then
+	ln -s /usr/share/sangfor/EasyConnect/resources/{conf_${EC_VER},conf}
+	exec start-sangfor.sh
+fi
+
+[ -n "$EXIT" ] && MAX_RETRY=0
+
+# 登陆信息持久化处理
+## 持久化配置文件夹 感谢 @hexid26 https://github.com/Hagb/docker-easyconnect/issues/21
+[ -d ~/conf ] || cp -a /usr/share/sangfor/EasyConnect/resources/conf_backup ~/conf
+[ -e ~/easy_connect.json ] && mv ~/easy_connect.json ~/conf/easy_connect.json # 向下兼容
+## 默认使用英语：感谢 @forest0 https://github.com/Hagb/docker-easyconnect/issues/2#issuecomment-658205504
+[ -e ~/conf/easy_connect.json ] || echo '{"language": "en_US"}' > ~/conf/easy_connect.json
+
+export DISPLAY
 
 if [ "$TYPE" != "X11" -a "$TYPE" != "x11" ]
 then
