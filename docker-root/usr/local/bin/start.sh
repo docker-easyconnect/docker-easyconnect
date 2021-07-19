@@ -1,5 +1,6 @@
 #!/bin/bash
 
+detect-tun.sh || exit 1
 detect-iptables.sh
 . "$(which detect-route.sh)"
 [ -n "DETECT_ROUTE_ONLY" ] && exit

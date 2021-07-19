@@ -213,6 +213,16 @@ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HO
 
 见 [路由和开放端口说明](doc/route.md)。
 
+### `Failed to operate tun device! Please check whether /dev/net/tun is available.`
+
+请确保 `tun` 模块编译进内核或加载为内核模块。
+
+群辉系统可用以下命令来加载该模块：
+
+``` bash
+sudo insmod /lib/modules/tun.ko
+```
+
 ### `Failed to login in with this user account, for a user is online!`
 
 该问题在`7.6.3`版上有出现，`7.6.7`版上未知。
