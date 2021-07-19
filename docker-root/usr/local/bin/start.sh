@@ -21,7 +21,7 @@ done
 iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
 
 # 拒绝 tun0 侧主动请求的连接.
-iptables -I INPUT -p tcp -j REJECT
+iptables -I INPUT -p tcp -j DROP
 iptables -I INPUT -i eth0 -p tcp -j ACCEPT
 iptables -I INPUT -i lo -p tcp -j ACCEPT
 iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
