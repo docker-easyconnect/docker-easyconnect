@@ -37,7 +37,7 @@ fi
 
 [ -n "$EXIT" ] && MAX_RETRY=0
 
-# 登陆信息持久化处理
+# 登录信息持久化处理
 ## 持久化配置文件夹 感谢 @hexid26 https://github.com/Hagb/docker-easyconnect/issues/21
 [ -d ~/conf ] || cp -a /usr/share/sangfor/EasyConnect/resources/conf_backup ~/conf
 [ -e ~/easy_connect.json ] && mv ~/easy_connect.json ~/conf/easy_connect.json # 向下兼容
@@ -61,7 +61,7 @@ then
 	tigervncserver :1 -geometry 800x600 -localhost no -passwd ~/.vnc/passwd -xstartup flwm
 	DISPLAY=:1
 
-	# 将 easyconnect 的密码放入粘贴板中，应对密码复杂且无法保存的情况 (eg: 需要短信验证登陆)
+	# 将 easyconnect 的密码放入粘贴板中，应对密码复杂且无法保存的情况 (eg: 需要短信验证登录)
 	# 感谢 @yakumioto https://github.com/Hagb/docker-easyconnect/pull/8
 	echo "$ECPASSWORD" | DISPLAY=:1 xclip -selection c
 fi
