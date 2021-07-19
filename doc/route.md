@@ -7,7 +7,7 @@
 宿主机应满足以下条件的至少一条：
 
 - Linux 内核版本不小于 `4.17-rc1`。内核版本可通过 `uname -r` 获取。
-- 使用 [`nftables`](https://netfilter.org/projects/nftables/)。可通过 `sudo iptables -V | grep nf_tables` 输出是否为空来判断（非空则表明在使用 `nftables`）。
+- 使用 [`nftables`](https://netfilter.org/projects/nftables/)。可通过在宿主机运行 `sudo iptables -V | grep nf_tables` 的输出是否为空来判断（非空则表明在使用 `nftables`）。
 - `iptable_mangle` 和 `xt_mark` 模块被编译进内核或作为模块加载加载。
 
 可通过以下命令来快速检查（其中 `TAG` 替换成实际使用的 tag）
@@ -22,3 +22,13 @@ docker run --cap-add NET_ADMIN -e DETECT_ROUTE_ONLY=1 hagb/docker-easyconnect:TA
 sudo insmod /lib/modules/iptable_mangle.ko
 sudo insmod /lib/modules/xt_mark.ko
 ```
+
+其他发行版可尝试
+```bash
+sudo modprobe iptable_mangle
+sudo modprobe xt_mark
+```
+
+## 细节
+
+TODO
