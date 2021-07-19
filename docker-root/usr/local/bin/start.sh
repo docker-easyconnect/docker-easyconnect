@@ -1,44 +1,27 @@
 #!/bin/bash
 
-# 不支持 nftables 时使用 iptables-legacy
-# 感谢 @BoringCat https://github.com/Hagb/docker-easyconnect/issues/5
-if { [ -z "$IPTABLES_LEGACY" ] && iptables-nft -L 1>/dev/null 2>/dev/null ;}
-then
-	update-alternatives --set iptables /usr/sbin/iptables-nft
-	update-alternatives --set ip6tables /usr/sbin/ip6tables-nft
-else
-	update-alternatives --set iptables /usr/sbin/iptables-legacy
-	update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
-fi
+detect-tun.sh || exit 1
+detect-iptables.sh
+. "$(which detect-route.sh)"
+[ -n "$CHECK_SYSTEM_ONLY" ] && exit
 
 # 在虚拟网络设备 tun0 打开时运行 proxy 代理服务器
 [ -n "$NODANTED" ] || (while true
 do
 sleep 5
-[ -d /sys/class/net/tun0 ] && { chmod a+w /tmp ; su daemon -s /usr/sbin/danted; }
+[ -d /sys/class/net/tun0 ] && {
+	chmod a+w /tmp
+	open_port 1080
+	su daemon -s /usr/sbin/danted
+	close_port 1080
+}
 done
 )&
-
-# https://github.com/Hagb/docker-easyconnect/issues/20
-# https://serverfault.com/questions/302936/configuring-route-to-use-the-same-interface-for-outbound-traffic-as-that-of-inbo
-iptables -t mangle -I OUTPUT -m state --state ESTABLISHED,RELATED -j CONNMARK --restore-mark
-iptables -t mangle -I INPUT -m connmark ! --mark 0 -j CONNMARK --save-mark
-iptables -t mangle -I INPUT -m connmark --mark 1 -j MARK --set-mark 1
-iptables -t mangle -I INPUT -i eth0 -j CONNMARK --set-mark 1
-(
-IFS="
-"
-for i in $(ip route show); do
-	IFS=' '
-	ip route add $i table 2
-done
-ip rule add fwmark 1 table 2
-)
 
 iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
 
 # 拒绝 tun0 侧主动请求的连接.
-iptables -I INPUT -p tcp -j REJECT
+iptables -I INPUT -p tcp -j DROP
 iptables -I INPUT -i eth0 -p tcp -j ACCEPT
 iptables -I INPUT -i lo -p tcp -j ACCEPT
 iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
@@ -54,7 +37,7 @@ fi
 
 [ -n "$EXIT" ] && MAX_RETRY=0
 
-# 登陆信息持久化处理
+# 登录信息持久化处理
 ## 持久化配置文件夹 感谢 @hexid26 https://github.com/Hagb/docker-easyconnect/issues/21
 [ -d ~/conf ] || cp -a /usr/share/sangfor/EasyConnect/resources/conf_backup ~/conf
 [ -e ~/easy_connect.json ] && mv ~/easy_connect.json ~/conf/easy_connect.json # 向下兼容
@@ -74,10 +57,11 @@ then
 	[ -e ~/.vnc/passwd ] || (mkdir -p ~/.vnc && (echo password | tigervncpasswd -f > ~/.vnc/passwd)) 
 	[ -n "$PASSWORD" ] && printf %s "$PASSWORD" | tigervncpasswd -f > ~/.vnc/passwd
 
+	open_port 5901
 	tigervncserver :1 -geometry 800x600 -localhost no -passwd ~/.vnc/passwd -xstartup flwm
 	DISPLAY=:1
 
-	# 将 easyconnect 的密码放入粘贴板中，应对密码复杂且无法保存的情况 (eg: 需要短信验证登陆)
+	# 将 easyconnect 的密码放入粘贴板中，应对密码复杂且无法保存的情况 (eg: 需要短信验证登录)
 	# 感谢 @yakumioto https://github.com/Hagb/docker-easyconnect/pull/8
 	echo "$ECPASSWORD" | DISPLAY=:1 xclip -selection c
 fi

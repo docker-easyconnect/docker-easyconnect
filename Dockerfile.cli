@@ -3,8 +3,8 @@ FROM debian:buster-slim
 RUN sed -i s/deb.debian.org/mirrors.cqu.edu.cn/ /etc/apt/sources.list &&\
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests iptables \
-	dante-server busybox && \
-    for command in ip ps kill killall; do ln -s "$(which busybox)" /usr/local/bin/"${command}" || exit 1 ; done
+	dante-server busybox iproute2 && \
+    for command in ps kill killall; do ln -s "$(which busybox)" /usr/local/bin/"${command}" || exit 1 ; done
 
 ARG EC_CLI_URL="https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb"
 
