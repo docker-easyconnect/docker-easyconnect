@@ -1,6 +1,6 @@
 #!/bin/bash
 
-detect-tun.sh || exit 1
+[ -n "$CHECK_SYSTEM_ONLY" ] && detect-tun.sh
 detect-iptables.sh
 . "$(which detect-route.sh)"
 [ -n "$CHECK_SYSTEM_ONLY" ] && exit
