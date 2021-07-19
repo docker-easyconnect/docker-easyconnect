@@ -12,7 +12,7 @@
 
 可通过以下命令来快速检查（其中 `TAG` 替换成实际使用的 tag）
 ``` bash
-docker run --cap-add NET_ADMIN -e DETECT_ROUTE_ONLY=1 hagb/docker-easyconnect:TAG
+docker run --cap-add NET_ADMIN --device /dev/net/tun -e CHECK_SYSTEM_ONLY=1 hagb/docker-easyconnect:TAG
 ```
 
 若输出 `Can't find available method to automatically set route for opening ports (refer to https://github.com/Hagb/docker-easyconnect/tree/master/doc/ports.md)` 字样的报错，则说明不满足以上条件。

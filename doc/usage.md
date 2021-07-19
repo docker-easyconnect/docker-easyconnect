@@ -12,6 +12,9 @@
 
 - `IPTABLES_LEGACY`: 默认为空。设为非空值时强制要求 `iptables-legacy`。
 
+- `CHECK_SYSTEM_ONLY`: 默认为空。设为非空值时检查系统是否满足使用条件后退出。（`docker run --cap-add NET_ADMIN --device /dev/net/tun -e CHECK_SYSTEM_ONLY=1 hagb/docker-easyconnect:TAG
+`）
+
 ### 仅适用于纯命令行版本的环境变量
 
 - `EC_VER`: 指定运行的 EasyConnect 版本，必填

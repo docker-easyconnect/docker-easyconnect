@@ -3,7 +3,7 @@
 detect-tun.sh || exit 1
 detect-iptables.sh
 . "$(which detect-route.sh)"
-[ -n "DETECT_ROUTE_ONLY" ] && exit
+[ -n "$CHECK_SYSTEM_ONLY" ] && exit
 
 # 在虚拟网络设备 tun0 打开时运行 proxy 代理服务器
 [ -n "$NODANTED" ] || (while true
