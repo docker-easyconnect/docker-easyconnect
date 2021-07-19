@@ -4,7 +4,7 @@
 
 见 [路由和开放端口说明](route.md)。
 
-## `Failed to operate tun device! Please check whether /dev/net/tun is available.`
+## `docker: Error response from daemon: error gathering device information while adding custom device "/dev/net/tun": no such file or directory.` 或 `Failed to operate tun device! Please check whether /dev/net/tun is available.`
 
 请确保 `tun` 模块编译进内核或加载为内核模块。
 
