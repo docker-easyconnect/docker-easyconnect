@@ -10,11 +10,11 @@ for i in $(ip route show); do IFS=' '; ip route add $i table 2 ; done
 ## 确定策略路由方式
 ip rule add iif lo table 2 sport 1080
 if ip rule show iif lo table 2 | grep sport >/dev/null ; then
-	ip rule add fwmark 1 table 2
 	open_port() { ip rule add iif lo table 2 sport $1; }
 	close_port() { ip rule del iif lo table 2 sport $1; }
 elif iptables -t mangle -A OUTPUT -j MARK --set-mark 1 -p tcp --sport 1080 2>/dev/null ; then
 	iptables -t mangle -D OUTPUT -j MARK --set-mark 1 -p tcp --sport 1080
+	ip rule add fwmark 1 table 2
 	open_port() { iptables -t mangle -I OUTPUT -j MARK --set-mark 1 -p tcp --sport $1; }
 	close_port() { iptables -t mangle -D OUTPUT -j MARK --set-mark 1 -p tcp --sport $1; }
 else
