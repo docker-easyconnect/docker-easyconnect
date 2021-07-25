@@ -18,12 +18,12 @@
 2.  在终端输入：
 	``` bash
 	touch ~/.easyconn
-	docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/root/.easyconn -p 127.0.0.1:1080:1080 -e EC_VER=7.6.3 hagb/docker-easyconnect:cli
+	docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -p 127.0.0.1:8888:8888 -e EC_VER=7.6.3 -e CLI_OPTS="-d vpnaddress -u username -p password" hagb/docker-easyconnect:cli
 	```
 	其中 `-e EC_VER=7.6.3` 表示使用 `7.6.3` 版本的 EasyConnect，请根据实际情况修改版本号；
 3. 根据提示输入服务器地址、登录凭据；
 4. 浏览器单独配置socks5代理（可以通过插件配置），地址: 127.0.0.1, 端口: 1080
-5. 此时你应该就可以通过浏览器连接到内网了。
+5. 程序可使用容器的 http 代理，地址: 127.0.0.1, 端口: 8888
 
 ### 图形界面版
 
