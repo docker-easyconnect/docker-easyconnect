@@ -18,6 +18,8 @@ sleep 5
 done
 )&
 
+tinyproxy -c /etc/tinyproxy.conf
+
 iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
 
 # 拒绝 tun0 侧主动请求的连接.

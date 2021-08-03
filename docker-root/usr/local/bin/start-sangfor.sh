@@ -18,6 +18,8 @@ do
 		sleep 1
 		easyconn login -t autologin
 		pidof svpnservice > /dev/null || bash -c "exec easyconn login $CLI_OPTS"
+		# # 重启一下 tinyproxy
+		# service tinyproxy restart
 		while pidof svpnservice > /dev/null ; do
 		       sleep 1
 		done

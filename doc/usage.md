@@ -107,6 +107,25 @@ touch ~/.easyconn
 docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/root/.easyconn -e EC_VER=7.6.3 -e EXIT=1 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect:cli
 ```
 
+### tinyproxy
+下列例子可启动纯命令行的 EasyConnect `7.6.3` 并且对宿主主机提供 http 代理
+
+``` bash
+$ touch ~/.easyconn
+$ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/root/.easyconn -p 127.0.0.1:8888:8888 -e EC_VER=7.6.3 ztongxue/docker-easyconnect-tinyproxy:cli
+```
+
+程序内直接使用代理地址 127.0.0.1:8888 即可。例如在 python requests 中使用：
+
+```
+requests.get('https://www.hao123.com', proxies={'http': '127.0.0.1:8888'})
+```
+
+你也可以改成你需要宿主主机代理端口，例如你想对程序暴露的代理端口为 8118 ，只需要在启动容器的时候，指定一下端口即可。👇
+```
+$ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/root/.easyconn -p 127.0.0.1:8118:8888 -e EC_VER=7.6.3 ztongxue/docker-easyconnect-tinyproxy:cli
+```
+
 ### X11 socket
 
 在当前桌面环境中启动 EasyConnect `7.6.3` 前端，并且该前端退出后不会自动重启（`-e EXIT=1`），EasyConnect 要进行浏览器弹窗时会弹出含链接的文本框（`-e URLWIN=1`）。
