@@ -17,7 +17,7 @@ sleep 5
 }
 done
 )&
-
+open_port 8888
 tinyproxy -c /etc/tinyproxy.conf
 
 iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
