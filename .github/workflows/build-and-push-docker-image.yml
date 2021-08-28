@@ -22,13 +22,18 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ env.IMAGE_NAME }}:cli --build-arg BUILD_ENV=actions -f Dockerfile.cli .
+          docker-build() {
+            docker pull $1
+            docker build -t $1 --cache-from $1 --build-arg BUILD_ENV=actions "${@:2}"
+          }
 
-          docker build -t ${{ env.IMAGE_NAME }}:7.6.3 --build-arg BUILD_ENV=actions --build-arg EC_URL=$(cat ec_urls/7.6.3.txt) -f Dockerfile .
-          docker build -t ${{ env.IMAGE_NAME }}:7.6.7 --build-arg BUILD_ENV=actions --build-arg EC_URL=$(cat ec_urls/7.6.7.txt) -f Dockerfile .
+          docker-build ${{ env.IMAGE_NAME }}:cli -f Dockerfile.cli .
 
-          docker build -t ${{ env.IMAGE_NAME }}:vncless-7.6.3 --build-arg BUILD_ENV=actions --build-arg EC_URL=$(cat ec_urls/7.6.3.txt) -f Dockerfile.vncless .
-          docker build -t ${{ env.IMAGE_NAME }}:vncless-7.6.7 --build-arg BUILD_ENV=actions --build-arg EC_URL=$(cat ec_urls/7.6.7.txt) -f Dockerfile.vncless .
+          docker-build ${{ env.IMAGE_NAME }}:7.6.3 --build-arg EC_URL=$(cat ec_urls/7.6.3.txt) -f Dockerfile .
+          docker-build ${{ env.IMAGE_NAME }}:7.6.7 --build-arg EC_URL=$(cat ec_urls/7.6.7.txt) -f Dockerfile .
+
+          docker-build ${{ env.IMAGE_NAME }}:vncless-7.6.3 --build-arg EC_URL=$(cat ec_urls/7.6.3.txt) -f Dockerfile.vncless .
+          docker-build ${{ env.IMAGE_NAME }}:vncless-7.6.7 --build-arg EC_URL=$(cat ec_urls/7.6.7.txt) -f Dockerfile.vncless .
 
       - name: Push Docker image
         run: |
