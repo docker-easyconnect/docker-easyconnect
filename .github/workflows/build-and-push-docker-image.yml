@@ -1,0 +1,41 @@
+name: Build And Push Docker Image
+
+on: workflow_dispatch
+
+env:
+  IMAGE_NAME: hagb/docker-easyconnect
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login to Docker registry
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker-build() {
+            docker pull $1
+            docker build -t $1 --cache-from $1 --build-arg BUILD_ENV=actions "${@:2}"
+          }
+
+          docker-build ${{ env.IMAGE_NAME }}:cli -f Dockerfile.cli .
+
+          docker-build ${{ env.IMAGE_NAME }}:7.6.3 --build-arg EC_URL=$(cat ec_urls/7.6.3.txt) -f Dockerfile .
+          docker-build ${{ env.IMAGE_NAME }}:7.6.7 --build-arg EC_URL=$(cat ec_urls/7.6.7.txt) -f Dockerfile .
+
+          docker-build ${{ env.IMAGE_NAME }}:vncless-7.6.3 --build-arg EC_URL=$(cat ec_urls/7.6.3.txt) -f Dockerfile.vncless .
+          docker-build ${{ env.IMAGE_NAME }}:vncless-7.6.7 --build-arg EC_URL=$(cat ec_urls/7.6.7.txt) -f Dockerfile.vncless .
+
+      - name: Push Docker image
+        run: |
+          docker tag ${{ env.IMAGE_NAME }}:7.6.3 ${{ env.IMAGE_NAME }}:latest
+          docker push --all-tags ${{ env.IMAGE_NAME }}
