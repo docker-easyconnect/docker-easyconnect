@@ -18,11 +18,19 @@ sleep 5
 done
 )&
 
+interface_name="eth0"
+
+# 如果是 podman 容器，interface 名称为 tap0 而不是 eth0
+if [[ -n "$container" && "$container" == "podman" ]]; then
+	sed --in-place=.bak 's/eth0/tap0/g' /etc/danted.conf
+	interface_name="tap0"
+fi
+
 iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
 
 # 拒绝 tun0 侧主动请求的连接.
 iptables -I INPUT -p tcp -j DROP
-iptables -I INPUT -i eth0 -p tcp -j ACCEPT
+iptables -I INPUT -i $interface_name -p tcp -j ACCEPT
 iptables -I INPUT -i lo -p tcp -j ACCEPT
 iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
