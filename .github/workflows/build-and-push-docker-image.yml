@@ -23,8 +23,8 @@ jobs:
       - name: Build Docker image
         run: |
           docker-build() {
-            docker pull $1
-            docker build -t $1 --cache-from $1 --build-arg BUILD_ENV=actions "${@:2}"
+            #docker pull $1
+            docker build -t $1 --build-arg BUILD_ENV=actions "${@:2}"
           }
 
           docker-build ${{ env.IMAGE_NAME }}:cli -f Dockerfile.cli .
