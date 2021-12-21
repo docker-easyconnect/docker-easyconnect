@@ -1,0 +1,6 @@
+#!/bin/sh
+if [ "$*" = "-t filter -A SANGFOR_VIRTUAL -j DROP" ]; then
+	echo EasyConnect is trying to drop connections from outside, but intercepted by the hook.
+	exit 0
+fi
+exec /usr/sbin/iptables "$@"
