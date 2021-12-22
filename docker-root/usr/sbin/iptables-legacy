@@ -1,0 +1,3 @@
+#!/bin/sh
+[ "$*" = "-t filter -A SANGFOR_VIRTUAL -j DROP" ] && exit 0
+exec /usr/sbin/xtables-legacy-multi iptables-legacy "$@"
