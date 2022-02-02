@@ -2,11 +2,12 @@ FROM debian:buster-slim
 
 ARG BUILD_ENV=local
 
-RUN if [ "${BUILD_ENV}" = "local" ]; then sed -i s/deb.debian.org/mirrors.cqu.edu.cn/ /etc/apt/sources.list; fi &&\
+RUN if [ "${BUILD_ENV}" = "local" ]; then sed -i s/deb.debian.org/mirrors.cqu.edu.cn/ /etc/apt/sources.list; fi && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests iptables \
 	dante-server busybox iproute2 tinyproxy-bin && \
-    for command in ps kill killall; do ln -s "$(which busybox)" /usr/local/bin/"${command}" || exit 1 ; done
+    for command in ps kill killall; do ln -s "$(which busybox)" /usr/local/bin/"${command}" || exit 1 ; done && \
+    rm -rf /var/lib/apt/lists/*
 
 ARG EC_CLI_URL="https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb"
 
@@ -39,7 +40,7 @@ RUN cd /tmp && \
         rm -r *; fi ;} || exit 1 ; done
 
 RUN for i in /usr/share/sangfor/EasyConnect/resources/conf_*/; do \
-        ln -s /root/.easyconn $i/.easyconn ;\
+        ln -s /root/.easyconn $i/.easyconn ; \
     done && touch /root/.easyconn
 
 COPY ./docker-root /
