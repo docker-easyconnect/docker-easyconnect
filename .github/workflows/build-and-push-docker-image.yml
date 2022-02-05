@@ -27,6 +27,8 @@ jobs:
             docker build -t $1 --build-arg BUILD_ENV=actions "${@:2}"
           }
 
+          docker-build fake-hwaddr -f Dockerfile.fake-hwaddr .
+
           docker-build ${{ env.IMAGE_NAME }}:cli -f Dockerfile.cli .
 
           docker-build ${{ env.IMAGE_NAME }}:7.6.3 --build-arg EC_URL=$(cat ec_urls/7.6.3.txt) -f Dockerfile .

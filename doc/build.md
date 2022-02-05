@@ -22,6 +22,7 @@
 ``` bash
 git clone https://github.com/hagb/docker-easyconnect.git --branch cli
 cd docker-easyconnect
+docker image build -f Dockerfile.fake-hwaddr .
 docker image build --tag hagb/docker-easyconnect -f Dockerfile.cli .
 ```
 
@@ -30,6 +31,7 @@ docker image build --tag hagb/docker-easyconnect -f Dockerfile.cli .
 ``` bash
 git clone https://github.com/hagb/docker-easyconnect.git
 cd docker-easyconnect
+docker image build -f Dockerfile.fake-hwaddr .
 EC_VER=7.6.3  # 此变量填写 ec_urls 文件夹中的版本，`7.6.3`或`7.6.7`
 docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/docker-easyconnect -f Dockerfile .
 ```
@@ -39,6 +41,7 @@ docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/do
 ``` bash
 git clone https://github.com/hagb/docker-easyconnect.git
 cd docker-easyconnect
+docker image build -f Dockerfile.fake-hwaddr .
 EC_VER=7.6.3  # 此变量填写 ec_urls 文件夹中的版本，`7.6.3`或`7.6.7`
 docker image build --build-arg EC_URL=$(cat ec_urls/${EC_VER}.txt) --tag hagb/docker-easyconnect -f Dockerfile.vncless .
 ```

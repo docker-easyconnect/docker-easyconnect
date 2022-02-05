@@ -45,6 +45,8 @@ RUN for i in /usr/share/sangfor/EasyConnect/resources/conf_*/; do \
 
 COPY ./docker-root /
 
+COPY --from=fake-hwaddr fake-hwaddr/fake-hwaddr.so /usr/local/lib/fake-hwaddr.so
+
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
 CMD _EC_CLI=1 start.sh

@@ -23,6 +23,8 @@ RUN rm -f /usr/share/sangfor/EasyConnect/resources/conf/easy_connect.json &&\
     mv /usr/share/sangfor/EasyConnect/resources/conf/ /usr/share/sangfor/EasyConnect/resources/conf_backup &&\
     ln -s /root/conf /usr/share/sangfor/EasyConnect/resources/conf
 
+COPY --from=fake-hwaddr fake-hwaddr/fake-hwaddr.so /usr/local/lib/fake-hwaddr.so
+
 #ENV PASSWORD="" LOOP=""
 #ENV DISPLAY
 
