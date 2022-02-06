@@ -17,7 +17,6 @@
 1. [安装Docker并运行](https://docs.docker.com/get-docker/)；
 2.  在终端输入：
 	``` bash
-	touch ~/.easyconn
 	docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -p 127.0.0.1:1080:1080 -p 127.0.0.1:8888:8888 -e EC_VER=7.6.3 -e CLI_OPTS="-d vpnaddress -u username -p password" hagb/docker-easyconnect:cli
 	```
 	其中 `-e EC_VER=7.6.3` 表示使用 `7.6.3` 版本的 EasyConnect，请根据实际情况修改版本号；
