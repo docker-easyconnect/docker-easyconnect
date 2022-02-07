@@ -1,7 +1,5 @@
-internal: eth0 port = 1080
+internal: 0.0.0.0 port = 1080
 external: tun0
-external: eth0
-external: lo
 external.rotation: route
 socksmethod: none
 clientmethod: none
