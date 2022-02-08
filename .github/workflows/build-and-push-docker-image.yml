@@ -27,7 +27,7 @@ jobs:
             docker build -t $1 --build-arg BUILD_ENV=actions "${@:2}"
           }
           prefix=""
-          if [ "$(git branch --show-current)" = dev ]; then prefix=dev- ; fi
+          if [ "$(git branch --show-current)" = develop ]; then prefix=dev- ; fi
 
           docker-build fake-hwaddr -f Dockerfile.fake-hwaddr .
 
