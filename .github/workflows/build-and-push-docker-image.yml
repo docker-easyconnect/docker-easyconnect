@@ -26,8 +26,9 @@ jobs:
             #docker pull $1
             docker build -t $1 --build-arg BUILD_ENV=actions "${@:2}"
           }
-          prefix=""
-          if [ "$(git branch --show-current)" = develop ]; then prefix=dev- ; fi
+          pirefix=""
+          latest_name="latest"
+          if [ "$(git branch --show-current)" = develop ]; then prefix=dev- ; latest_name=dev ; fi
 
           docker-build fake-hwaddr -f Dockerfile.fake-hwaddr .
 
@@ -41,5 +42,5 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker tag ${{ env.IMAGE_NAME }}:${prefix}7.6.3 ${{ env.IMAGE_NAME }}:${prefix}latest
+          docker tag ${{ env.IMAGE_NAME }}:${prefix}7.6.3 ${{ env.IMAGE_NAME }}:${latest_name}
           docker push --all-tags ${{ env.IMAGE_NAME }}
