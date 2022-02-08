@@ -1,11 +1,20 @@
-FROM debian:buster-slim
+FROM debian:bookworm-slim
+
+SHELL ["/bin/bash", "-c"]
 
 ARG BUILD_ENV=local
+ARG ANDROID_PATCH=
+
+RUN if [ -n "${ANDROID_PATCH}" ]; then \
+        groupadd -g 3003 inet && usermod -a -G inet root && usermod -g inet -ou 0 daemon && usermod -g inet -ou 0 _apt; \
+    fi
 
 RUN if [ "${BUILD_ENV}" = "local" ]; then sed -i s/deb.debian.org/mirrors.aliyun.com/ /etc/apt/sources.list; fi && \
+    extra_pkg="" && \
+    if [ "$(dpkg --print-architecture)" != "amd64" ]; then dpkg --add-architecture amd64 && extra_pkg=qemu-user; fi && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests iptables \
-	dante-server busybox iproute2 tinyproxy-bin && \
+        libc6:amd64 libstdc++6:amd64 dante-server busybox iproute2 tinyproxy-bin ${extra_pkg} && \
     for command in ps kill killall; do ln -s "$(which busybox)" /usr/local/bin/"${command}" || exit 1 ; done && \
     rm -rf /var/lib/apt/lists/*
 
@@ -14,13 +23,23 @@ ARG EC_CLI_URL="https://github.com/shmilee/scripts/releases/download/v0.0.1/easy
 RUN EC_DIR=/usr/share/sangfor/EasyConnect/resources && cd tmp && \
     busybox wget "${EC_CLI_URL}" -O easyconn.deb && \
     dpkg -x easyconn.deb easyconn && \
-    bash -c " \
-        mkdir -p ${EC_DIR}/{bin,lib64,shell,logs}/ && \
-        cp easyconn/${EC_DIR}/bin/{CSClient,easyconn,ECAgent,svpnservice,ca.crt,cert.crt} \
-                   /${EC_DIR}/bin/ && \
-        chmod +xs ${EC_DIR}/bin/{CSClient,ECAgent,svpnservice} && \
-        cp easyconn/${EC_DIR}/lib64/lib{nspr4,nss3,nssutil3,plc4,plds4,smime3}.so \
-                   /${EC_DIR}/lib64/" && \
+    mkdir -p ${EC_DIR}/{bin,lib64,shell,logs}/ && \
+    cp easyconn/${EC_DIR}/bin/{CSClient,easyconn,ECAgent,svpnservice,ca.crt,cert.crt} \
+               /${EC_DIR}/bin/ && \
+    if [ "$(dpkg --print-architecture)" != "amd64" ]; then for exec in CSClient ECAgent svpnservice easyconn; do \
+        exec_path=/${EC_DIR}/bin/$exec && \
+        mkdir -p /usr/local/libexec/qemu-hack/ && \
+        qemu_path=/usr/local/libexec/qemu-hack/$exec && \
+        mv ${exec_path} ${exec_path}-origin && \
+        # 一个让 qemu 产生的进程名字和原生运行时名字一致的 hack（便于杀进程）：使 qemu 的文件名和被模拟程序文件名一致 \
+        ln -s /usr/bin/qemu-x86_64 ${qemu_path} && \
+        # 将原可执行文件用 qemu 封装起来 \
+        printf '%s\n%s\n' '#!/bin/sh' "exec ${qemu_path} \${qemu_args} ${exec_path}-origin "'"$@"' > ${exec_path} && \
+        chmod +x ${exec_path} ${exec_path}-origin ; \
+    done ; fi && \
+    chmod +xs ${EC_DIR}/bin/{CSClient,ECAgent,svpnservice}* && \
+    cp easyconn/${EC_DIR}/lib64/lib{nspr4,nss3,nssutil3,plc4,plds4,smime3}.so \
+               /${EC_DIR}/lib64/ && \
     cp easyconn/${EC_DIR}/shell/* \
                /${EC_DIR}/shell/ && \
     chmod +x ${EC_DIR}/shell/* && \

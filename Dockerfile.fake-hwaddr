@@ -1,10 +1,18 @@
-FROM debian:buster-slim AS fake-hwaddr
+FROM debian:bookworm-slim AS fake-hwaddr
 
 ARG BUILD_ENV=local
+ARG ANDROID_PATCH=
+
+RUN if [ -n "${ANDROID_PATCH}" ]; then \
+        groupadd -g 3003 inet && usermod -a -G inet root && usermod -g inet -ou 0 daemon && usermod -g inet -ou 0 _apt; \
+    fi
 
 RUN if [ "${BUILD_ENV}" = "local" ]; then sed -i s/deb.debian.org/mirrors.aliyun.com/ /etc/apt/sources.list; fi &&\
+    gcc=gcc && if [ "$(dpkg --print-architecture)" != "amd64" ]; then \
+        dpkg --add-architecture amd64 && gcc=gcc-x86-64-linux-gnu ; \
+    fi &&\
     apt-get update && \
-    apt-get install -y --no-install-recommends --no-install-suggests gcc libc6-dev make
+    apt-get install -y --no-install-recommends --no-install-suggests $gcc libc6-dev:amd64 make
 
 COPY fake-hwaddr ./fake-hwaddr/
 

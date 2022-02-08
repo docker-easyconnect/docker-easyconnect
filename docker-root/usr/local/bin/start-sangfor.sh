@@ -1,6 +1,13 @@
 #!/bin/bash
 fake-hwaddr-run() { "$@" ; }
-[ -n "$FAKE_HWADDR" ] && fake-hwaddr-run() { LD_PRELOAD=/usr/local/lib/fake-hwaddr.so "$@" ; }
+qemu_args=""
+if [ -n "$FAKE_HWADDR" ]; then
+	if [ "$(dpkg --print-architecture)" = "amd64" ]; then
+		fake-hwaddr-run() { LD_PRELOAD=/usr/local/lib/fake-hwaddr.so "$@" ; }
+	else
+		fake-hwaddr-run() { qemu_args="-E LD_PRELOAD=/usr/local/lib/fake-hwaddr.so" "$@" ; }
+	fi
+fi
 [ -z "$_EC_CLI" ] && /usr/share/sangfor/EasyConnect/resources/bin/EasyMonitor
 sleep 1
 while true
