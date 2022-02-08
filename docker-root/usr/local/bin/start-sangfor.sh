@@ -16,10 +16,10 @@ do
 		# 下面这行代码启动 EasyConnect 的前端。
 		fake-hwaddr-run /usr/share/sangfor/EasyConnect/EasyConnect --enable-transparent-visuals --disable-gpu
 	else
-		/usr/share/sangfor/EasyConnect/resources/bin/ECAgent &
+		fake-hwaddr-run /usr/share/sangfor/EasyConnect/resources/bin/ECAgent &
 		sleep 1
 		fake-hwaddr-run easyconn login -t autologin
-		pidof svpnservice > /dev/null || bash -c "exec easyconn login $CLI_OPTS"
+		pidof svpnservice > /dev/null || fake-hwaddr-run bash -c "exec easyconn login $CLI_OPTS"
 		# # 重启一下 tinyproxy
 		# service tinyproxy restart
 		while pidof svpnservice > /dev/null ; do
