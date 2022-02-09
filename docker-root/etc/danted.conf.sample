@@ -1,12 +1,13 @@
 internal: 0.0.0.0 port = 1080
+internal: :: port = 1080
 external: tun0
 #external-lines
 external.rotation: route
 socksmethod: none
 clientmethod: none
 client pass {
-        from: 0.0.0.0/0 to: 0.0.0.0/0
+        from: 0/0 to: 0/0
 }
 socks pass {
-        from: 0.0.0.0/0 to: 0.0.0.0/0
+        from: 0/0 to: 0.0.0.0/0
 }
