@@ -7,11 +7,10 @@ detect-iptables.sh
 
 cp /etc/danted.conf.sample /tmp/danted.conf
 externals=""
-for iface in $( cd /sys/class/net && echo * ); do
+for iface in $(ip -f inet -o addr | sed -E 's/^[0-9]+: ([^ ]+) .*/\1/'); do
 	externals="${externals}external: $iface\\n"
 done
 sed s/^#external-lines/"$externals"/ -i /tmp/danted.conf
-
 # 在虚拟网络设备 tun0 打开时运行 danted 代理服务器
 [ -n "$NODANTED" ] || (while true
 do
