@@ -7,7 +7,7 @@ detect-iptables.sh
 
 cp /etc/danted.conf.sample /tmp/danted.conf
 externals=""
-for iface in $(ip -f inet -o addr | sed -E 's/^[0-9]+: ([^ ]+) .*/\1/'); do
+for iface in $({ ip -f inet -o addr; ip -f inet6 -o addr; } | sed -E 's/^[0-9]+: ([^ ]+) .*/\1/'); do
 	externals="${externals}external: $iface\\n"
 done
 sed s/^#external-lines/"$externals"/ -i /tmp/danted.conf
