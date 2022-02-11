@@ -5,12 +5,12 @@ detect-iptables.sh
 . "$(which detect-route.sh)"
 [ -n "$CHECK_SYSTEM_ONLY" ] && exit
 
-cp /etc/danted.conf.sample /tmp/danted.conf
+cp /etc/danted.conf.sample /run/danted.conf
 externals=""
 for iface in $({ ip -f inet -o addr; ip -f inet6 -o addr; } | sed -E 's/^[0-9]+: ([^ ]+) .*/\1/'); do
 	externals="${externals}external: $iface\\n"
 done
-sed s/^#external-lines/"$externals"/ -i /tmp/danted.conf
+sed s/^#external-lines/"$externals"/ -i /run/danted.conf
 # 在虚拟网络设备 tun0 打开时运行 danted 代理服务器
 [ -n "$NODANTED" ] || (while true
 do
@@ -18,7 +18,7 @@ sleep 5
 [ -d /sys/class/net/tun0 ] && {
 	chmod a+w /tmp
 	open_port 1080
-	su daemon -s /usr/sbin/danted -f /tmp/danted.conf
+	su daemon -s /usr/sbin/danted -f /run/danted.conf
 	close_port 1080
 }
 done
