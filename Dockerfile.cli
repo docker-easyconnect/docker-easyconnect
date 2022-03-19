@@ -1,7 +1,5 @@
 FROM debian:bookworm-slim
 
-SHELL ["/bin/bash", "-c"]
-
 ARG BUILD_ENV=local
 ARG ANDROID_PATCH=
 
@@ -23,9 +21,9 @@ ARG EC_CLI_URL="https://github.com/shmilee/scripts/releases/download/v0.0.1/easy
 RUN EC_DIR=/usr/share/sangfor/EasyConnect/resources && cd tmp && \
     busybox wget "${EC_CLI_URL}" -O easyconn.deb && \
     dpkg -x easyconn.deb easyconn && \
-    mkdir -p ${EC_DIR}/{bin,lib64,shell,logs}/ && \
-    cp easyconn/${EC_DIR}/bin/{CSClient,easyconn,ECAgent,svpnservice,ca.crt,cert.crt} \
-               /${EC_DIR}/bin/ && \
+    bash -c "mkdir -p ${EC_DIR}/{bin,lib64,shell,logs}/" && \
+    bach -c "cp easyconn/${EC_DIR}/bin/{CSClient,easyconn,ECAgent,svpnservice,ca.crt,cert.crt} \
+               /${EC_DIR}/bin/" && \
     if [ "$(dpkg --print-architecture)" != "amd64" ]; then for exec in CSClient ECAgent svpnservice easyconn; do \
         exec_path=/${EC_DIR}/bin/$exec && \
         mkdir -p /usr/local/libexec/qemu-hack/ && \
@@ -37,9 +35,9 @@ RUN EC_DIR=/usr/share/sangfor/EasyConnect/resources && cd tmp && \
         printf '%s\n%s\n' '#!/bin/sh' "exec ${qemu_path} \${qemu_args} ${exec_path}-origin "'"$@"' > ${exec_path} && \
         chmod +x ${exec_path} ${exec_path}-origin ; \
     done ; fi && \
-    chmod +xs ${EC_DIR}/bin/{CSClient,ECAgent,svpnservice}* && \
-    cp easyconn/${EC_DIR}/lib64/lib{nspr4,nss3,nssutil3,plc4,plds4,smime3}.so \
-               /${EC_DIR}/lib64/ && \
+    bash -c "chmod +xs ${EC_DIR}/bin/{CSClient,ECAgent,svpnservice}*" && \
+    bash -c "cp easyconn/${EC_DIR}/lib64/lib{nspr4,nss3,nssutil3,plc4,plds4,smime3}.so \
+               /${EC_DIR}/lib64/" && \
     cp easyconn/${EC_DIR}/shell/* \
                /${EC_DIR}/shell/ && \
     chmod +x ${EC_DIR}/shell/* && \
