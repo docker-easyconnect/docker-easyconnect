@@ -1,30 +1,26 @@
-FROM debian:buster-slim
+FROM debian:bookworm-slim
 
-ARG BUILD_ENV=local
+ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://mirrors.aliyun.com/debian/
 
-RUN if [ "${BUILD_ENV}" = "local" ]; then sed -i s/deb.debian.org/mirrors.aliyun.com/ /etc/apt/sources.list; fi &&\
+COPY ["./build-scripts/pre_build.sh", "./build-scripts/set-mirror.sh", "/tmp/build-scripts/"]
+
+RUN extra_pkg_cross="libxss1 libgconf-2-4" . /tmp/build-scripts/pre_build.sh && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests \
         libgtk2.0-0 libx11-xcb1 libxtst6 libnss3 libasound2 libdbus-glib-1-2 iptables xclip\
-        dante-server tigervnc-standalone-server tigervnc-common dante-server psmisc flwm x11-utils\
-        busybox libssl-dev iproute2 tinyproxy-bin
+        dante-server tigervnc-standalone-server tigervnc-tools dante-server psmisc flwm x11-utils\
+        busybox libssl-dev iproute2 tinyproxy-bin $extra_pkg && \
+    rm -rf /var/lib/apt/lists/*
 
-ARG EC_URL
+ARG EC_URL ELECTRON_URL
 
-RUN cd tmp &&\
-    busybox wget "${EC_URL}" -O EasyConnect.deb &&\
-    dpkg -i EasyConnect.deb && rm EasyConnect.deb
+COPY ["./build-scripts/install-ec-gui.sh", "./build-scripts/mk-qemu-wrapper.sh", "/tmp/build-scripts/"]
+
+RUN /tmp/build-scripts/install-ec-gui.sh
 
 COPY ./docker-root /
 
-RUN rm -f /usr/share/sangfor/EasyConnect/resources/conf/easy_connect.json &&\
-    mv /usr/share/sangfor/EasyConnect/resources/conf/ /usr/share/sangfor/EasyConnect/resources/conf_backup &&\
-    ln -s /root/conf /usr/share/sangfor/EasyConnect/resources/conf
-
 COPY --from=fake-hwaddr fake-hwaddr/fake-hwaddr.so /usr/local/lib/fake-hwaddr.so
-
-#ENV TYPE="" PASSWORD="" LOOP=""
-#ENV DISPLAY
 
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
