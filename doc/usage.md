@@ -10,6 +10,19 @@
 
 - `FAKE_HWADDR`: 默认为空，向 EasyConnect 提供的固定网卡 MAC 地址。Podman 在非 root 权限下无法固定虚拟网卡的 MAC 地址，为了防止每次启动容器都要重新提交硬件 ID，可设置该环境变量为某一 MAC 地址（建议使用 podman 先前启动时随机生成的地址或已提交的 MAC 地址），劫持 EasyConnect 使其获取到该固定地址。Docker 默认的情况下 MAC 地址即固定，root 环境下的 podman 可以直接使用 `--mac-address` 参数设置，无需使用 `FAKE_HWADDR`。
 
+- `FORWARD`: 默认为空，用于将 vpn 服务端一侧对客户端虚拟 ip 发起的访问转发到客户端侧的 ip，格式如下（以下所有 ip 均为 ipv4 ip）：
+
+    > [SOURCE_IP:]CONTAINER_PORT:DESTINATION_IP:DESTINATION_PORT
+
+    其中
+
+    - `SOURCE_IP`: 可选项。服务端侧发起连接的 ip 或 ip 段，这些 ip 对容器的 `CONTAINER_PORT` 端口发起的连接允许被转发，为空则服务端侧任意 IP 对容器 `CONTAINER_PORT` 端口发起的连接都会被转发。
+    - `CONTAINER_PORT`: 容器接受服务端侧传入连接的端口
+    - `DESTINATION_IP`: 转发的目的 ip
+    - `DESTINATION_PORT`: 转发的目的端口
+
+    例如：`1010:172.17.0.1:1013` 指服务端侧所有 ip 访问容器的 `1010` 端口会被转发到 `172.17.0.1:1013`；`10.234.0.0/24:172.17.0.1:1013` 指服务端侧 `10.234.0.0/24`（即 `10.234.0.0`~`10.234.0.255`）访问容器的 `1010` 端口会被转发到 `172.17.0.1:1013`；`10.234.0.1:172.17.0.1:1013` 指服务端侧 `10.234.0.1` 访问容器的 `1010` 端口会被转发到 `172.17.0.1:1013`
+
 - `IPTABLES_LEGACY`: 默认为空。设为非空值时强制要求 `iptables-legacy`。
 
 - `MAX_RETRY`: 最大重连次数，默认为空。
