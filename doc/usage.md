@@ -4,17 +4,17 @@
 
 ## 环境变量
 
+- `CHECK_SYSTEM_ONLY`: 默认为空。设为非空值时检查系统是否满足使用条件后退出。（`docker run --cap-add NET_ADMIN --device /dev/net/tun -e CHECK_SYSTEM_ONLY=1 hagb/docker-easyconnect:TAG`）
+
 - `EXIT`: 默认为空，此时前端退出后会自动重连。不为空时，前端退出后不自动重启。
+
+- `FAKE_HWADDR`: 默认为空，向 EasyConnect 提供的固定网卡 MAC 地址。Podman 在非 root 权限下无法固定虚拟网卡的 MAC 地址，为了防止每次启动容器都要重新提交硬件 ID，可设置该环境变量为某一 MAC 地址（建议使用 podman 先前启动时随机生成的地址或已提交的 MAC 地址），劫持 EasyConnect 使其获取到该固定地址。Docker 默认的情况下 MAC 地址即固定，root 环境下的 podman 可以直接使用 `--mac-address` 参数设置，无需使用 `FAKE_HWADDR`。
+
+- `IPTABLES_LEGACY`: 默认为空。设为非空值时强制要求 `iptables-legacy`。
 
 - `MAX_RETRY`: 最大重连次数，默认为空。
 
 - `NODANTED`: 默认为空。不为空时提供 socks5 代理的`danted`将不会启动（可用于和`--net host`参数配合，提供全局透明代理）。
-
-- `IPTABLES_LEGACY`: 默认为空。设为非空值时强制要求 `iptables-legacy`。
-
-- `CHECK_SYSTEM_ONLY`: 默认为空。设为非空值时检查系统是否满足使用条件后退出。（`docker run --cap-add NET_ADMIN --device /dev/net/tun -e CHECK_SYSTEM_ONLY=1 hagb/docker-easyconnect:TAG`）
-
-- `FAKE_HWADDR`: 默认为空，向 EasyConnect 提供的固定网卡 MAC 地址。Podman 在非 root 权限下无法固定虚拟网卡的 MAC 地址，为了防止每次启动容器都要重新提交硬件 ID，可设置该环境变量为某一 MAC 地址（建议使用 podman 先前启动时随机生成的地址或已提交的 MAC 地址），劫持 EasyConnect 使其获取到该固定地址。Docker 默认的情况下 MAC 地址即固定，root 环境下的 podman 可以直接使用 `--mac-address` 参数设置，无需使用 `FAKE_HWADDR`。
 
 ### 仅适用于纯命令行版本的环境变量
 
@@ -35,19 +35,19 @@
 
 ### 仅适用于图形界面版本的环境变量
 
+- `DISPLAY`: `$TYPE`为`x11`或使用无 vnc 的 image 时通过该变量来显示 EasyConnect 界面。
+
+- `ECPASSWORD`: 默认为空，使用 vnc 时用于将密码放入粘帖板，应对密码复杂且无法保存的情况 (eg: 需要短信验证登录)。
+
+- `PASSWORD`: 用于设置 vnc 服务的密码，该变量的值默认为空字符串，表示密码不作改变。变量不为空时，密码（应小于或等于 8 位）就会被更新到变量的值。默认密码是`password`.
+
 - `TYPE`（仅适用于带 vnc 的 image）: 如何显示 EasyConnect 前端（目前没有找到纯 cli 的办法）。有以下两种选项:
 
 	- `x11`或`X11`: 将直接通过`DISPLAY`环境变量的值显示 EasyConnect 前端，请同时设置`DISPLAY`环境变量。
 
 	- 其它任何值（默认值）: 将在`5901`端口开放 vnc 服务以操作 EasyConnect 前端。
 
-- `DISPLAY`: `$TYPE`为`x11`或使用无 vnc 的 image 时通过该变量来显示 EasyConnect 界面。
-
-- `PASSWORD`: 用于设置 vnc 服务的密码，该变量的值默认为空字符串，表示密码不作改变。变量不为空时，密码（应小于或等于 8 位）就会被更新到变量的值。默认密码是`password`.
-
 - `URLWIN`: 默认为空，此时当 EasyConnect 想要调用浏览器时，不会弹窗，若该变量设为任何非空值，则会弹出一个包含链接文本框。
-
-- `ECPASSWORD`: 默认为空，使用 vnc 时用于将密码放入粘帖板，应对密码复杂且无法保存的情况 (eg: 需要短信验证登录)。
 
 ## 服务说明
 
