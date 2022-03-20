@@ -1,26 +1,31 @@
-FROM debian:buster-slim
+FROM debian:bookworm-slim
 
-ARG BUILD_ENV=local
+ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://mirrors.aliyun.com/debian/
 
-RUN if [ "${BUILD_ENV}" = "local" ]; then sed -i s/deb.debian.org/mirrors.aliyun.com/ /etc/apt/sources.list; fi && \
+COPY ["./build-scripts/pre_build.sh", "./build-scripts/set-mirror.sh", "/tmp/build-scripts/"]
+
+RUN . /tmp/build-scripts/pre_build.sh && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests iptables \
-	dante-server busybox iproute2 tinyproxy-bin && \
+        libstdc++6:amd64 dante-server busybox iproute2 tinyproxy-bin ${extra_pkg} && \
     for command in ps kill killall; do ln -s "$(which busybox)" /usr/local/bin/"${command}" || exit 1 ; done && \
     rm -rf /var/lib/apt/lists/*
 
 ARG EC_CLI_URL="https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb"
+COPY ./build-scripts/mk-qemu-wrapper.sh /tmp/build-scripts/
 
-RUN EC_DIR=/usr/share/sangfor/EasyConnect/resources && cd tmp && \
+RUN EC_DIR=/usr/share/sangfor/EasyConnect/resources && cd /tmp && \
     busybox wget "${EC_CLI_URL}" -O easyconn.deb && \
     dpkg -x easyconn.deb easyconn && \
-    bash -c " \
-        mkdir -p ${EC_DIR}/{bin,lib64,shell,logs}/ && \
-        cp easyconn/${EC_DIR}/bin/{CSClient,easyconn,ECAgent,svpnservice,ca.crt,cert.crt} \
-                   /${EC_DIR}/bin/ && \
-        chmod +xs ${EC_DIR}/bin/{CSClient,ECAgent,svpnservice} && \
-        cp easyconn/${EC_DIR}/lib64/lib{nspr4,nss3,nssutil3,plc4,plds4,smime3}.so \
-                   /${EC_DIR}/lib64/" && \
+    bash -c "mkdir -p ${EC_DIR}/{bin,lib64,shell,logs}/" && \
+    bash -c "cp easyconn/${EC_DIR}/bin/{CSClient,easyconn,ECAgent,svpnservice,ca.crt,cert.crt} \
+               /${EC_DIR}/bin/" && \
+    if [ "$(dpkg --print-architecture)" != "amd64" ]; then \
+        extra_amd64_bins=easyconn /tmp/build-scripts/mk-qemu-wrapper.sh ; \
+    fi && \
+    bash -c "chmod +xs ${EC_DIR}/bin/{CSClient,ECAgent,svpnservice}*" && \
+    bash -c "cp easyconn/${EC_DIR}/lib64/lib{nspr4,nss3,nssutil3,plc4,plds4,smime3}.so \
+               /${EC_DIR}/lib64/" && \
     cp easyconn/${EC_DIR}/shell/* \
                /${EC_DIR}/shell/ && \
     chmod +x ${EC_DIR}/shell/* && \

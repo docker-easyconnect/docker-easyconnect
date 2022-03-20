@@ -1,6 +1,13 @@
 #!/bin/bash
 fake-hwaddr-run() { "$@" ; }
-[ -n "$FAKE_HWADDR" ] && fake-hwaddr-run() { LD_PRELOAD=/usr/local/lib/fake-hwaddr.so "$@" ; }
+qemu_args=""
+if [ -n "$FAKE_HWADDR" ]; then
+	if [ "$(dpkg --print-architecture)" = "amd64" ]; then
+		fake-hwaddr-run() { LD_PRELOAD=/usr/local/lib/fake-hwaddr.so "$@" ; }
+	else
+		fake-hwaddr-run() { qemu_args="-E LD_PRELOAD=/usr/local/lib/fake-hwaddr.so" "$@" ; }
+	fi
+fi
 [ -z "$_EC_CLI" ] && /usr/share/sangfor/EasyConnect/resources/bin/EasyMonitor
 sleep 1
 while true
@@ -10,7 +17,7 @@ do
 		# 参考了 https://blog.51cto.com/13226459/2476193 ，在此对作者表示感谢。
 		{
 			tail -n 0 -f /usr/share/sangfor/EasyConnect/resources/logs/ECAgent.log | grep "\\[Register\\]cms client connect failed" -m 1
-			fake-hwaddr-run /usr/share/sangfor/EasyConnect/resources/shell/sslservice.sh
+			/usr/share/sangfor/EasyConnect/resources/shell/sslservice.sh
 		} &
 
 		# 下面这行代码启动 EasyConnect 的前端。
