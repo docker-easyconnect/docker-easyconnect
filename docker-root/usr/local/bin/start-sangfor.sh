@@ -24,7 +24,7 @@ fi
 		((rss_size_mb=rss_pages*page_size/1024/1024))
 		if ((rss_size_mb>QEMU_ECAGENT_MEM_LIMIT)); then
 			killall ECAgent
-			echo "ECAgent spend memory $rss_size_mb MB > $QEMU_ECAGENT_MEM_LIMIT MB! Kill ECAgent!"
+			echo "ECAgent spend memory $rss_size_mb MB > $QEMU_ECAGENT_MEM_LIMIT MB! Kill ECAgent!" >&2
 		fi
 		sleep 15
 	done
