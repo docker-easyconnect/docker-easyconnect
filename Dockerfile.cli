@@ -52,6 +52,8 @@ COPY ./docker-root /
 
 COPY --from=fake-hwaddr fake-hwaddr/fake-hwaddr.so /usr/local/lib/fake-hwaddr.so
 
+ENV QEMU_ECAGENT_MEM_LIMIT=256
+
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
 CMD _EC_CLI=1 start.sh
