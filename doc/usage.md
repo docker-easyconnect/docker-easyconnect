@@ -29,7 +29,9 @@
 
 - `NODANTED`: 默认为空。不为空时提供 socks5 代理的`danted`将不会启动（可用于和`--net host`参数配合，提供全局透明代理）。
 
-- `QEMU_ECAGENT_MEM_LIMIT`：在非 amd64 架构上用 `qemu-x86_64` 运行 `ECAgent` 时，限制 `ECAgent` 的最大内存（MB），默认为 256。（qemu-user 内存泄漏问题 https://gitlab.com/qemu-project/qemu/-/issues/866 的 workaround）
+- `QEMU_ECAGENT_MEM_LIMIT`: 在非 amd64 架构上用 `qemu-x86_64` 运行 `ECAgent` 时，限制 `ECAgent` 的最大内存（MB），默认为 256。（qemu-user 内存泄漏问题 https://gitlab.com/qemu-project/qemu/-/issues/866 的 workaround）
+
+- `QEMU_THREAD_REUSE`: 默认为 `1`，非空时使 `qemu-x86_64` 模拟的深信服组件重复利用线程，这是 qemu-user 内存泄漏问题 https://gitlab.com/qemu-project/qemu/-/issues/866 的 workaround
 
 ### 仅适用于纯命令行版本的环境变量
 

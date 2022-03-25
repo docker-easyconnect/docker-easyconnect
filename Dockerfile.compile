@@ -1,0 +1,24 @@
+FROM debian:bookworm-slim AS compile
+
+ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://mirrors.aliyun.com/debian/
+
+COPY ./build-scripts/set-mirror.sh ./
+
+RUN if [ -n "${ANDROID_PATCH}" ]; then \
+        groupadd -g 3003 inet && usermod -a -G inet root && usermod -g inet -ou 0 daemon && usermod -g inet -ou 0 _apt; \
+    fi
+
+RUN ./set-mirror.sh && \
+    gcc=gcc && if [ "$(dpkg --print-architecture)" != "amd64" ]; then \
+        dpkg --add-architecture amd64 && gcc=gcc-x86-64-linux-gnu ; \
+    fi && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends --no-install-suggests $gcc libc6-dev:amd64 make cmake
+
+COPY ./fake-hwaddr/ ./fake-hwaddr/
+
+RUN cd fake-hwaddr && make
+
+COPY ./thread_reuse/ ./thread_reuse/
+
+RUN cd thread_reuse && mkdir -p build && cd build && cmake .. -DCMAKE_C_COMPILER=x86_64-linux-gnu-gcc && make

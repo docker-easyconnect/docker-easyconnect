@@ -20,9 +20,9 @@ RUN /tmp/build-scripts/install-ec-gui.sh
 
 COPY ./docker-root /
 
-COPY --from=fake-hwaddr fake-hwaddr/fake-hwaddr.so /usr/local/lib/fake-hwaddr.so
+COPY --from=compile ["fake-hwaddr/fake-hwaddr.so", "thread_reuse/build/libthread_reuse.so", "/usr/local/lib/"]
 
-ENV QEMU_ECAGENT_MEM_LIMIT=256
+ENV QEMU_ECAGENT_MEM_LIMIT=256 QEMU_THREAD_REUSE=1
 
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
