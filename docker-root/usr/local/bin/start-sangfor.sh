@@ -1,7 +1,7 @@
 #!/bin/bash
 fake-hwaddr-run() { "$@" ; }
 qemu_id_preload=""
-[ -n "$QEMU_THREAD_REUSE" ] && qemu_ld_preload="/usr/local/lib/libthrea_reuse.so"
+[ -n "$QEMU_THREAD_REUSE" ] && qemu_ld_preload="/usr/local/lib/libthread_reuse.so"
 export qemu_args="-E LD_PRELOAD=$qemu_ld_preload"
 if [ -n "$FAKE_HWADDR" ]; then
 	if [ "$(dpkg --print-architecture)" = "amd64" ]; then
