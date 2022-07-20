@@ -6,6 +6,22 @@ detect-iptables.sh
 [ -n "$CHECK_SYSTEM_ONLY" ] && exit
 
 cp /etc/danted.conf.sample /run/danted.conf
+
+if [[ -n "$SOCKS_PASSWD" && -n "$SOCKS_USER" ]];then
+	id $SOCKS_USER &> /dev/null
+	if [ $? -ne 0 ]; then
+		useradd $SOCKS_USER
+	fi
+
+	echo $SOCKS_USER:$SOCKS_PASSWD | chpasswd
+	sed -i 's/socksmethod: none/socksmethod: username/g' /run/danted.conf
+
+	sed '/socksmethod: username/a user.notprivileged : '$SOCKS_USER /run/danted.conf
+	sed '/socksmethod: username/a user.privileged    : root'        /run/danted.conf
+
+	echo "use socks5 auth: $SOCKS_USER:$SOCKS_PASSWD"
+fi
+
 externals=""
 for iface in $({ ip -f inet -o addr; ip -f inet6 -o addr; } | sed -E 's/^[0-9]+: ([^ ]+) .*/\1/'); do
 	externals="${externals}external: $iface\\n"
@@ -18,7 +34,11 @@ sleep 5
 [ -d /sys/class/net/tun0 ] && {
 	chmod a+w /tmp
 	open_port 1080
-	su daemon -s /usr/sbin/danted -f /run/danted.conf
+	if [[ -n "$SOCKS_PASSWD" && -n "$SOCKS_USER" ]];then
+		/usr/sbin/danted -f /run/danted.conf # 使用 username 验证时, 必须有 root 权限
+	else
+		su daemon -s /usr/sbin/danted -f /run/danted.conf
+	fi
 	close_port 1080
 }
 done
