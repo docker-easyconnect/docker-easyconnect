@@ -62,6 +62,8 @@
 
 - `URLWIN`: 默认为空，此时当 EasyConnect 想要调用浏览器时，不会弹窗，若该变量设为任何非空值，则会弹出一个包含链接文本框。
 
+- `USE_NOVNC`: 默认为空，不为空时将启动easy-novnc，端口为8080， 可用-p参数转发。
+
 ## 服务说明
 
 ### Socks5
@@ -85,6 +87,10 @@ ip rule add iif lo table 3
 ### VNC 服务器（仅限带 VNC 的图形界面版）
 
 带 VNC 的版本中，默认情况下环境变量 `TYPE` 留空会在 `5901` 端口开启 VNC 服务器。
+
+### noVNC（仅限带 VNC 的图形界面版）
+
+带 VNC 的版本中，环境变量 `USE_NOVNC` 不留空会在 `8080` 端口开启 noVNC 的web服务。
 
 ### 处理 EasyConnect 的浏览器弹窗（仅限图形界面版）
 

@@ -21,10 +21,14 @@ RUN rm -f /usr/share/sangfor/EasyConnect/resources/conf/easy_connect.json &&\
     mv /usr/share/sangfor/EasyConnect/resources/conf/ /usr/share/sangfor/EasyConnect/resources/conf_backup &&\
     ln -s /root/conf /usr/share/sangfor/EasyConnect/resources/conf
 
+RUN busybox wget https://github.com/pgaskin/easy-novnc/releases/download/v1.1.0/easy-novnc_linux-64bit -O /usr/bin/easy-novnc &&\
+    chmod +x /usr/bin/easy-novnc
+
 COPY --from=fake-hwaddr fake-hwaddr/fake-hwaddr.so /usr/local/lib/fake-hwaddr.so
 
 #ENV TYPE="" PASSWORD="" LOOP=""
 #ENV DISPLAY
+#ENV USE_NOVNC=""
 
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 

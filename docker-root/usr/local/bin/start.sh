@@ -70,6 +70,12 @@ then
 	# 将 easyconnect 的密码放入粘贴板中，应对密码复杂且无法保存的情况 (eg: 需要短信验证登录)
 	# 感谢 @yakumioto https://github.com/Hagb/docker-easyconnect/pull/8
 	echo "$ECPASSWORD" | DISPLAY=:1 xclip -selection c
+
+	# 环境变量USE_NOVNC不为空时，启动 easy-novnc
+	if [ -n "$USE_NOVNC" ]; then
+		open_port 8080
+		easy-novnc -p 5901 2>/dev/null &
+	fi
 fi
 
 exec start-sangfor.sh
