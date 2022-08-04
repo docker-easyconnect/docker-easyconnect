@@ -16,6 +16,7 @@ do
 		# 下面这行代码启动 EasyConnect 的前端。
 		fake-hwaddr-run /usr/share/sangfor/EasyConnect/EasyConnect --enable-transparent-visuals --disable-gpu
 	else
+		rm -f /root/.easyconn
 		fake-hwaddr-run /usr/share/sangfor/EasyConnect/resources/bin/ECAgent &
 		sleep 1
 		fake-hwaddr-run easyconn login -t autologin
