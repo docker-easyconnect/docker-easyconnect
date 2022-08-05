@@ -9,6 +9,8 @@ RUN if [ "${BUILD_ENV}" = "local" ]; then sed -i s/deb.debian.org/mirrors.aliyun
     for command in ps kill killall; do ln -s "$(which busybox)" /usr/local/bin/"${command}" || exit 1 ; done && \
     rm -rf /var/lib/apt/lists/*
 
+RUN groupadd -r socks && useradd -r -g socks socks
+
 ARG EC_CLI_URL="https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb"
 
 RUN EC_DIR=/usr/share/sangfor/EasyConnect/resources && cd tmp && \

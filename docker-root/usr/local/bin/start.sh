@@ -6,11 +6,14 @@ detect-iptables.sh
 [ -n "$CHECK_SYSTEM_ONLY" ] && exit
 
 cp /etc/danted.conf.sample /run/danted.conf
+internals=""
 externals=""
-for iface in $({ ip -f inet -o addr; ip -f inet6 -o addr; } | sed -E 's/^[0-9]+: ([^ ]+) .*/\1/'); do
-	externals="${externals}external: $iface\\n"
+for iface in $(ip -o addr | sed -E 's/^[0-9]+: ([^ ]+) .*/\1/' | sort | uniq | grep -v "lo\|sit\|vir"); do
+        internals="${internals}internal: $iface port = 1080\\n"
+        externals="${externals}external: $iface\\n"
 done
-sed s/^#external-lines/"$externals"/ -i /run/danted.conf
+sed /^internal:/c"$internals" -i /run/danted.conf
+sed /^external:/a"$externals" -i /run/danted.conf
 # 在虚拟网络设备 tun0 打开时运行 danted 代理服务器
 [ -n "$NODANTED" ] || (while true
 do
@@ -18,7 +21,7 @@ sleep 5
 [ -d /sys/class/net/tun0 ] && {
 	chmod a+w /tmp
 	open_port 1080
-	su daemon -s /usr/sbin/danted -f /run/danted.conf
+	/usr/sbin/danted -f /run/danted.conf
 	close_port 1080
 }
 done

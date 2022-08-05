@@ -6,8 +6,10 @@ RUN if [ "${BUILD_ENV}" = "local" ]; then sed -i s/deb.debian.org/mirrors.aliyun
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests \
         libgtk2.0-0 libx11-xcb1 libxtst6 libnss3 libasound2 libdbus-glib-1-2 iptables xclip\
-        dante-server tigervnc-standalone-server tigervnc-common dante-server psmisc flwm x11-utils\
+        dante-server tigervnc-standalone-server tigervnc-common psmisc flwm x11-utils\
         busybox libssl-dev iproute2 tinyproxy-bin
+
+RUN groupadd -r socks && useradd -r -g socks socks
 
 ARG EC_URL
 
