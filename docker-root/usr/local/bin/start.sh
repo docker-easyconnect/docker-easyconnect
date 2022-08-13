@@ -6,6 +6,19 @@ detect-iptables.sh
 [ -n "$CHECK_SYSTEM_ONLY" ] && exit
 
 cp /etc/danted.conf.sample /run/danted.conf
+
+if [[ -n "$SOCKS_PASSWD" && -n "$SOCKS_USER" ]];then
+	id $SOCKS_USER &> /dev/null
+	if [ $? -ne 0 ]; then
+		useradd $SOCKS_USER
+	fi
+
+	echo $SOCKS_USER:$SOCKS_PASSWD | chpasswd
+	sed -i 's/socksmethod: none/socksmethod: username/g' /run/danted.conf
+
+	echo "use socks5 auth: $SOCKS_USER:$SOCKS_PASSWD"
+fi
+
 internals=""
 externals=""
 for iface in $(ip -o addr | sed -E 's/^[0-9]+: ([^ ]+) .*/\1/' | sort | uniq | grep -v "lo\|sit\|vir"); do

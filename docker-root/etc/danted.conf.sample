@@ -9,7 +9,7 @@ external: tun0
 external.rotation: route
 
 #server identities (not needed on solaris)
-#user.privileged: root
+user.privileged: root
 user.notprivileged: socks
 #user.libwrap: libwrap
 

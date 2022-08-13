@@ -29,6 +29,10 @@
 
 - `NODANTED`: 默认为空。不为空时提供 socks5 代理的`danted`将不会启动（可用于和`--net host`参数配合，提供全局透明代理）。
 
+- `SOCKS_USER`: 默认为空，不为空时以此为用户名启用 socks5 代理的密码认证
+
+- `SOCKS_PASSWD`: 默认为空，`SOCKS_USER` 不为空时此变量作为 socks5 代理的密码
+
 ### 仅适用于纯命令行版本的环境变量
 
 - `EC_VER`: 指定运行的 EasyConnect 版本，必填
