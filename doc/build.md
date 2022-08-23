@@ -20,7 +20,7 @@
 ### 纯命令行
 
 ``` bash
-git clone https://github.com/hagb/docker-easyconnect.git --branch cli
+git clone https://github.com/hagb/docker-easyconnect.git
 cd docker-easyconnect
 docker image build -f Dockerfile.fake-hwaddr -t fake-hwaddr .
 docker image build --tag hagb/docker-easyconnect -f Dockerfile.cli .
