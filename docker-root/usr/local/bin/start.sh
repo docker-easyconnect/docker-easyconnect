@@ -53,7 +53,7 @@ iptables -A INPUT -i tun0 -p tcp -j DROP
 # ( while true; do sleep 5 ; iptables -D SANGFOR_VIRTUAL -j DROP 2>/dev/null ; done )&
 
 if [ -n "$_EC_CLI" ]; then
-	ln -s /usr/share/sangfor/EasyConnect/resources/{conf_${EC_VER},conf}
+	ln -fs /usr/share/sangfor/EasyConnect/resources/{conf_${EC_VER},conf}
 	exec start-sangfor.sh
 fi
 
