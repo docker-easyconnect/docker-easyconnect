@@ -11,6 +11,8 @@ RUN . /tmp/build-scripts/pre_build.sh && \
     for command in ps kill killall; do ln -s "$(which busybox)" /usr/local/bin/"${command}" || exit 1 ; done && \
     rm -rf /var/lib/apt/lists/*
 
+RUN groupadd -r socks && useradd -r -g socks socks
+
 ARG EC_CLI_URL="https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb"
 COPY ./build-scripts/mk-qemu-wrapper.sh /tmp/build-scripts/
 

@@ -8,7 +8,7 @@
 
 望批评、指正。欢迎提交 issue、PR，包括但不仅限于 bug、各种疑问、代码和文档的改进。
 
-详细用法见于 [doc/usage.md](doc/usage.md)，常见问题见于 [doc/faq.md](doc/faq.md)。
+详细用法见于 [doc/usage.md](doc/usage.md)，常见问题见于 [doc/faq.md](doc/faq.md)，自行构建可参照构建说明 [doc/build.md](doc/build.md)。
 
 ## 简明使用步骤
 
@@ -22,6 +22,7 @@
 	其中 `-e EC_VER=7.6.3` 表示使用 `7.6.3` 版本的 EasyConnect，请根据实际情况修改版本号；
 3. 根据提示输入服务器地址、登录凭据；
 4. 浏览器（或其他支持的应用）可配置socks5代理（可以通过插件配置），地址 `127.0.0.1`, 端口 `1080`；也可以使用 http 代理，地址 `127.0.0.1`, 端口 `8888`。
+5. 如需为 socks5 设置密码，可在 `docker run` 命令后追加 `-e SOCKS_USER="youruser" -e SOCKS_PASSWD="thepassword"`。
 
 ### 图形界面版
 

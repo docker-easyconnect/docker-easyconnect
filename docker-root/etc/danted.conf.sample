@@ -1,13 +1,69 @@
-internal: 0.0.0.0 port = 1080
-internal: :: port = 1080
+#logging
+#errorlog: /var/log/sockd.errlog
+logoutput: /var/log/sockd.log
+#debug: 2
+
+#server address specification
+internal: eth0 port = 1080
 external: tun0
-#external-lines
 external.rotation: route
-socksmethod: none
+
+#server identities (not needed on solaris)
+user.privileged: root
+user.notprivileged: socks
+#user.libwrap: libwrap
+
+#authentication methods
 clientmethod: none
+socksmethod: none
+
+##
+## SOCKS client access rules
+##
+#rule processing stops at the first match, no match results in blocking
+
+#block access to socks server from 192.0.2.22 (exception for pass rule below)
+# client block {
+#       #block connections from 192.0.2.22/32
+#       from: 192.0.2.22/24 to: 0.0.0.0/0
+#       log: error # connect disconnect
+# }
+
+#allow all connections
 client pass {
         from: 0/0 to: 0/0
+        log: error # connect disconnect
 }
+
+##
+## SOCKS command rules
+##
+#rule processing stops at the first match, no match results in blocking
+
+#block communication with www.example.org
+# socks block {
+#        from: 0.0.0.0/0 to: www.example.org
+#        command: bind connect udpassociate
+#        log: error # connect disconnect iooperation
+# }
+
+#generic pass statement - bind/outgoing traffic
 socks pass {
-        from: 0/0 to: 0.0.0.0/0
+        from: 0/0 to: 0/0
+        command: bind connect udpassociate
+        log: error # connect disconnect iooperation
+}
+
+#block incoming connections/packets from ftp.example.org
+# socks block {
+#        from: ftp.example.org to: 0.0.0.0/0
+#        command: bindreply udpreply
+#        log: error # connect disconnect iooperation
+# }
+
+#generic pass statement for incoming connections/packets
+socks pass {
+        from: 0/0 to: 0/0
+        command: bindreply udpreply
+        log: error # connect disconnect iooperation
 }

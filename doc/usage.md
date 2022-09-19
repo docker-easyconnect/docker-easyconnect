@@ -31,6 +31,10 @@
 
 - `QEMU_ECAGENT_MEM_LIMIT`：在非 amd64 架构上用 `qemu-x86_64` 运行 `ECAgent` 时，限制 `ECAgent` 的最大内存（MB），默认为 256。（qemu-user 内存泄漏问题 https://gitlab.com/qemu-project/qemu/-/issues/866 的 workaround）
 
+- `SOCKS_USER`: 默认为空，不为空时以此为用户名启用 socks5 代理的密码认证
+
+- `SOCKS_PASSWD`: 默认为空，`SOCKS_USER` 不为空时此变量作为 socks5 代理的密码
+
 ### 仅适用于纯命令行版本的环境变量
 
 - `EC_VER`: 指定运行的 EasyConnect 版本，必填
@@ -64,6 +68,8 @@
 
 - `URLWIN`: 默认为空，此时当 EasyConnect 想要调用浏览器时，不会弹窗，若该变量设为任何非空值，则会弹出一个包含链接文本框。
 
+- `USE_NOVNC`: 默认为空，不为空时将启动easy-novnc，端口为8080， 可用-p参数转发。
+
 ## 服务说明
 
 ### Socks5
@@ -87,6 +93,10 @@ ip rule add iif lo table 3
 ### VNC 服务器（仅限带 VNC 的图形界面版）
 
 带 VNC 的版本中，默认情况下环境变量 `TYPE` 留空会在 `5901` 端口开启 VNC 服务器。
+
+### noVNC（仅限带 VNC 的图形界面版）
+
+带 VNC 的版本中，环境变量 `USE_NOVNC` 不留空会在 `8080` 端口开启 noVNC 的web服务。
 
 ### 处理 EasyConnect 的浏览器弹窗（仅限图形界面版）
 
