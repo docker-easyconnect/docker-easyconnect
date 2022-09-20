@@ -2,13 +2,14 @@ FROM debian:bookworm-slim
 
 ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://mirrors.aliyun.com/debian/
 
-COPY ["./build-scripts/pre_build.sh", "./build-scripts/set-mirror.sh", "/tmp/build-scripts/"]
+COPY ["./build-scripts/config-apt.sh", "./build-scripts/add-qemu.sh", "/tmp/build-scripts/"]
 
-RUN extra_pkg_cross="libxss1 libgconf-2-4" . /tmp/build-scripts/pre_build.sh && \
+RUN . /tmp/build-scripts/config-apt.sh && \
+    . /tmp/build-scripts/add-qemu.sh && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests $extra_pkg \
 	libgtk2.0-0 libx11-xcb1 libxtst6 libnss3 libasound2 libdbus-glib-1-2 iptables \
-	dante-server psmisc libxaw7 xclip busybox libssl-dev iproute2 tinyproxy-bin && \
+	dante-server psmisc libxaw7 xclip busybox libssl-dev iproute2 tinyproxy-bin libxss1 libgconf-2-4 && \
     cd /tmp && apt download x11-utils && dpkg -x x11-utils_*.deb x11-utils && \
     mkdir -p /usr/local/bin && cp x11-utils/usr/bin/xmessage /usr/local/bin && rm -r x11-utils* && \
     rm -rf /var/lib/apt/lists/*

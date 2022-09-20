@@ -1,19 +1,18 @@
 FROM debian:bookworm-slim AS build
 
-ARG ANDROID_PATCH BUILD_ENV=local
+ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://mirrors.aliyun.com/debian/
 
-RUN mkdir results && cd results && mkdir fake-hwaddr
+COPY ["./build-scripts/config-apt.sh", "./build-scripts/add-qemu.sh", "/tmp/build-scripts/"]
 
-RUN if [ -n "${ANDROID_PATCH}" ]; then \
-        groupadd -g 3003 inet && usermod -a -G inet root && usermod -g inet -ou 0 daemon && usermod -g inet -ou 0 _apt; \
-    fi
-
-RUN if [ "${BUILD_ENV}" = "local" ]; then sed -i s/deb.debian.org/mirrors.aliyun.com/ /etc/apt/sources.list; fi &&\
+RUN . /tmp/build-scripts/config-apt.sh && \
+    . /tmp/build-scripts/add-qemu.sh && \
     gcc=gcc && if [ "$(dpkg --print-architecture)" != "amd64" ]; then \
         dpkg --add-architecture amd64 && gcc=gcc-x86-64-linux-gnu ; \
     fi &&\
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests $gcc libc6-dev:amd64 make
+
+RUN mkdir results && cd results && mkdir fake-hwaddr
 
 COPY fake-hwaddr /src/fake-hwaddr/
 
