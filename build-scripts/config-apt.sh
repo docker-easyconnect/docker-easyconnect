@@ -6,7 +6,7 @@ if [ "${BUILD_ENV}" = "local" ]; then
 	if [ -n "$MIRROR_URL" ]; then
 		origin="$(cat /etc/apt/sources.list)"
 		default_mirror=http://deb.debian.org/debian
-		replaced="$(origin=$origin default_mirror=$default_mirror bash -c 'echo "${origin//$default_mirror/$MIRROR_URL}"')"
+		replaced="$(origin=$origin default_mirror=$default_mirror bash -c 'echo "${origin//$default_mirror /$MIRROR_URL }"')"
 		printf %s "$replaced" > /etc/apt/sources.list
 	fi
 else
