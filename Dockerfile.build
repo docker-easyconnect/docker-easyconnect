@@ -10,10 +10,17 @@ RUN . /tmp/build-scripts/config-apt.sh && \
         dpkg --add-architecture amd64 && gcc=gcc-x86-64-linux-gnu ; \
     fi &&\
     apt-get update && \
-    apt-get install -y --no-install-recommends --no-install-suggests $gcc libc6-dev:amd64 make
+    apt-get install -y --no-install-recommends --no-install-suggests gcc $gcc libc6-dev:amd64 make busybox automake
 
-RUN mkdir results && cd results && mkdir fake-hwaddr
+RUN mkdir results && cd results && mkdir fake-hwaddr tinyproxy-ws novnc
 
 COPY fake-hwaddr /src/fake-hwaddr/
 
 RUN cd /src/fake-hwaddr && make && install -D fake-hwaddr.so /results/fake-hwaddr/usr/local/lib/fake-hwaddr.so
+
+# https://github.com/tinyproxy/tinyproxy/pull/211#issue-382736027
+ARG TINYPROXY_COMMIT=991e47d8ebd4b12710828b2b486535e4c25ba26c
+
+RUN cd /src && busybox wget https://github.com/tinyproxy/tinyproxy/archive/${TINYPROXY_COMMIT}.zip -O tinyproxy.zip && \
+    busybox unzip tinyproxy.zip && mv tinyproxy-${TINYPROXY_COMMIT} tinyproxy && cd tinyproxy && \
+    ./autogen.sh --prefix=/usr && make install && install -D /usr/bin/tinyproxy /results/tinyproxy-ws/usr/bin/tinyproxy

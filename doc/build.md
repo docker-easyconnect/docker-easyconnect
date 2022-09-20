@@ -21,6 +21,11 @@
 - `EC_CLI_URL`（仅适用于命令行版）: [@shmilee](https://github.com/shmilee) 提供的命令行 `7.6.8` 版 deb 包的下载地址，默认为 `https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb`
 - `MIRROR_URL`: Debian 镜像站，默认为 <http://ftp.cn.debian.org/debian/>，设为空则不使用镜像站
 
+### `Dockerfile.build` 构建参数
+
+- `MIRROR_URL`: Debian 镜像站，同上文
+- `TINYPROXY_COMMIT`: 构建支持 websocket 的 [tinyproxy](https://github.com/tinyproxy/tinyproxy) 的 commit.
+
 ## 从 Dockerfile 构建
 
 ### 纯命令行

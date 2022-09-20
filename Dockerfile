@@ -23,7 +23,7 @@ RUN /tmp/build-scripts/install-ec-gui.sh
 
 COPY ./docker-root /
 
-COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /
+COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /results/tinyproxy-ws/ /
 
 ENV QEMU_ECAGENT_MEM_LIMIT=256
 
