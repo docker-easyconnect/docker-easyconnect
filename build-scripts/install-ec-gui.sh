@@ -16,7 +16,7 @@ rm -f /usr/share/sangfor/EasyConnect/resources/conf/easy_connect.json &&
 mv /usr/share/sangfor/EasyConnect/resources/conf/ /usr/share/sangfor/EasyConnect/resources/conf_backup &&
 ln -s /root/conf /usr/share/sangfor/EasyConnect/resources/conf &&
 
-if [ "$(dpkg --print-architecture)" == "amd64" -a -z "${ELECTRON_URL}" ]; then
+if [ "$(dpkg --print-architecture)" == "amd64" -a ! -z "${USE_EC_ELECTRON}" ]; then
 	exit 0
 fi &&
 
@@ -25,6 +25,8 @@ declare -A ELECTRON_URLS &&
 # v1.8 以下的 electron 无官方 arm64、mips64el 构建
 # armhf 在 v1.8.2-beta4 到 v1.8.8 无法渲染：https://github.com/electron/electron/issues/11797
 ELECTRON_URLS=(
+	[amd64]=https://github.com/electron/electron/releases/download/v1.8.8/electron-v1.8.8-linux-x64.zip
+	[i386]=https://github.com/electron/electron/releases/download/v1.8.8/electron-v1.8.8-linux-ia32.zip
 	[armel]=https://github.com/electron/electron/releases/download/v1.7.16/electron-v1.7.16-linux-armv7l.zip
 	[armhf]=https://github.com/electron/electron/releases/download/v1.7.16/electron-v1.7.16-linux-armv7l.zip
 	[arm64]=https://github.com/electron/electron/releases/download/v1.8.8/electron-v1.8.8-linux-arm64.zip

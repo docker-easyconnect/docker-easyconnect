@@ -15,9 +15,9 @@ RUN . /tmp/build-scripts/config-apt.sh && \
 
 RUN groupadd -r socks && useradd -r -g socks socks
 
-ARG EC_URL ELECTRON_URL
-
 COPY ["./build-scripts/install-ec-gui.sh", "./build-scripts/mk-qemu-wrapper.sh", "/tmp/build-scripts/"]
+
+ARG EC_URL ELECTRON_URL USE_EC_ELECTRON
 
 RUN /tmp/build-scripts/install-ec-gui.sh
 
