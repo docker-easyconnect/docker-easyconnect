@@ -9,8 +9,9 @@ RUN . /tmp/build-scripts/config-apt.sh && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests \
         libgtk2.0-0 libx11-xcb1 libxtst6 libnss3 libasound2 libdbus-glib-1-2 iptables xclip\
-        dante-server tigervnc-standalone-server tigervnc-tools psmisc flwm x11-utils\
-        busybox libssl-dev iproute2 tinyproxy-bin libxss1 libgconf-2-4 $extra_pkg && \
+        dante-server tigervnc-standalone-server tigervnc-tools psmisc flwm x11-utils \
+        busybox libssl-dev iproute2 tinyproxy-bin libxss1 libgconf-2-4 ca-certificates \
+        $extra_pkg && \
     rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -r socks && useradd -r -g socks socks

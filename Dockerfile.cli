@@ -8,7 +8,7 @@ RUN . /tmp/build-scripts/config-apt.sh && \
     . /tmp/build-scripts/add-qemu.sh && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests iptables \
-        libstdc++6:amd64 dante-server busybox iproute2 tinyproxy-bin ${extra_pkg} && \
+        libstdc++6:amd64 dante-server busybox iproute2 tinyproxy-bin ca-certificates ${extra_pkg} && \
     for command in ps kill killall; do ln -s "$(which busybox)" /usr/local/bin/"${command}" || exit 1 ; done && \
     rm -rf /var/lib/apt/lists/*
 
