@@ -25,6 +25,10 @@
 
 - `MIRROR_URL`: Debian 镜像站，同上文
 - `TINYPROXY_COMMIT`: 构建支持 websocket 的 [tinyproxy](https://github.com/tinyproxy/tinyproxy) 的 commit.
+- `NOVNC_METHOD`: 提供 noVNC 服务的方式，默认为 `min-size`，可选选项有
+
+    - `min-size`: 最小化镜像体积的方式，通过 busybox、tinyproxy 和 [C 语言版的 websockify](https://github.com/novnc/websockify-other) 来实现
+    - `easy-novnc`: 使用 [easy-novnc](https://github.com/pgaskin/easy-novnc)，由 easy-novnc 直接提供所有所需服务
 
 ## 从 Dockerfile 构建
 

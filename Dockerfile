@@ -23,12 +23,9 @@ RUN /tmp/build-scripts/install-ec-gui.sh
 
 COPY ./docker-root /
 
-COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /results/tinyproxy-ws/ /
+COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /results/tinyproxy-ws/ /results/novnc/ /
 
 ENV QEMU_ECAGENT_MEM_LIMIT=256
-
-RUN busybox wget https://github.com/pgaskin/easy-novnc/releases/download/v1.1.0/easy-novnc_linux-64bit -O /usr/bin/easy-novnc &&\
-    chmod +x /usr/bin/easy-novnc
 
 #ENV TYPE="" PASSWORD="" LOOP=""
 #ENV DISPLAY

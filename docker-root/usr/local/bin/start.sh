@@ -92,7 +92,7 @@ then
 	# 环境变量USE_NOVNC不为空时，启动 easy-novnc
 	if [ -n "$USE_NOVNC" ]; then
 		open_port 8080
-		easy-novnc -p 5901 2>/dev/null &
+		novnc
 	fi
 fi
 
