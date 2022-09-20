@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim
 
-ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://mirrors.aliyun.com/debian/
+ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/
 
 COPY ["./build-scripts/config-apt.sh", "./build-scripts/add-qemu.sh", "/tmp/build-scripts/"]
 
