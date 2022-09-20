@@ -1,7 +1,8 @@
-FROM debian:bookworm-slim AS fake-hwaddr
+FROM debian:bookworm-slim AS build
 
-ARG BUILD_ENV=local
-ARG ANDROID_PATCH=
+ARG ANDROID_PATCH BUILD_ENV=local
+
+RUN mkdir results && cd results && mkdir fake-hwaddr
 
 RUN if [ -n "${ANDROID_PATCH}" ]; then \
         groupadd -g 3003 inet && usermod -a -G inet root && usermod -g inet -ou 0 daemon && usermod -g inet -ou 0 _apt; \
@@ -14,6 +15,6 @@ RUN if [ "${BUILD_ENV}" = "local" ]; then sed -i s/deb.debian.org/mirrors.aliyun
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests $gcc libc6-dev:amd64 make
 
-COPY fake-hwaddr ./fake-hwaddr/
+COPY fake-hwaddr /src/fake-hwaddr/
 
-RUN cd fake-hwaddr && make
+RUN cd /src/fake-hwaddr && make && install -D fake-hwaddr.so /results/fake-hwaddr/usr/local/lib/fake-hwaddr.so

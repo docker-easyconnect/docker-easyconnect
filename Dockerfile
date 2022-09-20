@@ -22,14 +22,12 @@ RUN /tmp/build-scripts/install-ec-gui.sh
 
 COPY ./docker-root /
 
-COPY --from=fake-hwaddr fake-hwaddr/fake-hwaddr.so /usr/local/lib/fake-hwaddr.so
+COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /
 
 ENV QEMU_ECAGENT_MEM_LIMIT=256
 
 RUN busybox wget https://github.com/pgaskin/easy-novnc/releases/download/v1.1.0/easy-novnc_linux-64bit -O /usr/bin/easy-novnc &&\
     chmod +x /usr/bin/easy-novnc
-
-COPY --from=fake-hwaddr fake-hwaddr/fake-hwaddr.so /usr/local/lib/fake-hwaddr.so
 
 #ENV TYPE="" PASSWORD="" LOOP=""
 #ENV DISPLAY

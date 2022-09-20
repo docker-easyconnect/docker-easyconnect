@@ -52,7 +52,7 @@ RUN for i in /usr/share/sangfor/EasyConnect/resources/conf_*/; do \
 
 COPY ./docker-root /
 
-COPY --from=fake-hwaddr fake-hwaddr/fake-hwaddr.so /usr/local/lib/fake-hwaddr.so
+COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /
 
 ENV QEMU_ECAGENT_MEM_LIMIT=256
 

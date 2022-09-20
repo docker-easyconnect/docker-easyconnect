@@ -30,7 +30,7 @@ jobs:
           latest_name="latest"
           if [ "$(git branch --show-current)" = develop ]; then prefix=dev- ; latest_name=dev ; fi
 
-          docker-build fake-hwaddr -f Dockerfile.fake-hwaddr .
+          docker-build hagb/docker-easyconnect:build -f Dockerfile.build .
 
           docker-build ${{ env.IMAGE_NAME }}:${prefix}cli -f Dockerfile.cli .
 
