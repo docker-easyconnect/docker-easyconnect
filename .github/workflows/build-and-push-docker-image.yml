@@ -41,6 +41,7 @@ jobs:
           docker-build ${{ env.IMAGE_NAME }}:${prefix}vncless-7.6.7 --build-arg EC_URL=$(cat ec_urls/7.6.7.txt) -f Dockerfile.vncless .
 
           docker tag ${{ env.IMAGE_NAME }}:${prefix}7.6.3 ${{ env.IMAGE_NAME }}:${latest_name}
+          docker image rm hagb/docker-easyconnect:build
 
       - name: Push Docker image
         run: |
