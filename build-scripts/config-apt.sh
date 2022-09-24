@@ -11,5 +11,4 @@ if [ "${BUILD_ENV}" = "local" ]; then
 	fi
 else
 	echo "Warning: The BUILD_ENV build argument has been deprecated and will be removed. Please use MIRROR_URL instead." >&2
-fi &&
-extra_apk=""
+fi

@@ -1,3 +1,9 @@
-fake-hwaddr.so: fake-hwaddr.c
-	x86_64-linux-gnu-gcc --shared -o fake-hwaddr.so fake-hwaddr.c -ldl -fPIC
+.PHONY: all clean
 
+all: fake-hwaddr.so
+
+fake-hwaddr.so: fake-hwaddr.c
+	${CC} --shared -o fake-hwaddr.so fake-hwaddr.c -ldl -fPIC
+
+clean:
+	-rm fake-hwaddr.so

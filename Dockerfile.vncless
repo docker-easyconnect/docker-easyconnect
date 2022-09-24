@@ -1,13 +1,15 @@
 FROM debian:bookworm-slim
 
-ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/
+ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST
 
-COPY ["./build-scripts/config-apt.sh", "./build-scripts/add-qemu.sh", "/tmp/build-scripts/"]
+COPY ["./build-scripts/config-apt.sh", "./build-scripts/get-echost-names.sh",  "./build-scripts/add-qemu.sh", \
+      "/tmp/build-scripts/"]
 
 RUN . /tmp/build-scripts/config-apt.sh && \
+    . /tmp/build-scripts/get-echost-names.sh && \
     . /tmp/build-scripts/add-qemu.sh && \
     apt-get update && \
-    apt-get install -y --no-install-recommends --no-install-suggests $extra_pkg ca-certificates \
+    apt-get install -y --no-install-recommends --no-install-suggests $qemu_pkgs ca-certificates \
 	libgtk2.0-0 libx11-xcb1 libxtst6 libnss3 libasound2 libdbus-glib-1-2 iptables \
 	dante-server psmisc libxaw7 xclip busybox libssl-dev iproute2 tinyproxy-bin libxss1 libgconf-2-4 && \
     cd /tmp && apt download x11-utils && dpkg -x x11-utils_*.deb x11-utils && \

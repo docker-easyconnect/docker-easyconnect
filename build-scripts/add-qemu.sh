@@ -1,4 +1,4 @@
 #!/bin/sh
-if [ "$(dpkg --print-architecture)" != "amd64" ]; then
-	dpkg --add-architecture amd64 && extra_pkg="qemu-user libc6:amd64 libstdc++6:amd64"
+if is_echost_foreign; then
+	dpkg --add-architecture $EC_HOST && qemu_pkgs="qemu-user libc6:$EC_HOST libstdc++6:$EC_HOST"
 fi

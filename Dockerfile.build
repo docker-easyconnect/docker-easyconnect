@@ -1,27 +1,25 @@
 FROM debian:bookworm-slim AS build
 
-ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/
+ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST
 
-COPY ["./build-scripts/config-apt.sh", "./build-scripts/add-qemu.sh", "/tmp/build-scripts/"]
+COPY ["./build-scripts/config-apt.sh", "./build-scripts/get-echost-names.sh", "/tmp/build-scripts/"]
 
 RUN . /tmp/build-scripts/config-apt.sh && \
-    . /tmp/build-scripts/add-qemu.sh && \
-    gcc=gcc && if [ "$(dpkg --print-architecture)" != "amd64" ]; then \
-        dpkg --add-architecture amd64 && gcc=gcc-x86-64-linux-gnu ; \
-    fi && \
+    . /tmp/build-scripts/get-echost-names.sh && \
     case "$(dpkg --print-architecture)" in \
         amd64 | i386 | arm64 ) go=golang-go ;; \
         * ) go=gccgo-go ;; \
     esac && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests ca-certificates \
-                    gcc $gcc libc6-dev:amd64 make busybox automake libssl-dev $go
+                    busybox libssl-dev automake $go $ecgccpkg build-essential
 
 RUN mkdir results && cd results && mkdir fake-hwaddr tinyproxy-ws novnc
 
 COPY fake-hwaddr /tmp/src/fake-hwaddr/
 
-RUN cd /tmp/src/fake-hwaddr && make && install -D fake-hwaddr.so /results/fake-hwaddr/usr/local/lib/fake-hwaddr.so
+RUN . /tmp/build-scripts/get-echost-names.sh && \
+    cd /tmp/src/fake-hwaddr && CC=${ec_cc} make clean all && install -D fake-hwaddr.so /results/fake-hwaddr/usr/local/lib/fake-hwaddr.so
 
 # https://github.com/tinyproxy/tinyproxy/pull/211#issue-382736027
 ARG TINYPROXY_COMMIT=991e47d8ebd4b12710828b2b486535e4c25ba26c

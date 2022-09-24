@@ -1,14 +1,16 @@
 FROM debian:bookworm-slim
 
-ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/
+ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST
 
-COPY ["./build-scripts/config-apt.sh", "./build-scripts/add-qemu.sh", "/tmp/build-scripts/"]
+COPY ["./build-scripts/config-apt.sh", "./build-scripts/get-echost-names.sh",  "./build-scripts/add-qemu.sh", \
+      "/tmp/build-scripts/"]
 
 RUN . /tmp/build-scripts/config-apt.sh && \
+    . /tmp/build-scripts/get-echost-names.sh && \
     . /tmp/build-scripts/add-qemu.sh && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests iptables \
-        libstdc++6:amd64 dante-server busybox iproute2 tinyproxy-bin ca-certificates ${extra_pkg} && \
+        dante-server busybox iproute2 tinyproxy-bin ca-certificates ${qemu_pkgs} && \
     for command in ps kill killall; do ln -s "$(which busybox)" /usr/local/bin/"${command}" || exit 1 ; done && \
     rm -rf /var/lib/apt/lists/*
 
@@ -23,10 +25,8 @@ RUN EC_DIR=/usr/share/sangfor/EasyConnect/resources && cd /tmp && \
     bash -c "mkdir -p ${EC_DIR}/{bin,lib64,shell,logs}/" && \
     bash -c "cp easyconn/${EC_DIR}/bin/{CSClient,easyconn,ECAgent,svpnservice,ca.crt,cert.crt} \
                /${EC_DIR}/bin/" && \
-    if [ "$(dpkg --print-architecture)" != "amd64" ]; then \
-        extra_amd64_bins=easyconn /tmp/build-scripts/mk-qemu-wrapper.sh ; \
-    fi && \
-    bash -c "chmod +xs ${EC_DIR}/bin/{CSClient,ECAgent,svpnservice}*" && \
+    bash -c "chmod +xs ${EC_DIR}/bin/{CSClient,ECAgent,svpnservice}" && \
+    extra_bins=easyconn . /tmp/build-scripts/mk-qemu-wrapper.sh && \
     bash -c "cp easyconn/${EC_DIR}/lib64/lib{nspr4,nss3,nssutil3,plc4,plds4,smime3}.so \
                /${EC_DIR}/lib64/" && \
     cp easyconn/${EC_DIR}/shell/* \

@@ -1,12 +1,7 @@
 #!/bin/bash
 fake-hwaddr-run() { "$@" ; }
-qemu_args=""
 if [ -n "$FAKE_HWADDR" ]; then
-	if [ "$(dpkg --print-architecture)" = "amd64" ]; then
-		fake-hwaddr-run() { LD_PRELOAD=/usr/local/lib/fake-hwaddr.so "$@" ; }
-	else
-		fake-hwaddr-run() { qemu_args="-E LD_PRELOAD=/usr/local/lib/fake-hwaddr.so" "$@" ; }
-	fi
+	fake-hwaddr-run() { LD_PRELOAD=/usr/local/lib/fake-hwaddr.so "$@" ; }
 fi
 [ -z "$_EC_CLI" ] && /usr/share/sangfor/EasyConnect/resources/bin/EasyMonitor
 
@@ -42,12 +37,12 @@ do
 		} &
 
 		# 下面这行代码启动 EasyConnect 的前端。
-		fake-hwaddr-run /usr/share/sangfor/EasyConnect/EasyConnect --enable-transparent-visuals --disable-gpu
+		/usr/share/sangfor/EasyConnect/EasyConnect --enable-transparent-visuals --disable-gpu
 	else
 		fake-hwaddr-run /usr/share/sangfor/EasyConnect/resources/bin/ECAgent &
 		sleep 1
 		fake-hwaddr-run easyconn login -t autologin
-		pidof svpnservice > /dev/null || fake-hwaddr-run bash -c "exec easyconn login $CLI_OPTS"
+		pidof svpnservice > /dev/null || bash -c "exec easyconn login $CLI_OPTS"
 		# # 重启一下 tinyproxy
 		# service tinyproxy restart
 		while pidof svpnservice > /dev/null ; do

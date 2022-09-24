@@ -11,6 +11,7 @@
 ## 构建参数
 
 - `EC_URL`（仅适用于图形界面版）: EasyConnect 的 deb 包下载地址，各版本的下载地址可见于 [../ec\_urls/](../ec_urls/)。
+- `EC_HOST`: EasyConnect deb 包的架构，默认为空表示 deb 包架构与容器运行的架构一致；以 Debian 包管理器的架构名可准，可选项为：`aarch64`、`amd64`、`armel`、`armhf`、`i386`、`misp64el`。
 - `ELECTRON_URL`（仅适用于图形界面版）: [electron](https://github.com/electron/electron/releases) 的下载地址，用于在非 amd64 架构中将 EasyConnect 前端自带的 electron 替换成可原生执行的 electron（使用 qemu 时原生 electron 可以减小翻译开销；来自 EasyConnect 的 electron 在 Debian bookworm 上有段错误的现象），有一些注意事项：
 
     - `armel`、`armhf`、`arm64`、`mips64el`、`amd64`、`i386` 架构无需设定该参数，构建脚本中已经预设（有特殊需要可以使用该参数覆盖预设值）
@@ -24,6 +25,7 @@
 
 ### `Dockerfile.build` 构建参数
 
+- `EC_HOST`: EasyConnect deb 包的架构，同上文
 - `MIRROR_URL`: Debian 镜像站，同上文
 - `TINYPROXY_COMMIT`: 构建支持 websocket 的 [tinyproxy](https://github.com/tinyproxy/tinyproxy) 的 commit.
 - `NOVNC_METHOD`: 提供 noVNC 服务的方式，默认为 `min-size`，可选选项有
