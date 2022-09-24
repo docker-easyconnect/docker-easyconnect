@@ -28,7 +28,7 @@ sleep 1
 
 while true
 do
-	rm /usr/share/sangfor/EasyConnect/resources/conf/ECDomainFile
+	rm -f /usr/share/sangfor/EasyConnect/resources/conf/ECDomainFile
 	if [ -z "$_EC_CLI" ]; then
 		# 在 EasyConnect 前端启动过程中，会出现 cms client connect failed 的报错，此时应该启动 sslservice.sh。但这个脚本启动得太早也会没有作用。
 		# (来自 https://blog.51cto.com/13226459/2476193 的线索，感谢文章作者)
