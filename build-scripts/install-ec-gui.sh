@@ -1,7 +1,13 @@
 #!/bin/bash
 cd /tmp &&
 . ./build-scripts/get-echost-names.sh &&
-busybox wget "${EC_URL}" -O EasyConnect.deb &&
+if [ -z "${EC_DEB_PATH}" ]; then
+	busybox wget "${EC_URL}" -O EasyConnect.deb
+else
+	set -o pipefail &&
+	busybox wget "${EC_URL}" -O - |
+		busybox unzip -p - "${EC_DEB_PATH}" > EasyConnect.deb
+fi &&
 if is_echost_foreign; then
 	dpkg-deb -R EasyConnect.deb / &&
 	/DEBIAN/postinst &&

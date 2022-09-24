@@ -20,7 +20,7 @@ RUN groupadd -r socks && useradd -r -g socks socks
 
 COPY ["./build-scripts/install-ec-gui.sh", "./build-scripts/mk-qemu-wrapper.sh", "/tmp/build-scripts/"]
 
-ARG EC_URL ELECTRON_URL USE_EC_ELECTRON
+ARG EC_URL ELECTRON_URL USE_EC_ELECTRON EC_DEB_PATH
 
 RUN /tmp/build-scripts/install-ec-gui.sh
 
