@@ -4,9 +4,9 @@ cd /tmp &&
 if [ -z "${EC_DEB_PATH}" ]; then
 	busybox wget "${EC_URL}" -O EasyConnect.deb
 else
-	set -o pipefail &&
-	busybox wget "${EC_URL}" -O - |
-		busybox unzip -p - "${EC_DEB_PATH}" > EasyConnect.deb
+	busybox wget "${EC_URL}" -O EasyConnect.zip &&
+	busybox unzip -p EasyConnect.zip "${EC_DEB_PATH}" > EasyConnect.deb &&
+	rm EasyConnect.zip
 fi &&
 if is_echost_foreign; then
 	dpkg-deb -R EasyConnect.deb / &&
