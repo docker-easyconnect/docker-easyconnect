@@ -33,8 +33,10 @@ do
 		# 在 EasyConnect 前端启动过程中，会出现 cms client connect failed 的报错，此时应该启动 sslservice.sh。但这个脚本启动得太早也会没有作用。
 		# (来自 https://blog.51cto.com/13226459/2476193 的线索，感谢文章作者)
 		# 进一步研究发现此时应启动 svpnservice 和 CSClient 两个程序
-		fake-hwaddr-run /usr/share/sangfor/EasyConnect/resources/bin/ECAgent |
-			{
+		{
+			fake-hwaddr-run /usr/share/sangfor/EasyConnect/resources/bin/ECAgent
+			kill $!
+		} > >(
 				grep '\[Register\]cms client connect failed|ECDomainFile domain socket connect failed' -Em 1 --line-buffered || break
 				killall -9 svpnservice CSClient
 				# 在某些性能不佳的设备上（尤其是如果使用了 qemu-user 来模拟运行其他架构的 EasyConnect），CSClient 和 svpnservice 启动较慢，
@@ -46,10 +48,10 @@ do
 				wait
 				until [ -e /usr/share/sangfor/EasyConnect/resources/conf/ECDomainFile ]; do
 					sleep 0.1
-					pidof ECAgent >/dev/null || exit
 				done
 				killall -CONT ECAgent
-			} &
+				exec cat >/dev/null
+			) &
 
 		# 下面这行代码启动 EasyConnect 的前端。
 		/usr/share/sangfor/EasyConnect/EasyConnect --enable-transparent-visuals --disable-gpu
@@ -65,17 +67,15 @@ do
 		done
 		echo svpn stop!
 	fi
-
 	[ -n "$MAX_RETRY" ] && ((MAX_RETRY--))
 
 	# 自动重连
 	((MAX_RETRY<0)) && exit
 
 	# 清除的残余进程，它们可能会妨碍下次的启动。
-	killall CSClient svpnservice 2> /dev/null
-	kill %1 %2 2> /dev/null
+	killall CSClient svpnservice ECAgent 2> /dev/null
 	sleep 4
 
 	# 只要杀不死，就往死里杀
-	killall -9 CSClient svpnservice 2> /dev/null
+	killall -9 CSClient svpnservice ECAgent 2> /dev/null
 done
