@@ -6,7 +6,9 @@
 
 - `CHECK_SYSTEM_ONLY`: 默认为空。设为非空值时检查系统是否满足使用条件后退出。（`docker run --cap-add NET_ADMIN --device /dev/net/tun -e CHECK_SYSTEM_ONLY=1 hagb/docker-easyconnect:TAG`）
 
-- `EXIT`: 默认为空，此时前端退出后会自动重连。不为空时，前端退出后不自动重启。
+- `EXIT`: 默认为空，此时前端退出后会自动重连。不为空时，前端退出后不自动重启，并停止容器。
+
+- `DO_NOT_EXIT`: 默认为空，此时前端退出后会自动重连。不为空时， 前端退出后不自动重启，不会停止容器。
 
 - `FAKE_HWADDR`: 默认为空，向 EasyConnect 提供的固定网卡 MAC 地址。Podman 在非 root 权限下无法固定虚拟网卡的 MAC 地址，为了防止每次启动容器都要重新提交硬件 ID，可设置该环境变量为某一 MAC 地址（建议使用 podman 先前启动时随机生成的地址或已提交的 MAC 地址），劫持 EasyConnect 使其获取到该固定地址。Docker 默认的情况下 MAC 地址即固定，root 环境下的 podman 可以直接使用 `--mac-address` 参数设置，无需使用 `FAKE_HWADDR`。
 

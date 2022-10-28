@@ -30,6 +30,9 @@ do
 
 	[ -n "$MAX_RETRY" ] && ((MAX_RETRY--))
 
+	# 等待后端服务结束
+        [ -n "$DO_NOT_EXIT" ] && printf "\n\n\n 前端服务已退出! 由于设定DO_NOT_EXIT，等待后端服务退出!!!! \n\n\n" && sleep 100000000 && echo "已退出"
+
 	# 自动重连
 	((MAX_RETRY<0)) && exit
 
