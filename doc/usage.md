@@ -127,11 +127,11 @@ ip rule add iif lo table 3
 
 ### 纯命令行
 
-下列例子可启动纯命令行的 EasyConnect `7.6.3`（`-e EC_VER=7.6.3`），并且退出后不会自动重启（`-e EXIT=1`）。
+下列例子可启动纯命令行的 EasyConnect `7.6.3`（`-e EC_VER=7.6.3`），并且退出后不会自动重启（`-e EXIT=1` 且 `-e MAX_RETRY=0`）。
 
 ``` bash
 touch ~/.easyconn
-docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/root/.easyconn -e EC_VER=7.6.3 -e EXIT=1 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect:cli
+docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/root/.easyconn -e EC_VER=7.6.3 -e EXIT=1 -e MAX_RETRY=0 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect:cli
 ```
 
 ### tinyproxy
@@ -155,11 +155,11 @@ $ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/r
 
 ### X11 socket
 
-在当前桌面环境中启动 EasyConnect `7.6.3` 前端，并且该前端退出后不会自动重启（`-e EXIT=1`），EasyConnect 要进行浏览器弹窗时会弹出含链接的文本框（`-e URLWIN=1`）。
+在当前桌面环境中启动 EasyConnect `7.6.3` 前端，并且该前端退出后不会自动重启（`-e EXIT=1` 且 `-e MAX_RETRY=0`），EasyConnect 要进行浏览器弹窗时会弹出含链接的文本框（`-e URLWIN=1`）。
 
 ``` bash
 xhost +LOCAL:
-docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/.Xauthority:/root/.Xauthority -e EXIT=1 -e DISPLAY=$DISPLAY -e URLWIN=1 -e TYPE=x11 -v $HOME/.ecdata:/root -p 127.0.0.1:1080:1080 hagb/docker-easyconnect:vncless-7.6.3
+docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/.Xauthority:/root/.Xauthority -e EXIT=1 -e MAX_RETRY=0 -e DISPLAY=$DISPLAY -e URLWIN=1 -e TYPE=x11 -v $HOME/.ecdata:/root -p 127.0.0.1:1080:1080 hagb/docker-easyconnect:vncless-7.6.3
 xhost -LOCAL:
 ```
 
