@@ -12,7 +12,7 @@ RUN apt-get install fonts-wqy-microhei
 
 RUN groupadd -r socks && useradd -r -g socks socks
 
-RUN cd tmp && apt update && apt download x11-utils && dpkg -x x11-utils_*.deb x11-utils &&\
+RUN cd tmp && apt-get download x11-utils && dpkg -x x11-utils_*.deb x11-utils &&\
     mkdir -p /usr/local/bin && cp x11-utils/usr/bin/xmessage /usr/local/bin && rm -r x11-utils* 
 
 ARG EC_URL
