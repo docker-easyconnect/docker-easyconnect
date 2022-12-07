@@ -8,6 +8,8 @@ RUN if [ "${BUILD_ENV}" = "local" ]; then sed -i s/deb.debian.org/mirrors.aliyun
 	libgtk2.0-0 libx11-xcb1 libxtst6 libnss3 libasound2 libdbus-glib-1-2 iptables \
 	dante-server psmisc libxaw7 xclip busybox libssl-dev iproute2 tinyproxy-bin
 
+RUN apt-get install fonts-wqy-microhei
+
 RUN groupadd -r socks && useradd -r -g socks socks
 
 RUN cd tmp && apt update && apt download x11-utils && dpkg -x x11-utils_*.deb x11-utils &&\

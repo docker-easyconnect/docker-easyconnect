@@ -9,6 +9,8 @@ RUN if [ "${BUILD_ENV}" = "local" ]; then sed -i s/deb.debian.org/mirrors.aliyun
         dante-server tigervnc-standalone-server tigervnc-common psmisc flwm x11-utils\
         busybox libssl-dev iproute2 tinyproxy-bin
 
+RUN apt-get install fonts-wqy-microhei
+
 RUN groupadd -r socks && useradd -r -g socks socks
 
 ARG EC_URL
