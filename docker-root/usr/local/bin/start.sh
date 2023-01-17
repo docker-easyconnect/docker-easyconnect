@@ -1,7 +1,7 @@
 #!/bin/bash
 
 [ -n "$CHECK_SYSTEM_ONLY" ] && detect-tun.sh
-detect-iptables.sh
+eval "$(detect-iptables.sh)"
 . "$(which detect-route.sh)"
 [ -n "$CHECK_SYSTEM_ONLY" ] && exit
 
@@ -31,11 +31,10 @@ sed /^external:/a"$externals" -i /run/danted.conf
 [ -n "$NODANTED" ] || (while true
 do
 sleep 5
+open_port 1080
 [ -d /sys/class/net/tun0 ] && {
 	chmod a+w /tmp
-	open_port 1080
 	/usr/sbin/danted -f /run/danted.conf
-	close_port 1080
 }
 done
 )&

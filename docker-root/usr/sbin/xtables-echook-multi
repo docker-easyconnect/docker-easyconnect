@@ -1,0 +1,26 @@
+#!/bin/sh
+name="$(basename "$0")"
+iptables_type="$(cat /usr/share/sangfor/iptables-type)"
+xtables_multi="xtables-$iptables_type-multi"
+
+[ -z "$ECHACK_NOWARN" ] &&
+	echo "# WARNING: You are calling iptables hook that uses $iptables_type by force and applies some hacks." >&2
+
+case "$name" in
+	iptables | iptables-legacy | iptables-nft )
+		[ "$*" = "-t filter -A SANGFOR_VIRTUAL -j DROP" ] && exit 0
+		subcommand=iptables
+		;;
+	iptables-save | iptables-nft-save | iptables-legacy-save )
+		subcommand=iptables-save
+		;;
+	iptables-restore | iptables-nft-restore | iptables-legacy-restore )
+		subcommand=iptables-restore
+		;;
+	* )
+		echo Unknown subcommand "$name"! >&2
+		exit 1
+		;;
+esac
+
+exec "$xtables_multi" "$subcommand" "$@"
