@@ -15,7 +15,8 @@ case "$name" in
 		subcommand=iptables-save
 		;;
 	iptables-restore | iptables-nft-restore | iptables-legacy-restore )
-		subcommand=iptables-restore
+		sed -E 's/ -j DNAT --to-destination 127.0.0.1:4440$/ -j REDIRECT --to-ports 4440/' | "$xtables_multi" iptables-restore "$@"
+		exit $?
 		;;
 	* )
 		echo Unknown subcommand "$name"! >&2

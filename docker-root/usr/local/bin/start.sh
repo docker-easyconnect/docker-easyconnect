@@ -42,6 +42,8 @@ open_port 8888
 tinyproxy -c /etc/tinyproxy.conf
 
 iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
+iptables -t nat -N SANGFOR_OUTPUT
+iptables -t nat -A PREROUTING -j SANGFOR_OUTPUT
 
 # 拒绝 tun0 侧主动请求的连接.
 iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
