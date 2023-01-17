@@ -54,7 +54,7 @@ do
 			) &
 
 		# 下面这行代码启动 EasyConnect 的前端。
-		/usr/share/sangfor/EasyConnect/EasyConnect --enable-transparent-visuals --disable-gpu
+		LD_LIBRARY_PATH="/usr/share/sangfor/EasyConnect/:${LD_LIBRARY_PATH}" /usr/share/sangfor/EasyConnect/EasyConnect --enable-transparent-visuals --disable-gpu
 	else
 		fake-hwaddr-run /usr/share/sangfor/EasyConnect/resources/bin/ECAgent &
 		sleep 1
