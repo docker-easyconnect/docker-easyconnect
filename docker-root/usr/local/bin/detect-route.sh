@@ -7,6 +7,8 @@ IFS="
 "
 for i in $(ip route show); do IFS=' '; ip route add $i table 2 ; done
 )
+## 回包路由
+ip rule add iif tun0 table 2
 ## 确定策略路由方式
 ip rule add iif lo table 2 sport 1080
 if ip rule show iif lo table 2 | grep sport >/dev/null ; then
