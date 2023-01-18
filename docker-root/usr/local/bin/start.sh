@@ -42,6 +42,7 @@ open_port 8888
 tinyproxy -c /etc/tinyproxy.conf
 
 iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
+open_port 4440
 iptables -t nat -N SANGFOR_OUTPUT
 iptables -t nat -A PREROUTING -j SANGFOR_OUTPUT
 
