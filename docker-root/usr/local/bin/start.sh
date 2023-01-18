@@ -57,7 +57,7 @@ if [ -n "$_EC_CLI" ]; then
 	exec start-sangfor.sh
 fi
 
-[ -n "$EXIT" ] && MAX_RETRY=0
+[ -n "$EXIT" ] && export MAX_RETRY=0
 
 # 登录信息持久化处理
 ## 持久化配置文件夹 感谢 @hexid26 https://github.com/Hagb/docker-easyconnect/issues/21

@@ -127,7 +127,7 @@ ip rule add iif lo table 3
 
 ### 纯命令行
 
-下列例子可启动纯命令行的 EasyConnect `7.6.3`（`-e EC_VER=7.6.3`），并且退出后不会自动重启（`-e EXIT=1` 且 `-e MAX_RETRY=0`）。
+下列例子可启动纯命令行的 EasyConnect `7.6.3`（`-e EC_VER=7.6.3`），并且退出后不会自动重启（`-e EXIT=1`）。
 
 ``` bash
 touch ~/.easyconn
@@ -155,7 +155,7 @@ $ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/r
 
 ### X11 socket
 
-在当前桌面环境中启动 EasyConnect `7.6.3` 前端，并且该前端退出后不会自动重启（`-e EXIT=1` 且 `-e MAX_RETRY=0`），EasyConnect 要进行浏览器弹窗时会弹出含链接的文本框（`-e URLWIN=1`）。
+在当前桌面环境中启动 EasyConnect `7.6.3` 前端，并且该前端退出后不会自动重启（`-e EXIT=1`），EasyConnect 要进行浏览器弹窗时会弹出含链接的文本框（`-e URLWIN=1`）。
 
 ``` bash
 xhost +LOCAL:
