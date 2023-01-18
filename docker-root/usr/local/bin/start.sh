@@ -93,10 +93,6 @@ fi
 ## 持久化配置文件夹 感谢 @hexid26 https://github.com/Hagb/docker-easyconnect/issues/21
 [ -d ~/conf ] || cp -a /usr/share/sangfor/EasyConnect/resources/conf_backup ~/conf
 [ -e ~/easy_connect.json ] && mv ~/easy_connect.json ~/conf/easy_connect.json # 向下兼容
-## 默认使用英语：感谢 @forest0 https://github.com/Hagb/docker-easyconnect/issues/2#issuecomment-658205504
-## 使 7.6.7 上系统被识别为 Linux：https://github.com/Hagb/docker-easyconnect/issues/174
-[ -e ~/conf/easy_connect.json ] ||
-	echo '{"version" : "0.0.2","language": "en_US","build_type": "release","sys_type": "linux"}' > ~/conf/easy_connect.json
 
 export DISPLAY
 
