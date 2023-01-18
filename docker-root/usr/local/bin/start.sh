@@ -2,7 +2,7 @@
 
 [ -n "$CHECK_SYSTEM_ONLY" ] && detect-tun.sh
 eval "$(detect-iptables.sh)"
-. "$(which detect-route.sh)"
+eval "$(detect-route.sh)"
 [ -n "$CHECK_SYSTEM_ONLY" ] && exit
 
 if [ -n "$FORWARD" ]; then
