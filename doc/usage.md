@@ -131,7 +131,7 @@ ip rule add iif lo table 3
 
 ``` bash
 touch ~/.easyconn
-docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/root/.easyconn -e EC_VER=7.6.3 -e EXIT=1 -e MAX_RETRY=0 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect:cli
+docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/root/.easyconn -e EC_VER=7.6.3 -e EXIT=1 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect:cli
 ```
 
 ### tinyproxy
