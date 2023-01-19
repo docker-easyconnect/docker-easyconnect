@@ -1,5 +1,4 @@
 #!/bin/bash
-
 [ -n "$CHECK_SYSTEM_ONLY" ] && detect-tun.sh
 eval "$(detect-iptables.sh)"
 eval "$(detect-route.sh)"
@@ -91,8 +90,33 @@ fi
 
 # 登录信息持久化处理
 ## 持久化配置文件夹 感谢 @hexid26 https://github.com/Hagb/docker-easyconnect/issues/21
-[ -d ~/conf ] || cp -a /usr/share/sangfor/EasyConnect/resources/conf_backup ~/conf
+cp -r /usr/share/sangfor/EasyConnect/resources/conf_backup/. ~/conf/
+rm -f ~/conf/ECDomainFile
 [ -e ~/easy_connect.json ] && mv ~/easy_connect.json ~/conf/easy_connect.json # 向下兼容
+mkdir -p /usr/share/sangfor/EasyConnect/resources/conf/
+cd ~/conf/
+
+## 不再假定 /root 的文件系统（可能从宿主机挂载）支持 unix sock（用于 ECDomainFile），因此不直接使用
+for file in *; do
+	## 通过软链接减小拷贝量
+	ln -s ~/conf/"$file" /usr/share/sangfor/EasyConnect/resources/conf/"$file"
+done
+cd -
+
+sync_ec2volume() {
+	cd /usr/share/sangfor/EasyConnect/resources/conf/
+	for file in *; do
+		[ -r "$file" -a ! -L "$file" -a "ECDomainFile" != "$file" ] && cp -r "$file" ~/conf/
+	done
+	cd ~/conf/
+	for file in *; do
+		[ ! -e /usr/share/sangfor/EasyConnect/resources/conf/"$file" ] && {
+			rm -r "$file"
+		}
+	done
+}
+## 容器退出时将配置文件同步回 /root/conf。感谢 @Einskai 的点子
+trap "sync_ec2volume; exit;" SIGINT SIGQUIT SIGSTOP SIGTSTP SIGTERM
 
 export DISPLAY
 
@@ -122,4 +146,6 @@ then
 	fi
 fi
 
-exec start-sangfor.sh
+start-sangfor.sh &
+wait $!
+sync_ec2volume

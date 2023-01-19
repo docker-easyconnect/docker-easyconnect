@@ -21,8 +21,7 @@ RUN cd tmp &&\
 COPY ./docker-root /
 
 RUN rm -f /usr/share/sangfor/EasyConnect/resources/conf/easy_connect.json &&\
-    mv /usr/share/sangfor/EasyConnect/resources/conf/ /usr/share/sangfor/EasyConnect/resources/conf_backup &&\
-    ln -s /root/conf /usr/share/sangfor/EasyConnect/resources/conf
+    mv /usr/share/sangfor/EasyConnect/resources/conf/ /usr/share/sangfor/EasyConnect/resources/conf_backup
 
 RUN busybox wget https://github.com/pgaskin/easy-novnc/releases/download/v1.1.0/easy-novnc_linux-64bit -O /usr/bin/easy-novnc &&\
     chmod +x /usr/bin/easy-novnc
