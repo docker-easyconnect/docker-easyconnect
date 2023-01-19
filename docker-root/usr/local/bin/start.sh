@@ -131,8 +131,10 @@ then
 	[ -e ~/.vnc/passwd ] || (mkdir -p ~/.vnc && (echo password | tigervncpasswd -f > ~/.vnc/passwd)) 
 	[ -n "$PASSWORD" ] && printf %s "$PASSWORD" | tigervncpasswd -f > ~/.vnc/passwd
 
+	VNC_SIZE="${VNC_SIZE:-1110x620}"
+
 	open_port 5901
-	tigervncserver :1 -geometry 800x600 -localhost no -passwd ~/.vnc/passwd -xstartup flwm
+	tigervncserver :1 -geometry "$VNC_SIZE" -localhost no -passwd ~/.vnc/passwd -xstartup flwm
 	DISPLAY=:1
 
 	# 将 easyconnect 的密码放入粘贴板中，应对密码复杂且无法保存的情况 (eg: 需要短信验证登录)
