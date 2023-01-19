@@ -20,7 +20,6 @@ rm EasyConnect.deb &&
 
 rm -f /usr/share/sangfor/EasyConnect/resources/conf/easy_connect.json &&
 mv /usr/share/sangfor/EasyConnect/resources/conf/ /usr/share/sangfor/EasyConnect/resources/conf_backup &&
-ln -s /root/conf /usr/share/sangfor/EasyConnect/resources/conf &&
 
 if ! is_echost_foreign &&  [ ! -z "${USE_EC_ELECTRON}" ] ; then
 	exit 0

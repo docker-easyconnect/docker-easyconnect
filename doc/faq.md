@@ -44,9 +44,3 @@ sudo modprobe tun
 
 在 docker 命令行内临时删去设置`EXIT`环境变量的`-e EXIT=`参数（如果有），在弹窗发生后点击`OK`，使客户端重启，重启后问题消失。
 
-## 无法显示中文
-
-原因是 image 内无中文字体。可以通过修改 EasyConnect 前端的语言为英语来绕过中文显示的问题。也可以安装或挂载中文字体进容器中。
-
-详见 [#2](https://github.com/Hagb/docker-easyconnect/issues/2)。
-
