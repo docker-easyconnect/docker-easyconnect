@@ -108,7 +108,7 @@ ip rule add iif lo table 3
 
 可以直接使用宿主机的界面来显示 EasyConnect 前端。
 
-容器启动参数中需加入 `-v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/.Xauthority:/root/.Xauthority -e DISPLAY=$DISPLAY`，且 X 服务器需设置允许容器的连入（如通过命令 `xhost +LOCAL:`）。
+容器启动参数中需加入 `-v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/.Xauthority:/root/.Xauthority -e TYPE=x11 -e DISPLAY=$DISPLAY`，且 X 服务器需设置允许容器的连入（如通过命令 `xhost +LOCAL:`）。
 
 ### 配置、登录信息持久化
 
