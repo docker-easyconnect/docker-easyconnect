@@ -5,7 +5,7 @@ ARG BUILD_ENV=local
 RUN if [ "${BUILD_ENV}" = "local" ]; then sed -i s/deb.debian.org/mirrors.aliyun.com/ /etc/apt/sources.list; fi && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests iptables \
-	dante-server busybox iproute2 tinyproxy-bin && \
+	dante-server busybox iproute2 tinyproxy-bin socat && \
     for command in ps kill killall; do ln -s "$(which busybox)" /usr/local/bin/"${command}" || exit 1 ; done && \
     rm -rf /var/lib/apt/lists/*
 
