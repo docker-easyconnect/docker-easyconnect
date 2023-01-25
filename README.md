@@ -2,7 +2,7 @@
 
 让深信服开发的**非自由**的 EasyConnect 代理软件运行在 docker 中，并开放 Socks5 供宿主机连接以使用代理。（此外亦可通过 [ip forward 的方式](doc/usage.md#ip-forward) 来使用）
 
-**在使用本项目前，推荐尝试使用 [@lyc8503](https://github.com/lyc8503) 所编写的开源 EasyConnect 客户端 [EaiserConnect](https://github.com/lyc8503/EasierConnect)。**
+**在使用本项目前，推荐尝试使用 [@lyc8503](https://github.com/lyc8503) 所编写的开源 EasyConnect 客户端 [EasierConnect](https://github.com/lyc8503/EasierConnect)。**
 
 本项目基于 EasyConnect 官方“Linux”版的 deb 包以及 [@shmille](https://github.com/shmilee) 提供的[命令行版客户端 deb 包](https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb)。
 
