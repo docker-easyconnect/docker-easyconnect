@@ -80,6 +80,11 @@ iptables -A INPUT -i tun0 -p tcp -j DROP
 # 感谢 @stingshen https://github.com/Hagb/docker-easyconnect/issues/6
 # ( while true; do sleep 5 ; iptables -D SANGFOR_VIRTUAL -j DROP 2>/dev/null ; done )&
 
+# 暴露 54530 端口
+open_port 54530
+open_port 54531
+iptables -t nat -A PREROUTING -p tcp --dport 54530 -m addrtype --dst-type LOCAL -j REDIRECT --to-port 54531
+socat tcp-listen:54531,reuseaddr,fork tcp4:127.0.0.1:54530 &
 
 [ -n "$EXIT" ] && export MAX_RETRY=0
 
@@ -102,9 +107,11 @@ for file in *; do
 	ln -s ~/conf/"$file" /usr/share/sangfor/EasyConnect/resources/conf/"$file"
 done
 cd -
+[ -n "$DISABLE_PKG_VERSION_XML" ] && ln -fs /dev/null /usr/share/sangfor/EasyConnect/resources/conf/pkg_version.xml
 
 sync_ec2volume() {
 	cd /usr/share/sangfor/EasyConnect/resources/conf/
+	[ -n "$DISABLE_PKG_VERSION_XML" ] && rm pkg_version.xml
 	for file in *; do
 		[ -r "$file" -a ! -L "$file" -a "ECDomainFile" != "$file" ] && cp -r "$file" ~/conf/
 	done

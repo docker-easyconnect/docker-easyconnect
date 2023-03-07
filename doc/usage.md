@@ -6,6 +6,8 @@
 
 - `CHECK_SYSTEM_ONLY`: 默认为空。设为非空值时检查系统是否满足使用条件后退出。（`docker run --cap-add NET_ADMIN --device /dev/net/tun -e CHECK_SYSTEM_ONLY=1 hagb/docker-easyconnect:TAG`）
 
+- `DISABLE_PKG_VERSION_XML`: 默认为空。设为非空时会阻止 EasyConnect 使用 `pkg_version.xml` 配置文件（通过将其设为 `/dev/null` 的软链接），从而绕过一些客户端和服务端版本不匹配的问题
+
 - `EXIT`: 默认为空，此时前端退出后会自动重连。不为空时，前端退出后不自动重启，并停止容器。
 
 - `EXIT_LOCK`: 默认为空，此时前端退出后会自动重连。不为空时， 前端退出后不自动重启，循环等待锁释放，当锁文件被删除后才会执行到下一步。
@@ -110,7 +112,7 @@ ip rule add iif lo table 3
 
 可以直接使用宿主机的界面来显示 EasyConnect 前端。
 
-容器启动参数中需加入 `-v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/.Xauthority:/root/.Xauthority -e DISPLAY=$DISPLAY`，且 X 服务器需设置允许容器的连入（如通过命令 `xhost +LOCAL:`）。
+容器启动参数中需加入 `-v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/.Xauthority:/root/.Xauthority -e TYPE=x11 -e DISPLAY=$DISPLAY`，且 X 服务器需设置允许容器的连入（如通过命令 `xhost +LOCAL:`）。
 
 ### 配置、登录信息持久化
 
@@ -124,6 +126,10 @@ ip rule add iif lo table 3
 如 `-v $HOME/.ecdata:/root`。
 
 更换 EasyConnect 版本需要清空其中的 `conf` 目录。
+
+### EasyConnect web 登录
+
+将容器的 `54530` 端口映射到宿主机（加入 `-p 127.0.0.1:54530:54530` 参数），之后便可以在宿主机上打开 VPN 服务器的网页进行登录而无需使用 X11 或 VNC（需要提前在相应浏览器打开 `https://127.0.0.1:54530` 并选择忽略证书错误——此处 EasyConnect 使用了一份自签证书）。
 
 ## 用例
 

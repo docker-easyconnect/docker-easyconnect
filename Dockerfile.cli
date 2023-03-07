@@ -10,7 +10,7 @@ RUN . /tmp/build-scripts/config-apt.sh && \
     . /tmp/build-scripts/add-qemu.sh && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests iptables \
-        dante-server busybox iproute2 tinyproxy-bin ca-certificates ${qemu_pkgs} && \
+        dante-server busybox iproute2 tinyproxy-bin ca-certificates ${qemu_pkgs} socat && \
     for command in ps kill killall; do ln -s "$(which busybox)" /usr/local/bin/"${command}" || exit 1 ; done && \
     rm -rf /var/lib/apt/lists/*
 
