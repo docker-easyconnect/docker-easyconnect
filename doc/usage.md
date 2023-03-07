@@ -6,6 +6,8 @@
 
 - `CHECK_SYSTEM_ONLY`: 默认为空。设为非空值时检查系统是否满足使用条件后退出。（`docker run --cap-add NET_ADMIN --device /dev/net/tun -e CHECK_SYSTEM_ONLY=1 hagb/docker-easyconnect:TAG`）
 
+- `DISABLE_PKG_VERSION_XML`: 默认为空。设为非空时会阻止 EasyConnect 使用 `pkg_version.xml` 配置文件（通过将其设为 `/dev/null` 的软链接），从而绕过一些客户端和服务端版本不匹配的问题
+
 - `EXIT`: 默认为空，此时前端退出后会自动重连。不为空时，前端退出后不自动重启，并停止容器。
 
 - `EXIT_LOCK`: 默认为空，此时前端退出后会自动重连。不为空时， 前端退出后不自动重启，循环等待锁释放，当锁文件被删除后才会执行到下一步。

@@ -107,9 +107,11 @@ for file in *; do
 	ln -s ~/conf/"$file" /usr/share/sangfor/EasyConnect/resources/conf/"$file"
 done
 cd -
+[ -n "$DISABLE_PKG_VERSION_XML" ] && ln -fs /dev/null /usr/share/sangfor/EasyConnect/resources/conf/pkg_version.xml
 
 sync_ec2volume() {
 	cd /usr/share/sangfor/EasyConnect/resources/conf/
+	[ -n "$DISABLE_PKG_VERSION_XML" ] && rm pkg_version.xml
 	for file in *; do
 		[ -r "$file" -a ! -L "$file" -a "ECDomainFile" != "$file" ] && cp -r "$file" ~/conf/
 	done
