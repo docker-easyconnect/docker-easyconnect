@@ -14,7 +14,7 @@ RUN groupadd -r socks && useradd -r -g socks socks
 ARG EC_CLI_URL="https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb"
 
 RUN EC_DIR=/usr/share/sangfor/EasyConnect/resources && cd tmp && \
-    busybox wget -O easyconn.deb "${EC_CLI_URL}" && \
+    busybox wget "${EC_CLI_URL}" -O easyconn.deb && \
     dpkg -x easyconn.deb easyconn && \
     bash -c " \
         mkdir -p ${EC_DIR}/{bin,lib64,shell,logs}/ && \

@@ -36,7 +36,7 @@ do
 		done
 
 		# 清理添加的转发规则
-		iptables -t nat -D OUTPUT -p udp -m udp ! --sport 7789  --destination 127.0.0.1 --dport 53 -j DNAT --to-destination 127.0.0.1:5373 2> /dev/null
+		iptables -t nat -C OUTPUT "${RULE_ADD[@]}" 2> /dev/null && iptables -t nat -D OUTPUT "${RULE_ADD[@]}" 2> /dev/null
 
 		echo svpn stop!
 	fi
