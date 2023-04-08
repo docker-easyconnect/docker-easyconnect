@@ -28,15 +28,19 @@ do
 		while pidof svpnservice > /dev/null ; do
 
 			# 解决DNS easyconnect劫持DNS的问题，一秒看一次这个转发规则有没有被修改
-			iptables -t nat -C OUTPUT "${RULE_ADD[@]}" 2> /dev/null || iptables -t nat -A OUTPUT "${RULE_ADD[@]}" 2> /dev/null
-			iptables -t nat -C OUTPUT "${RULE_DELETE[@]}" 2> /dev/null && iptables -t nat -D OUTPUT "${RULE_DELETE[@]}" 2> /dev/null
-			grep -qxF 'nameserver 223.5.5.5' /etc/resolv.conf || echo 'nameserver 223.5.5.5' >> /etc/resolv.conf
+			if [ -n "$ADD_NAMESERVER" ]; then
+				iptables -t nat -C OUTPUT "${RULE_ADD[@]}" 2> /dev/null || iptables -t nat -A OUTPUT "${RULE_ADD[@]}" 2> /dev/null
+				iptables -t nat -C OUTPUT "${RULE_DELETE[@]}" 2> /dev/null && iptables -t nat -D OUTPUT "${RULE_DELETE[@]}" 2> /dev/null
+				grep -qxF "nameserver $ADD_NAMESERVER" /etc/resolv.conf || echo "nameserver $ADD_NAMESERVER" >> /etc/resolv.conf
+			fi
 
 			sleep 1
 		done
 
 		# 清理添加的转发规则
-		iptables -t nat -C OUTPUT "${RULE_ADD[@]}" 2> /dev/null && iptables -t nat -D OUTPUT "${RULE_ADD[@]}" 2> /dev/null
+		if [ -n "$ADD_NAMESERVER" ]; then
+			iptables -t nat -C OUTPUT "${RULE_ADD[@]}" 2> /dev/null && iptables -t nat -D OUTPUT "${RULE_ADD[@]}" 2> /dev/null
+		fi
 
 		echo svpn stop!
 	fi
