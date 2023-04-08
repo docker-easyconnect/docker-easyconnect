@@ -3,6 +3,8 @@ fake-hwaddr-run() { "$@" ; }
 [ -n "$FAKE_HWADDR" ] && fake-hwaddr-run() { LD_PRELOAD=/usr/local/lib/fake-hwaddr.so "$@" ; }
 [ -z "$_EC_CLI" ] && /usr/share/sangfor/EasyConnect/resources/bin/EasyMonitor
 sleep 1
+RULE_ADD=(-p udp -m udp ! --sport 7789 --destination 127.0.0.1 --dport 53 -j DNAT --to-destination 127.0.0.1:5373)
+RULE_DELETE=(-p udp -m udp ! --sport 7789 --dport 53 -j DNAT --to-destination 127.0.0.1:5373)
 while true
 do
 	if [ -z "$_EC_CLI" ]; then
@@ -22,9 +24,20 @@ do
 		pidof svpnservice > /dev/null || fake-hwaddr-run bash -c "exec easyconn login $CLI_OPTS"
 		# # 重启一下 tinyproxy
 		# service tinyproxy restart
+
 		while pidof svpnservice > /dev/null ; do
-		       sleep 1
+
+			# 解决DNS easyconnect劫持DNS的问题，一秒看一次这个转发规则有没有被修改
+			iptables -t nat -C OUTPUT "${RULE_ADD[@]}" 2> /dev/null || iptables -t nat -A OUTPUT "${RULE_ADD[@]}" 2> /dev/null
+			iptables -t nat -C OUTPUT "${RULE_DELETE[@]}" 2> /dev/null && iptables -t nat -D OUTPUT "${RULE_DELETE[@]}" 2> /dev/null
+			grep -qxF 'nameserver 223.5.5.5' /etc/resolv.conf || echo 'nameserver 223.5.5.5' >> /etc/resolv.conf
+
+			sleep 1
 		done
+
+		# 清理添加的转发规则
+		iptables -t nat -D OUTPUT -p udp -m udp ! --sport 7789  --destination 127.0.0.1 --dport 53 -j DNAT --to-destination 127.0.0.1:5373 2> /dev/null
+
 		echo svpn stop!
 	fi
 
