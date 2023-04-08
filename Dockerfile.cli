@@ -14,7 +14,7 @@ RUN groupadd -r socks && useradd -r -g socks socks
 ARG EC_CLI_URL="https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb"
 
 RUN EC_DIR=/usr/share/sangfor/EasyConnect/resources && cd tmp && \
-    busybox wget "${EC_CLI_URL}" -O easyconn.deb && \
+    busybox wget -O easyconn.deb "${EC_CLI_URL}" && \
     dpkg -x easyconn.deb easyconn && \
     bash -c " \
         mkdir -p ${EC_DIR}/{bin,lib64,shell,logs}/ && \
@@ -51,4 +51,5 @@ COPY --from=fake-hwaddr fake-hwaddr/fake-hwaddr.so /usr/local/lib/fake-hwaddr.so
 
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
-CMD _EC_CLI=1 start.sh
+# 暂时修改了dns的问题
+CMD ["/bin/bash", "-c", "export _EC_CLI=1 && start.sh & sleep 10 && iptables -t nat -A OUTPUT -p udp -m udp ! --sport 7789 --destination 127.0.0.1 --dport 53 -j DNAT --to-destination 127.0.0.1:5373 && iptables -t nat -D OUTPUT -p udp -m udp ! --sport 7789 --dport 53 -j DNAT --to-destination 127.0.0.1:5373 && echo nameserver 114.114.114.114 >> /etc/resolv.conf && tail -f /dev/null"]
