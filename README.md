@@ -19,7 +19,7 @@
 	``` bash
 	docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -p 127.0.0.1:1080:1080 -p 127.0.0.1:8888:8888 -e EC_VER=7.6.3 -e CLI_OPTS="-d vpnaddress -u username -p password" hagb/docker-easyconnect:cli
 	```
-	其中 `-e EC_VER=7.6.3` 表示使用 `7.6.3` 版本的 EasyConnect，请根据实际情况修改版本号；
+	其中 `-e EC_VER=7.6.7` 表示使用 `7.6.7` 版本的 EasyConnect，请根据实际情况修改版本号（选择 `7.6.7` 或 `7.6.3`）；
 3. 根据提示输入服务器地址、登录凭据；
 4. 浏览器（或其他支持的应用）可配置socks5代理（可以通过插件配置），地址 `127.0.0.1`, 端口 `1080`；也可以使用 http 代理，地址 `127.0.0.1`, 端口 `8888`。
 5. 如需为 socks5 设置密码，可在 `docker run` 命令后追加 `-e SOCKS_USER="youruser" -e SOCKS_PASSWD="thepassword"`。
@@ -27,7 +27,7 @@
 ### 图形界面版
 
 1. [安装Docker并运行](https://docs.docker.com/get-docker/)；
-2. 在终端输入： `docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 -p 127.0.0.1:8888:8888 hagb/docker-easyconnect:7.6.3`（末尾 EasyConnect 版本号 `7.6.3` 请根据实际情况修改）；
+2. 在终端输入： `docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 -p 127.0.0.1:8888:8888 hagb/docker-easyconnect:7.6.7`（末尾 EasyConnect 版本号 `7.6.7` 请根据实际情况修改）；
 3. 使用vnc客户端连接vnc， 地址：127.0.0.1, 端口: 5901, 密码 xxxx ;
 4. 成功连上后你应该能看到easyconnect的登录窗口，填写并登录easyconnect；
 5. 浏览器（或其他支持的应用）可配置socks5代理（可以通过插件配置），地址 `127.0.0.1`, 端口 `1080`；也可以使用 http 代理，地址 `127.0.0.1`, 端口 `8888`。
@@ -37,7 +37,7 @@
 
 ## EasyConnect 版本
 
-[`ec_urls`](ec_urls) 目录中以`版本号.txt`为文件名的文本文件保存了下载链接。（欢迎提交 issue 或 PR）
+[`build-args`](./build-args) 目录中以`版本号-架构.txt`为文件名的文本文件中包含下载链接。（欢迎提交 issue 或 PR）
 
 ### 已经过测试的版本
 
@@ -59,9 +59,9 @@ docker pull hagb/docker-easyconnect:TAG
 
 其中 TAG 可以是如下值（不带 VNC 服务端的 image 比带 VNC 服务端的 image 小）：
 
-- `latest`: 默认值，带 VNC 服务端的`7.6.3`版 image，
+- `latest`: 默认值，带 VNC 服务端的`7.6.7`版 image，
 - `cli`: 多版本（`7.6.3`, `7.6.7`, `7.6.8`）纯命令行版
-- `vncless`: 不带 VNC 服务端的`7.6.3`版 image
+- `vncless`: 不带 VNC 服务端的`7.6.7`版 image
 - `7.6.3`: 带 VNC 服务端的`7.6.3`版 image
 - `vncless-7.6.3`: 不带 VNC 服务端的`7.6.3`版 image
 - `7.6.7`: 带 VNC 服务端的`7.6.7`版 image

@@ -4,6 +4,7 @@ on: workflow_dispatch
 
 env:
   IMAGE_NAME: hagb/docker-easyconnect
+  ARCHS: mips64le arm64 i386 amd64
 
 jobs:
   build:
@@ -24,25 +25,83 @@ jobs:
         run: |
           docker-build() {
             #docker pull $1
-            docker build -t $1 --build-arg BUILD_ENV=actions "${@:2}"
+            docker buildx build --build-arg BUILD_ENV=actions "$@"
           }
-          pirefix=""
-          latest_name="latest"
-          if [ "$(git branch --show-current)" = develop ]; then prefix=dev- ; latest_name=dev ; fi
+          branch="$(git branch --show-current)"
+          case "$branch" in
+            master) prefix= ;;
+            develop) prefix=dev- ;;
+            *) prefix="$branch"- ;;
+          esac
 
-          docker-build hagb/docker-easyconnect:build -f Dockerfile.build .
+          build() {
+            for ver in 7.6.3 7.6.7; do
+              docker-build --platform "$1" -t hagb/docker-easyconnect:build -f Dockerfile.build $(cat build-args/$ver-"$1".txt) .
+              docker-build --platform "$1" -t ${{ env.IMAGE_NAME }}:${prefix}$ver-"$1" $(cat build-args/$ver-"$1".txt) -f Dockerfile .
+              docker-build --platform "$1" -t ${{ env.IMAGE_NAME }}:${prefix}vncless-$ver-"$1" $(cat build-args/$ver-"$1".txt) -f Dockerfile.vncless .
+            done
 
-          docker-build ${{ env.IMAGE_NAME }}:${prefix}cli -f Dockerfile.cli .
+            if [ amd64 = "$1" ]; then
+              docker-build -t ${{ env.IMAGE_NAME }}:${prefix}cli -f Dockerfile.cli .
+            fi
+          }
 
-          docker-build ${{ env.IMAGE_NAME }}:${prefix}7.6.3 --build-arg EC_URL=$(cat ec_urls/7.6.3.txt) -f Dockerfile .
-          docker-build ${{ env.IMAGE_NAME }}:${prefix}7.6.7 --build-arg EC_URL=$(cat ec_urls/7.6.7.txt) -f Dockerfile .
+          sudo apt-get -y install binfmt-support qemu-user-static
 
-          docker-build ${{ env.IMAGE_NAME }}:${prefix}vncless-7.6.3 --build-arg EC_URL=$(cat ec_urls/7.6.3.txt) -f Dockerfile.vncless .
-          docker-build ${{ env.IMAGE_NAME }}:${prefix}vncless-7.6.7 --build-arg EC_URL=$(cat ec_urls/7.6.7.txt) -f Dockerfile.vncless .
+          for arch in ${{ env.ARCHS }}; do
+            build $arch
+          done
 
-          docker tag ${{ env.IMAGE_NAME }}:${prefix}7.6.3 ${{ env.IMAGE_NAME }}:${latest_name}
           docker image rm hagb/docker-easyconnect:build
 
       - name: Push Docker image
         run: |
+          branch="$(git branch --show-current)"
+          case "$branch" in
+            master)
+              prefix=
+              default=latest
+              ;;
+            develop)
+              prefix=dev-
+              default=dev
+              ;;
+            *)
+              prefix="$branch"-
+              default="$branch"
+              ;;
+          esac
+
+          token="$( curl -sH "Content-Type: application/json" \
+                      -X POST -d "{\"username\": \"${{ secrets.DOCKERHUB_USERNAME }}\", \"password\": \"${{ secrets.DOCKERHUB_TOKEN }}\"}" \
+                      https://hub.docker.com/v2/users/login/ |
+                    jq -r .token )"
+
           docker push --all-tags ${{ env.IMAGE_NAME }}
+
+          for ver in 7.6.3 7.6.7; do
+            for vncless in "" vncless-; do
+              for arch in ${{ env.ARCHS }}; do
+                docker manifest create ${{ env.IMAGE_NAME }}:${prefix}${vncless}${ver} --amend ${{ env.IMAGE_NAME }}:${prefix}${vncless}${ver}-${arch}
+              done
+
+              docker manifest push ${{ env.IMAGE_NAME }}:${prefix}${vncless}${ver}
+
+              if [ 7.6.7 = $ver ]; then
+                if [ -n "$vncless" ]; then
+                  tag=${prefix}vncless
+                else
+                  tag=$default
+                fi
+                for arch in ${{ env.ARCHS }}; do
+                  docker manifest create ${{ env.IMAGE_NAME }}:$tag --amend ${{ env.IMAGE_NAME }}:${prefix}${vncless}${ver}-${arch}
+                done
+                docker manifest push ${{ env.IMAGE_NAME }}:$tag
+              fi
+
+              for arch in ${{ env.ARCHS }}; do
+                curl -sH "Content-Type: application/json" -X DELETE -H "Authorization: JWT $token" \
+                      https://hub.docker.com/v2/repositories/${{ env.IMAGE_NAME }}/tags/${prefix}${vncless}${ver}-${arch}/
+              done
+            done
+          done

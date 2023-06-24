@@ -8,14 +8,10 @@ else
 	busybox unzip -p EasyConnect.zip "${EC_DEB_PATH}" > EasyConnect.deb &&
 	rm EasyConnect.zip
 fi &&
-if is_echost_foreign; then
-	dpkg-deb -R EasyConnect.deb / &&
-	/DEBIAN/postinst &&
-	rm -r /DEBIAN &&
-	extra_bins=EasyMonitor ./build-scripts/mk-qemu-wrapper.sh
-else
-	dpkg -i EasyConnect.deb
-fi &&
+dpkg-deb -R EasyConnect.deb / &&
+/DEBIAN/postinst &&
+rm -r /DEBIAN &&
+extra_bins=EasyMonitor ./build-scripts/mk-qemu-wrapper.sh
 rm EasyConnect.deb &&
 
 rm -f /usr/share/sangfor/EasyConnect/resources/conf/easy_connect.json &&
