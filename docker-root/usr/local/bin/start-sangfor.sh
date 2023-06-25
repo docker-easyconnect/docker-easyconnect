@@ -37,7 +37,7 @@ do
 			fake-hwaddr-run /usr/share/sangfor/EasyConnect/resources/bin/ECAgent
 			kill $!
 		} > >(
-				grep '\[Register\]cms client connect failed|ECDomainFile domain socket connect failed' -Em 1 --line-buffered || break
+				grep '\[Register\]cms client connect failed|ECDomainFile domain socket connect failed' -Em 1 --line-buffered
 				killall -9 svpnservice CSClient
 				# 在某些性能不佳的设备上（尤其是如果使用了 qemu-user 来模拟运行其他架构的 EasyConnect），CSClient 和 svpnservice 启动较慢，
 				# 此时有可能 CSClient 启动完成前 ECAgent 就会等待超时、登录失败，因此启动 CSClient 前先将 ECAgent 休眠（发送 STOP 信号），
