@@ -3,10 +3,14 @@ fake-hwaddr-run() { "$@" ; }
 [ -n "$FAKE_HWADDR" ] && fake-hwaddr-run() { LD_PRELOAD=/usr/local/lib/fake-hwaddr.so "$@" ; }
 [ -z "$_EC_CLI" ] && /usr/share/sangfor/EasyConnect/resources/bin/EasyMonitor
 sleep 1
-RULE_ADD=(-p udp -m udp ! --sport 7789 --destination 127.0.0.1 --dport 53 -j DNAT --to-destination 127.0.0.1:5373)
-RULE_DELETE=(-p udp -m udp ! --sport 7789 --dport 53 -j DNAT --to-destination 127.0.0.1:5373)
+
 while true
 do
+	# 添加额外的dns解析服务
+	if [ -n "$ADD_NAMESERVER" ]; then 
+		echo "nameserver $ADD_NAMESERVER" | tee -a /etc/resolv.conf
+	fi
+
 	if [ -z "$_EC_CLI" ]; then
 		# 在 EasyConnect 前端启动过程中，会出现 cms client connect failed 的报错，此时应该启动 sslservice.sh。但这个脚本启动得太早也会没有作用……
 		# 参考了 https://blog.51cto.com/13226459/2476193 ，在此对作者表示感谢。
@@ -26,21 +30,8 @@ do
 		# service tinyproxy restart
 
 		while pidof svpnservice > /dev/null ; do
-
-			# 解决DNS easyconnect劫持DNS的问题，一秒看一次这个转发规则有没有被修改
-			if [ -n "$ADD_NAMESERVER" ]; then
-				iptables -t nat -C OUTPUT "${RULE_ADD[@]}" 2> /dev/null || iptables -t nat -A OUTPUT "${RULE_ADD[@]}" 2> /dev/null
-				iptables -t nat -C OUTPUT "${RULE_DELETE[@]}" 2> /dev/null && iptables -t nat -D OUTPUT "${RULE_DELETE[@]}" 2> /dev/null
-				grep -qxF "nameserver $ADD_NAMESERVER" /etc/resolv.conf || echo "nameserver $ADD_NAMESERVER" >> /etc/resolv.conf
-			fi
-
 			sleep 1
 		done
-
-		# 清理添加的转发规则
-		if [ -n "$ADD_NAMESERVER" ]; then
-			iptables -t nat -C OUTPUT "${RULE_ADD[@]}" 2> /dev/null && iptables -t nat -D OUTPUT "${RULE_ADD[@]}" 2> /dev/null
-		fi
 
 		echo svpn stop!
 	fi
@@ -69,7 +60,8 @@ do
 
 	# 清除的残余进程，它们可能会妨碍下次的启动。
 	killall CSClient svpnservice 2> /dev/null
-	kill %1 %2 2> /dev/null
+	# 清理jobs中的进程
+	kill $(jobs -p) 2> /dev/null
 	sleep 4
 
 	# 只要杀不死，就往死里杀

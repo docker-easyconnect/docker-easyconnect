@@ -54,7 +54,7 @@
 	```
 	例如 `CLI_OPTS="-d 服务器地址 -u 用户名 -p 密码"` 可实现原登录信息失效时自动登录。
 
-- `ADD_NAMESERVER`: 默认为空，如果指定，将在 `/etc/resolv.conf` 中追加指定的 `nameserver` ，并调整*iptables nat*规则，详见 Hagb/docker-easyconnect#154
+- `ADD_NAMESERVER`: 默认为空，如果指定，将在 `/etc/resolv.conf` 中追加指定**一条**的 `nameserver` (如`114.114.114.114`) ，并调整*iptables nat*规则，详见 Hagb/docker-easyconnect#154
 
 ### 仅适用于图形界面版本的环境变量
 
