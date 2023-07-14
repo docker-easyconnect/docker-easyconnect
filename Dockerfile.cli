@@ -33,7 +33,7 @@ RUN EC_DIR=/usr/share/sangfor/EasyConnect/resources && cd /tmp && \
                /${EC_DIR}/shell/ && \
     chmod +x ${EC_DIR}/shell/* && \
     ln -s ${EC_DIR}/bin/easyconn /usr/local/bin/ && \
-    cp -r easyconn/${EC_DIR}/conf ${EC_DIR}/conf_7.6.8 && rm -r *
+    cp -r easyconn/${EC_DIR}/conf ${EC_DIR}/conf_7.6.8 && rm -r * && echo "EC_CLI" > /etc/vpn-type
 
 ARG EC_763_URL="http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb"
 ARG EC_767_URL="http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_767/EasyConnect_x64_7_6_7_3.deb"
@@ -59,4 +59,4 @@ ENV QEMU_ECAGENT_MEM_LIMIT=256
 
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
-CMD _EC_CLI=1 start.sh
+CMD start.sh

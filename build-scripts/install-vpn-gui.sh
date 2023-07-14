@@ -1,23 +1,34 @@
 #!/bin/bash
+echo "$VPN_TYPE" > /etc/vpn-type &&
 cd /tmp &&
 . ./build-scripts/get-echost-names.sh &&
-if [ -z "${EC_DEB_PATH}" ]; then
-	busybox wget "${EC_URL}" -O EasyConnect.deb
+if [ -z "${VPN_DEB_PATH}" ]; then
+	busybox wget "${VPN_URL}" -O VPN.deb
 else
-	busybox wget "${EC_URL}" -O EasyConnect.zip &&
-	busybox unzip -p EasyConnect.zip "${EC_DEB_PATH}" > EasyConnect.deb &&
-	rm EasyConnect.zip
+	busybox wget "${VPN_URL}" -O VPN.zip &&
+	busybox unzip -p VPN.zip "${VPN_DEB_PATH}" > VPN.deb &&
+	rm VPN.zip
 fi &&
-dpkg-deb -R EasyConnect.deb / &&
-/DEBIAN/postinst &&
-rm -r /DEBIAN &&
-extra_bins=EasyMonitor ./build-scripts/mk-qemu-wrapper.sh
-rm EasyConnect.deb &&
+dpkg-deb -R VPN.deb / &&
+package_name=$(echo $(grep -Po '(?<=Package:).*' /DEBIAN/control)) &&
+{ /DEBIAN/preinst || true ; } &&
+mkdir /var/lib/dpkg/info/$package_name &&
+for file in /DEBIAN/*; do
+	mv $file /var/lib/dpkg/info/$package_name.$(basename $file)
+done &&
+/var/lib/dpkg/info/$package_name.postinst &&
+rm -r /DEBIAN VPN.deb &&
+
+if [ "EC_CLI" != "$VPN_TYPE" -a "EC_GUI" != "$VPN_TYPE" ]; then
+	exit 0
+fi &&
+
+extra_bins=EasyMonitor ./build-scripts/mk-qemu-wrapper.sh &&
 
 rm -f /usr/share/sangfor/EasyConnect/resources/conf/easy_connect.json &&
 mv /usr/share/sangfor/EasyConnect/resources/conf/ /usr/share/sangfor/EasyConnect/resources/conf_backup &&
 
-if ! is_echost_foreign &&  [ ! -z "${USE_EC_ELECTRON}" ] ; then
+if ! is_echost_foreign &&  [ ! -z "${USE_VPN_ELECTRON}" ] ; then
 	exit 0
 fi &&
 

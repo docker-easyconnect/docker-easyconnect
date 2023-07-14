@@ -7,7 +7,7 @@ then
 else
 	iptables_type=legacy
 fi
-echo "$iptables_type" > /usr/share/sangfor/iptables-type
+echo "$iptables_type" > /etc/iptables-type
 
 for exec in /usr/sbin/iptables{-nft,-legacy,}{-save,-restore,}; do
 	ln -fs /usr/sbin/xtables-echook-multi "$exec"

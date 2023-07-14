@@ -1,6 +1,6 @@
 #!/bin/sh
 name="$(basename "$0")"
-iptables_type="$(cat /usr/share/sangfor/iptables-type)"
+iptables_type="$(cat /etc/iptables-type)"
 xtables_multi="xtables-$iptables_type-multi"
 
 [ -z "$ECHACK_NOWARN" ] &&

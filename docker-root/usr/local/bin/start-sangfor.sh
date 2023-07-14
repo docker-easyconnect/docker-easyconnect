@@ -1,4 +1,5 @@
 #!/bin/bash
+eval "$(vpn-config.sh)"
 fake-hwaddr-run() { "$@" ; }
 if [ -n "$FAKE_HWADDR" ]; then
 	fake-hwaddr-run() { LD_PRELOAD=/usr/local/lib/fake-hwaddr.so "$@" ; }
@@ -28,63 +29,28 @@ sleep 1
 
 while true
 do
-	rm -f /usr/share/sangfor/EasyConnect/resources/conf/ECDomainFile
-	if [ -z "$_EC_CLI" ]; then
-		# 在 EasyConnect 前端启动过程中，会出现 cms client connect failed 的报错，此时应该启动 sslservice.sh。但这个脚本启动得太早也会没有作用。
-		# (来自 https://blog.51cto.com/13226459/2476193 的线索，感谢文章作者)
-		# 进一步研究发现此时应启动 svpnservice 和 CSClient 两个程序
-		{
-			fake-hwaddr-run /usr/share/sangfor/EasyConnect/resources/bin/ECAgent
-			kill $!
-		} > >(
-				grep '\[Register\]cms client connect failed|ECDomainFile domain socket connect failed' -Em 1 --line-buffered
-				killall -9 svpnservice CSClient
-				# 在某些性能不佳的设备上（尤其是如果使用了 qemu-user 来模拟运行其他架构的 EasyConnect），CSClient 和 svpnservice 启动较慢，
-				# 此时有可能 CSClient 启动完成前 ECAgent 就会等待超时、登录失败，因此启动 CSClient 前先将 ECAgent 休眠（发送 STOP 信号），
-				# CSClient 启动完成（以 fifo 文件 ECDomainFile 存在为标志）后再解除 ECAgent 休眠（发送 CONT 信号）
-				killall -STOP ECAgent
-				fake-hwaddr-run /usr/share/sangfor/EasyConnect/resources/bin/svpnservice -h /usr/share/sangfor/EasyConnect/resources &
-				fake-hwaddr-run /usr/share/sangfor/EasyConnect/resources/bin/CSClient &
-				wait
-				until [ -e /usr/share/sangfor/EasyConnect/resources/conf/ECDomainFile ]; do
-					sleep 0.1
-				done
-				killall -CONT ECAgent
-				exec cat >/dev/null
-			) &
+	vpn_daemon
+	vpn_ui
 
-		# 下面这行代码启动 EasyConnect 的前端。
-		LD_LIBRARY_PATH="/usr/share/sangfor/EasyConnect/:${LD_LIBRARY_PATH}" /usr/share/sangfor/EasyConnect/EasyConnect --enable-transparent-visuals --disable-gpu
-	else
-		fake-hwaddr-run /usr/share/sangfor/EasyConnect/resources/bin/ECAgent &
-		sleep 1
-		fake-hwaddr-run easyconn login -t autologin
-		pidof svpnservice > /dev/null || bash -c "exec easyconn login $CLI_OPTS"
-		# # 重启一下 tinyproxy
-		# service tinyproxy restart
-		while pidof svpnservice > /dev/null ; do
-		       sleep 1
-		done
-		echo svpn stop!
-	fi
 	[ -n "$MAX_RETRY" ] && ((MAX_RETRY--))
 
-  LOCK_FILE="/tmp/EXIT_LOCK"
+	LOCK_FILE="/tmp/EXIT_LOCK"
+
 	# 等待后端服务结束
-  [ -n "$EXIT_LOCK" ] && touch "$LOCK_FILE" && {
-      printf "\n\n\n当前前端服务已退出, 由于EXIT_LOCK设置, 暂不执行重启. 执行重启请执行:\n\ndocker exec -it %s rm -f %s\n\n" "$HOSTNAME" "$LOCK_FILE"
-      echo "等待中"
-      while :
-      do
-        sleep 1
-        echo -e '\e[1A\e[K等待中.'
-        sleep 1
-        echo -e '\e[1A\e[K等待中..'
-        sleep 1
-        echo -e '\e[1A\e[K等待中...'
-        [ ! -e "$LOCK_FILE" ] && break
-      done
-  }
+	[ -n "$EXIT_LOCK" ] && touch "$LOCK_FILE" && {
+		printf "\n\n\n当前前端服务已退出, 由于EXIT_LOCK设置, 暂不执行重启. 执行重启请执行:\n\ndocker exec -it %s rm -f %s\n\n" "$HOSTNAME" "$LOCK_FILE"
+		echo "等待中"
+		while :
+		do
+			sleep 1
+			echo -e '\e[1A\e[K等待中.'
+			sleep 1
+			echo -e '\e[1A\e[K等待中..'
+			sleep 1
+			echo -e '\e[1A\e[K等待中...'
+			[ ! -e "$LOCK_FILE" ] && break
+		done
+	}
 
 	# 自动重连
 	((MAX_RETRY<0)) && exit

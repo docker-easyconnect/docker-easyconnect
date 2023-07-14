@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim
 
-ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST
+ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST VPN_TYPE=EC_GUI
 
 COPY ["./build-scripts/config-apt.sh", "./build-scripts/get-echost-names.sh",  "./build-scripts/add-qemu.sh", \
       "/tmp/build-scripts/"]
@@ -18,11 +18,11 @@ RUN . /tmp/build-scripts/config-apt.sh && \
 
 RUN groupadd -r socks && useradd -r -g socks socks
 
-COPY ["./build-scripts/install-ec-gui.sh", "./build-scripts/mk-qemu-wrapper.sh", "/tmp/build-scripts/"]
+COPY ["./build-scripts/install-vpn-gui.sh", "./build-scripts/mk-qemu-wrapper.sh", "/tmp/build-scripts/"]
 
-ARG EC_URL ELECTRON_URL USE_EC_ELECTRON EC_DEB_PATH
+ARG VPN_URL ELECTRON_URL USE_VPN_ELECTRON VPN_DEB_PATH
 
-RUN /tmp/build-scripts/install-ec-gui.sh
+RUN /tmp/build-scripts/install-vpn-gui.sh
 
 COPY ./docker-root /
 
@@ -36,4 +36,4 @@ ENV QEMU_ECAGENT_MEM_LIMIT=256
 
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
-CMD ["start.sh"]
+CMD start.sh
