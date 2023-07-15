@@ -1,0 +1,35 @@
+#!/bin/sh
+if [ ! -e /home/sangfor ]; then
+	useradd sangfor --home-dir /home/sangfor --uid 1234 -m
+fi
+if [ "$*" = "--no-legend list-sessions" ]; then
+        echo 10644 1234 sangfor seat0
+        exit 0
+fi
+if [ "$1" = show-session ]; then
+	echo "Id=10644
+User=1234
+Name=sangfor
+Timestamp=Mon 2023-03-06 14:52:44 CST
+TimestampMonotonic=1097012996679
+VTNr=7
+Seat=seat0
+Display=:1
+Remote=no
+Service=sddm
+Desktop=KDE
+Scope=session-10644.scope
+Leader=2268286
+Audit=10644
+Type=x11
+Class=user
+Active=yes
+State=active
+IdleHint=no
+IdleSinceHint=0
+IdleSinceHintMonotonic=0
+LockedHint=no"
+        exit 0
+fi
+exit 1
+

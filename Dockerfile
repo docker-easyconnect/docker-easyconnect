@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim
 
-ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST VPN_TYPE=EC_GUI
+ARG ANDROID_PATCH MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST VPN_TYPE=EC_GUI
 
 COPY ["./build-scripts/config-apt.sh", "./build-scripts/get-echost-names.sh",  "./build-scripts/add-qemu.sh", \
       "/tmp/build-scripts/"]
@@ -9,11 +9,17 @@ RUN . /tmp/build-scripts/config-apt.sh && \
     . /tmp/build-scripts/get-echost-names.sh && \
     . /tmp/build-scripts/add-qemu.sh && \
     apt-get update && \
+    if [ "ATRUST" = "$VPN_TYPE" ]; then \
+        extra_pkgs="libssl1.1 libatk-bridge2.0-0 libgtk-3-0 libgbm1 libqt5x11extras5 \
+                    libqt5core5a libqt5network5 libqt5widgets5 libldap-2.4-2"; \
+    else \
+        extra_pkgs="libgtk2.0-0 libdbus-glib-1-2 libgconf-2-4"; \
+    fi && \
     apt-get install -y --no-install-recommends --no-install-suggests \
-        libgtk2.0-0 libx11-xcb1 libxtst6 libnss3 libasound2 libdbus-glib-1-2 iptables xclip\
+        libx11-xcb1 libnss3 libasound2 iptables xclip libxtst6 \
         dante-server tigervnc-standalone-server tigervnc-tools psmisc flwm x11-utils \
-        busybox libssl-dev iproute2 tinyproxy-bin libxss1 libgconf-2-4 ca-certificates \
-        fonts-wqy-microhei $qemu_pkgs socat && \
+        busybox libssl-dev iproute2 tinyproxy-bin libxss1 ca-certificates \
+        fonts-wqy-microhei socat $qemu_pkgs $extra_pkgs && \
     rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -r socks && useradd -r -g socks socks

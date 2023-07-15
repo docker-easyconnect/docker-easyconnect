@@ -1,0 +1,1 @@
+--build-arg VPN_URL=https://download.sangfor.com.cn/download/product/atrust/2.2.16/uos/aTrustInstaller_arm64.zip --build-arg VPN_DEB_PATH=aTrustInstaller_arm64.deb --build-arg VPN_TYPE=ATRUST

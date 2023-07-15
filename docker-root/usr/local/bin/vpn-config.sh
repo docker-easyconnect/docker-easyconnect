@@ -59,6 +59,22 @@ case "$_VPN_TYPE" in
 			}'
 		fi
 		;;
+	ATRUST )
+		echo '
+		VPN_ROOT=$SANGFOR_ROOT/aTrust
+		VPN_RESOURCES=$VPN_ROOT/resources
+		VPN_BIN=$VPN_RESOURCES/bin
+		VPN_CONF=$VPN_RESOURCES/conf
+		VPN_UI=$VPN_ROOT/aTrustTray
+		VPN_TUN=utun7
+		FORCE_OPEN_PORTS=54631
+		vpn_daemon() {
+			fake-hwaddr-run $VPN_BIN/aTrustAgent --plugin plugin-daemon --plugin-cmd \| >/dev/null &
+		}
+		vpn_ui() {
+			$VPN_UI --no-sandbox
+		}'
+		;;
 	* )
 		echo "ERROR: Unknown _VPN_TYPE: $_VPN_TYPE" >&2
 		;;
