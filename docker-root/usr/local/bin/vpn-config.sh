@@ -2,7 +2,7 @@
 _VPN_TYPE="$(cat /etc/vpn-type)"
 echo "_VPN_TYPE=$_VPN_TYPE"
 echo 'SANGFOR_ROOT=/usr/share/sangfor'
-export VPN_ROOT VPN_RESOURCES VPN_BIN VPN_CONF VPN_TUN FORCE_OPEN_PORTS VPN_UI
+export VPN_ROOT VPN_RESOURCES VPN_BIN VPN_CONF VPN_TUN FORCE_OPEN_PORTS VPN_UI VPN_PROGS
 case "$_VPN_TYPE" in
 	"EC_GUI" | "EC_CLI" )
 		echo '
@@ -11,6 +11,7 @@ case "$_VPN_TYPE" in
 		VPN_BIN=$VPN_RESOURCES/bin
 		VPN_CONF=$VPN_RESOURCES/conf
 		VPN_TUN=tun0
+		VPN_PROCS="CSClient svpnservice ECAgent"
 		FORCE_OPEN_PORTS=54530
 		vpn_daemon() {
 			rm -f "$VPN_CONF/ECDomainFile"
@@ -68,6 +69,7 @@ case "$_VPN_TYPE" in
 		VPN_UI=$VPN_ROOT/aTrustTray
 		VPN_TUN=utun7
 		FORCE_OPEN_PORTS=54631
+		VPN_PROCS=aTrustAgent
 		vpn_daemon() {
 			fake-hwaddr-run $VPN_BIN/aTrustAgent --plugin plugin-daemon --plugin-cmd \| >/dev/null &
 		}
