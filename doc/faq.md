@@ -44,3 +44,6 @@ sudo modprobe tun
 
 在 docker 命令行内临时删去设置`EXIT`环境变量的`-e EXIT=`参数（如果有），在弹窗发生后点击`OK`，使客户端重启，重启后问题消失。
 
+## 在 arm64、mips64el 架构上 EasyConnect 无法导入证书
+
+将 `.p12` 后缀的证书文件拷贝到容器的 `/usr/share/sangfor/EasyConnect/resources/user_cert/` 目录。
