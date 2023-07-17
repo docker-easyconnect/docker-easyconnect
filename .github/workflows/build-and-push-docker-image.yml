@@ -3,8 +3,10 @@ name: Build And Push Docker Image
 on: workflow_dispatch
 
 env:
-  IMAGE_NAME: hagb/docker-easyconnect
+  EC_IMAGE_NAME: hagb/docker-easyconnect
+  ATRUST_IMAGE_NAME: hagb/docker-atrust
   ARCHS: mips64le arm64 i386 amd64
+  ATRUST_ARCHS: mips64le arm64 amd64
 
 jobs:
   build:
@@ -36,13 +38,18 @@ jobs:
 
           build() {
             for ver in 7.6.3 7.6.7; do
-              docker-build --platform "$1" -t hagb/docker-easyconnect:build -f Dockerfile.build $(cat build-args/$ver-"$1".txt) .
-              docker-build --platform "$1" -t ${{ env.IMAGE_NAME }}:${prefix}$ver-"$1" $(cat build-args/$ver-"$1".txt) -f Dockerfile .
-              docker-build --platform "$1" -t ${{ env.IMAGE_NAME }}:${prefix}vncless-$ver-"$1" $(cat build-args/$ver-"$1".txt) -f Dockerfile.vncless .
+              docker-build --platform "$1" -t hagb/docker-easyconnect:build $(cat build-args/$ver-"$1".txt) -f Dockerfile.build .
+              docker-build --platform "$1" -t ${{ env.EC_IMAGE_NAME }}:${prefix}$ver-"$1" $(cat build-args/$ver-"$1".txt) -f Dockerfile .
+              docker-build --platform "$1" -t ${{ env.EC_IMAGE_NAME }}:${prefix}vncless-$ver-"$1" $(cat build-args/$ver-"$1".txt) -f Dockerfile.vncless .
             done
 
+            if [ -e build-args/atrust-"$1".txt ]; then
+              docker-build --platform "$1" -t hagb/docker-easyconnect:build $(cat build-args/atrust-"$1".txt) -f Dockerfile.build .
+              docker-build --platform "$1" -t ${{ env.ATRUST_IMAGE_NAME }}:${prefix}"$1" $(cat build-args/atrust-"$1".txt) -f Dockerfile .
+            fi
+
             if [ amd64 = "$1" ]; then
-              docker-build -t ${{ env.IMAGE_NAME }}:${prefix}cli -f Dockerfile.cli .
+              docker-build -t ${{ env.EC_IMAGE_NAME }}:${prefix}cli -f Dockerfile.cli .
             fi
           }
 
@@ -76,16 +83,21 @@ jobs:
                       -X POST -d "{\"username\": \"${{ secrets.DOCKERHUB_USERNAME }}\", \"password\": \"${{ secrets.DOCKERHUB_TOKEN }}\"}" \
                       https://hub.docker.com/v2/users/login/ |
                     jq -r .token )"
+          delete_tag() {
+              curl -sH "Content-Type: application/json" -X DELETE -H "Authorization: JWT $token" \
+                    https://hub.docker.com/v2/repositories/$1/tags/$2/
+          }
 
-          docker push --all-tags ${{ env.IMAGE_NAME }}
+          docker push --all-tags ${{ env.EC_IMAGE_NAME }}
+          docker push --all-tags ${{ env.ATRUST_IMAGE_NAME }}
 
           for ver in 7.6.3 7.6.7; do
             for vncless in "" vncless-; do
               for arch in ${{ env.ARCHS }}; do
-                docker manifest create ${{ env.IMAGE_NAME }}:${prefix}${vncless}${ver} --amend ${{ env.IMAGE_NAME }}:${prefix}${vncless}${ver}-${arch}
+                docker manifest create ${{ env.EC_IMAGE_NAME }}:${prefix}${vncless}${ver} --amend ${{ env.EC_IMAGE_NAME }}:${prefix}${vncless}${ver}-${arch}
               done
 
-              docker manifest push ${{ env.IMAGE_NAME }}:${prefix}${vncless}${ver}
+              docker manifest push ${{ env.EC_IMAGE_NAME }}:${prefix}${vncless}${ver}
 
               if [ 7.6.7 = $ver ]; then
                 if [ -n "$vncless" ]; then
@@ -94,14 +106,23 @@ jobs:
                   tag=$default
                 fi
                 for arch in ${{ env.ARCHS }}; do
-                  docker manifest create ${{ env.IMAGE_NAME }}:$tag --amend ${{ env.IMAGE_NAME }}:${prefix}${vncless}${ver}-${arch}
+                  docker manifest create ${{ env.EC_IMAGE_NAME }}:$tag --amend ${{ env.EC_IMAGE_NAME }}:${prefix}${vncless}${ver}-${arch}
                 done
-                docker manifest push ${{ env.IMAGE_NAME }}:$tag
+                docker manifest push ${{ env.EC_IMAGE_NAME }}:$tag
               fi
 
               for arch in ${{ env.ARCHS }}; do
-                curl -sH "Content-Type: application/json" -X DELETE -H "Authorization: JWT $token" \
-                      https://hub.docker.com/v2/repositories/${{ env.IMAGE_NAME }}/tags/${prefix}${vncless}${ver}-${arch}/
+                delete_tag ${{ env.EC_IMAGE_NAME }} ${prefix}${vncless}${ver}-${arch}
               done
             done
+          done
+
+          for arch in ${{ env.ARCHS }}; do
+            [ ! -e build-args/atrust-"$1".txt ] || docker manifest create ${{ env.ATRUST_IMAGE_NAME }}:${prefix} --amend ${{ env.ATRUST_IMAGE_NAME }}:${prefix}${arch}
+          done
+
+          docker manifest push ${{ env.ATRUST_IMAGE_NAME }}:${prefix}
+
+          for arch in ${{ env.ARCHS }}; do
+            [ ! -e build-args/atrust-"$1".txt ] || delete_tag ${{ env.ATRUST_IMAGE_NAME }} ${prefix}${arch}
           done
