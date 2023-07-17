@@ -20,7 +20,7 @@ docker run --cap-add NET_ADMIN --device /dev/net/tun -e CHECK_SYSTEM_ONLY=1 hagb
 
 若出现报错 `Failed to operate tun device! Please check whether /dev/net/tun is available`，参看[下一个问题](#启动容器时输出-docker-error-response-from-daemon-error-gathering-device-information-while-adding-custom-device-devnettun-no-such-file-or-directory)，依然无法解决请提交 [issue](https://github.com/Hagb/docker-easyconnect/issues) 进行反馈。
 
-## 启动容器时输出 `docker: Error response from daemon: error gathering device information while adding custom device "/dev/net/tun": no such file or directory.`
+## 启动容器时输出 `docker: Error response from daemon: error gathering device information while adding custom device "/dev/net/tun": no such file or directory.` 或 `Failed to create tun device!`
 
 请确保 `tun` 模块编译进内核或加载为内核模块。
 

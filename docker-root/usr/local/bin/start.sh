@@ -1,9 +1,7 @@
 #!/bin/bash
-[ -n "$CHECK_SYSTEM_ONLY" ] && detect-tun.sh
 eval "$(detect-iptables.sh)"
 eval "$(detect-route.sh)"
 eval "$(vpn-config.sh)"
-[ -n "$CHECK_SYSTEM_ONLY" ] && exit
 
 if [ -n "$FORWARD" ]; then
 	if iptables -t mangle -A PREROUTING -m addrtype --dst-type LOCAL -j MARK --set-mark 2; then
@@ -55,16 +53,19 @@ done
 externals="${externals}external: $VPN_TUN\\n"
 sed /^internal:/c"$internals" -i /run/danted.conf
 sed /^external:/c"$externals" -i /run/danted.conf
-# 在虚拟网络接口 tun 打开时运行 danted 代理服务器
 open_port 1080
-[ -n "$NODANTED" ] || while true; do
-	sleep 5
-	[ -d /sys/class/net/$VPN_TUN ] && {
-		chmod a+w /tmp
-		/usr/sbin/danted -f /run/danted.conf
-		echo ping!
-	}
-done &
+if ip tuntap add mode tun $VPN_TUN; then
+	# eth0 need >1s to be ready
+	# refer to https://stackoverflow.com/questions/25226531/dante-sever-fail-to-bind-ip-by-interface-name-in-docker-container
+	ip addr add 10.0.0.1/32 dev $VPN_TUN
+	sleep 2
+	/usr/sbin/danted -D -f /run/danted.conf
+	ip tuntap del mode tun $VPN_TUN
+else
+	echo 'Failed to create tun device! Please check whether /dev/net/tun is available.' >&2
+	echo 'Also refer to https://github.com/Hagb/docker-easyconnect/blob/master/doc/faq.md.' >&2
+	exit 1
+fi
 
 open_port 8888
 tinyproxy -c /etc/tinyproxy.conf
