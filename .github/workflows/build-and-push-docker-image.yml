@@ -46,6 +46,7 @@ jobs:
             if [ -e build-args/atrust-"$1".txt ]; then
               docker-build --platform "$1" -t hagb/docker-easyconnect:build $(cat build-args/atrust-"$1".txt) -f Dockerfile.build .
               docker-build --platform "$1" -t ${{ env.ATRUST_IMAGE_NAME }}:${prefix}"$1" $(cat build-args/atrust-"$1".txt) -f Dockerfile .
+              docker-build --platform "$1" -t ${{ env.ATRUST_IMAGE_NAME }}:${prefix}vncless-"$1" $(cat build-args/atrust-"$1".txt) -f Dockerfile.vncless .
             fi
 
             if [ amd64 = "$1" ]; then
@@ -117,12 +118,16 @@ jobs:
             done
           done
 
-          for arch in ${{ env.ARCHS }}; do
-            [ ! -e build-args/atrust-"$1".txt ] || docker manifest create ${{ env.ATRUST_IMAGE_NAME }}:${prefix} --amend ${{ env.ATRUST_IMAGE_NAME }}:${prefix}${arch}
-          done
+          for vneless_suffix in "" -vncless; do
+            for arch in ${{ env.ARCHS }}; do
+              if [ -e build-args/atrust-"$1".txt ]; then
+                docker manifest create ${{ env.ATRUST_IMAGE_NAME }}:${default}${vncless_suffix} --amend ${{ env.ATRUST_IMAGE_NAME }}:${default}${vncless_suffix}-${arch}
+              fi
+            done
 
-          docker manifest push ${{ env.ATRUST_IMAGE_NAME }}:${prefix}
+            docker manifest push ${{ env.ATRUST_IMAGE_NAME }}:${default}${vncless_suffix}
 
-          for arch in ${{ env.ARCHS }}; do
-            [ ! -e build-args/atrust-"$1".txt ] || delete_tag ${{ env.ATRUST_IMAGE_NAME }} ${prefix}${arch}
+            for arch in ${{ env.ARCHS }}; do
+              [ ! -e build-args/atrust-"$1".txt ] || delete_tag ${{ env.ATRUST_IMAGE_NAME }} ${default}${vncless_suffix}-${arch}
+            done
           done
