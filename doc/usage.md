@@ -1,6 +1,6 @@
 # 用法
 
-**启动参数里的`--device /dev/net/tun --cap-add NET_ADMIN`是不可少的。** 因为 EasyConnect 要创建虚拟网络设备`tun0`。
+**启动参数里的`--device /dev/net/tun --cap-add NET_ADMIN`是不可少的。** 因为 VPN 要创建 tun 网络接口。
 
 ## 环境变量
 
@@ -12,7 +12,7 @@
 
 - `EXIT_LOCK`: 默认为空，此时前端退出后会自动重连。不为空时， 前端退出后不自动重启，循环等待锁释放，当锁文件被删除后才会执行到下一步。
 
-- `FAKE_HWADDR`: 默认为空，向 EasyConnect 提供的固定网卡 MAC 地址。Podman 在非 root 权限下无法固定虚拟网卡的 MAC 地址，为了防止每次启动容器都要重新提交硬件 ID，可设置该环境变量为某一 MAC 地址（建议使用 podman 先前启动时随机生成的地址或已提交的 MAC 地址），劫持 EasyConnect 使其获取到该固定地址。Docker 默认的情况下 MAC 地址即固定，root 环境下的 podman 可以直接使用 `--mac-address` 参数设置，无需使用 `FAKE_HWADDR`。
+- `FAKE_HWADDR`: 默认为空，向 VPN 提供的固定网卡 MAC 地址。Podman 在非 root 权限下无法固定虚拟网卡的 MAC 地址，为了防止每次启动容器都要重新提交硬件 ID，可设置该环境变量为某一 MAC 地址（建议使用 podman 先前启动时随机生成的地址或已提交的 MAC 地址），劫持 VPN 使其获取到该固定地址。Docker 默认的情况下 MAC 地址即固定，root 环境下的 podman 可以直接使用 `--mac-address` 参数设置，无需使用 `FAKE_HWADDR`。
 
 - `FORWARD`: 默认为空，用于将 vpn 服务端一侧对客户端虚拟 ip 发起的访问转发到客户端侧的 ip，格式如下（以下所有 ip 均为 ipv4 ip）：
 
@@ -58,33 +58,33 @@
 
 ### 仅适用于图形界面版本的环境变量
 
-- `DISPLAY`: `$TYPE`为`x11`或使用无 vnc 的 image 时通过该变量来显示 EasyConnect 界面。
+- `DISPLAY`: `$TYPE`为`x11`或使用无 vnc 的 image 时通过该变量来显示图像界面。
 
 - `ECPASSWORD`: 默认为空，使用 vnc 时用于将密码放入粘帖板，应对密码复杂且无法保存的情况 (eg: 需要短信验证登录)。
 
 - `PASSWORD`: 用于设置 vnc 服务的密码，该变量的值默认为空字符串，表示密码不作改变。变量不为空时，密码（应小于或等于 8 位）就会被更新到变量的值。默认密码是`password`.
 
-- `TYPE`（仅适用于带 vnc 的 image）: 如何显示 EasyConnect 前端（目前没有找到纯 cli 的办法）。有以下两种选项:
+- `TYPE`（仅适用于非 `vncless` 的图形界面镜像）: 如何显示图形界面。有以下两种选项:
 
-	- `x11`或`X11`: 将直接通过`DISPLAY`环境变量的值显示 EasyConnect 前端，请同时设置`DISPLAY`环境变量。
+	- `x11`或`X11`: 将直接通过`DISPLAY`环境变量的值显示前端，请同时设置`DISPLAY`环境变量。
 
-	- 其它任何值（默认值）: 将在`5901`端口开放 vnc 服务以操作 EasyConnect 前端。
+	- 其它任何值（默认值）: 将在`5901`端口开放 vnc 服务以操作前端。
 
-- `URLWIN`: 默认为空，此时当 EasyConnect 想要调用浏览器时，不会弹窗，若该变量设为任何非空值，则会弹出一个包含链接文本框。
+- `URLWIN`: 默认为空，此时当 VPN 前端想要调用浏览器时，不会弹窗，若该变量设为任何非空值，则会弹出一个包含链接的对话框供用户复制。
 
-- `USE_NOVNC`: 默认为空，不为空时将启动easy-novnc，端口为8080， 可用-p参数转发。
+- `USE_NOVNC`: 默认为空，不为空时将启动 noVNC 服务，可供用户在浏览器中访问 VPN 的图形界面，端口为 8080， 可用 -p 参数转发。
 
 - `VNC_SIZE`: 默认为空，为空时 VNC 服务分辨率为 `1110x620`（7.6.7 版 EasyConnect 登录后的默认窗口尺寸），可设置为自定义的 VNC 分辨率。
 
 ## 服务说明
 
-### Socks5
+### 代理服务
 
-EasyConnect 创建 `tun0` 后，Socks5 代理会在容器的 `1080` 端口开启。这可用 `-p` 参数转发到 `127.0.0.1` 上。将 `NODANTED` 设为非空值可关闭此功能。
+VPM 登录后，socks5 和 http 代理会分别在容器的 `1080` 和 `8888` 端口开启。这可用 `-p` 参数转发到 `127.0.0.1` 上。
 
 ### ip forward
 
-默认开启。可供宿主机通过路由表（将容器地址作为下一跳路由）来设置透明代理，mtu 应与容器内的 `tun0` 保持一致（可通过 `docker exec 容器名 cat /sys/class/net/tun0/mtu` 来获取，一般为 1400）。
+默认开启。可供宿主机通过路由表（将容器地址作为下一跳路由）来设置透明代理，mtu 应与容器内的 `tun0`（EasyConnect）或 `utun7`（aTrust）网络接口保持一致。可通过 `docker exec 容器名 cat /sys/class/net/接口名/mtu` 来获取，一般为 1400（EasyConnect）或 1500（aTrust）。
 
 如：
 
@@ -104,15 +104,15 @@ ip rule add iif lo table 3
 
 带 VNC 的版本中，环境变量 `USE_NOVNC` 不留空会在 `8080` 端口开启 noVNC 的web服务。
 
-### 处理 EasyConnect 的浏览器弹窗（仅限图形界面版）
+### 处理浏览器弹窗（仅限图形界面版）
 
 处理成将链接（追加）写入`/root/open-urls`，如果设置了 `URLWIN` 环境变量为非空值，还会弹出一个包含链接的文本框。
 
 ### X11 socket（仅限图形界面版）
 
-可以直接使用宿主机的界面来显示 EasyConnect 前端。
+可以直接使用宿主机的界面来显示前端。
 
-容器启动参数中需加入 `-v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/.Xauthority:/root/.Xauthority -e TYPE=x11 -e DISPLAY=$DISPLAY`，且 X 服务器需设置允许容器的连入（如通过命令 `xhost +LOCAL:`）。
+容器启动参数中需加入 `-v /tmp/.X11-unix:/tmp/.X11-unix -v ${XAUTHORITY:-~/.Xauthority}:/root/.Xauthority -e TYPE=x11 -e DISPLAY=$DISPLAY`，且 X 服务器需设置允许 root 用户的连入（如通过命令 `xhost +LOCAL:root`）。
 
 ### 配置、登录信息持久化
 
@@ -121,15 +121,27 @@ ip rule add iif lo table 3
 用 `-v` 参数将宿主机的登录信息**文件**（请确定该文件已存在）挂载到容器的 `/root/.easyconn`，如 `-v $HOME/.easyconn:/root/.easyconn`。
 
 #### 图形界面版
+
 只需要用 `-v` 参数将宿主机的目录挂载到容器的 `/root`。
 
 如 `-v $HOME/.ecdata:/root`。
 
-更换 EasyConnect 版本需要清空其中的 `conf` 目录。
+### web 登录
 
-### EasyConnect web 登录
+将容器的 `54530`（EasyConnect）或 `54631`（aTrust） 端口映射到宿主机（加入 `-p 127.0.0.1:端口号:端口号` 参数），之后便可以在宿主机上打开 VPN 服务器的网页进行登录。
 
-将容器的 `54530` 端口映射到宿主机（加入 `-p 127.0.0.1:54530:54530` 参数），之后便可以在宿主机上打开 VPN 服务器的网页进行登录而无需使用 X11 或 VNC（需要提前在相应浏览器打开 `https://127.0.0.1:54530` 并选择忽略证书错误——此处 EasyConnect 使用了一份自签证书）。
+这种登录方式可以在不使用 X11 或 VNC 的情况下登录 VPN。
+
+注意，EasyConnect web 登录需要提前在相应浏览器打开 `https://127.0.0.1:54530` 并选择忽略证书错误——此处 EasyConnect 使用了一份自签证书；aTrust 则无此类问题。
+
+
+## EasyConnect 版本选择
+
+`7.6.3`：适用于连接 <7.6.7 版本的 EasyConnect 服务端。
+
+`7.6.7`：适用于连接 >= 7.6.7 版本的 EasyConnect 服务端。
+
+`cli`：适用于所有版本的 EasyConnect 服务端，但只能使用用户名、密码来登录。
 
 ## 用例
 

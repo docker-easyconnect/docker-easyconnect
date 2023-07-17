@@ -1,53 +1,43 @@
 # docker-easyconnect
 
-让深信服开发的**非自由**的 EasyConnect 代理软件运行在 docker 中，并开放 Socks5 供宿主机连接以使用代理。（此外亦可通过 [ip forward 的方式](doc/usage.md#ip-forward) 来使用）
+让深信服开发的**非自由**的 VPN 软件 EasyConnect 或 aTrust 运行在 docker 中，提供 [socks5 和 http 代理](doc/usage.md#代理服务)服务和[网关](doc/usage.md#ip-forward)供宿主机连接使用。
 
-本项目基于 EasyConnect 官方“Linux”版的 deb 包以及 [@shmille](https://github.com/shmilee) 提供的[命令行版客户端 deb 包](https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb)。
+本项目基于 EasyConnect 官方“Linux”版的 deb 包、[@shmille](https://github.com/shmilee) 提供的[命令行版客户端 deb 包](https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb)、aTrust 官方“Linux”版 deb 包，这些 deb 包的版权归深信服（Sangfor）所有，请不要滥用本项目。本项目**不是**深信服官方项目。
 
-另有 [@shmilee](https://github.com/shmilee) 的 [easyconnect-in-docker 方案](https://github.com/shmilee/scripts/tree/master/easyconnect-in-docker)（另见 [#35](https://github.com/Hagb/docker-easyconnect/issues/35)）实现了多 EasyConnect 版本共用容器，其中还有另一个[纯 cli 版本的容器](https://github.com/shmilee/scripts/tree/master/easyconnect-in-docker/only-cli)。
-
-望批评、指正。欢迎提交 issue、PR，包括但不仅限于 bug、各种疑问、代码和文档的改进。
+欢迎批评、指正，提交 issue、PR，包括但不仅限于 bug、各种疑问、代码和文档的改进。
 
 详细用法见于 [doc/usage.md](doc/usage.md)，常见问题见于 [doc/faq.md](doc/faq.md)，自行构建可参照构建说明 [doc/build.md](doc/build.md)。
 
 ## 简明使用步骤
 
-### 纯命令行版
+使用下述方式登录后，可以通过 `127.0.0.1:1080`、`127.0.0.1:8888` 分别访问 [socks5 和 http 代理](doc/usage.md#代理服务)。
+
+### 纯命令行版 EasyConnect（amd64 架构）
+
+注意，纯命令行版本仅支持下列登录方式：用户名+密码、硬件特征码。
 
 1. [安装Docker并运行](https://docs.docker.com/get-docker/)；
 2.  在终端输入：
 	``` bash
 	docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -p 127.0.0.1:1080:1080 -p 127.0.0.1:8888:8888 -e EC_VER=7.6.3 -e CLI_OPTS="-d vpnaddress -u username -p password" hagb/docker-easyconnect:cli
 	```
-	其中 `-e EC_VER=7.6.7` 表示使用 `7.6.7` 版本的 EasyConnect，请根据实际情况修改版本号（选择 `7.6.7` 或 `7.6.3`）；
-3. 根据提示输入服务器地址、登录凭据；
-4. 浏览器（或其他支持的应用）可配置socks5代理（可以通过插件配置），地址 `127.0.0.1`, 端口 `1080`；也可以使用 http 代理，地址 `127.0.0.1`, 端口 `8888`。
-5. 如需为 socks5 设置密码，可在 `docker run` 命令后追加 `-e SOCKS_USER="youruser" -e SOCKS_PASSWD="thepassword"`。
+	其中 `-e EC_VER=7.6.7` 表示使用 `7.6.7` 版本的 EasyConnect，请根据实际情况修改版本号（选择 `7.6.7` 或 `7.6.3`，详见 [EasyConnect 版本选择](doc/usage.md#easyconnect-版本选择)）；
+3. 根据提示输入服务器地址、登录凭据。
 
-### 图形界面版
+### 图形界面版 EasyConnect（x86、amd64、arm64、mips64el 架构）
 
 1. [安装Docker并运行](https://docs.docker.com/get-docker/)；
-2. 在终端输入： `docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 -p 127.0.0.1:8888:8888 hagb/docker-easyconnect:7.6.7`（末尾 EasyConnect 版本号 `7.6.7` 请根据实际情况修改）；
-3. 使用vnc客户端连接vnc， 地址：127.0.0.1, 端口: 5901, 密码 xxxx ;
-4. 成功连上后你应该能看到easyconnect的登录窗口，填写并登录easyconnect；
-5. 浏览器（或其他支持的应用）可配置socks5代理（可以通过插件配置），地址 `127.0.0.1`, 端口 `1080`；也可以使用 http 代理，地址 `127.0.0.1`, 端口 `8888`。
+2. 在终端输入： `docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -e URLWIN=1 -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 -p 127.0.0.1:8888:8888 hagb/docker-easyconnect:7.6.7`（末尾 EasyConnect 版本号 `7.6.7` 请根据实际情况修改；arm64 和 mips64el 架构需要加入 `-e DISABLE_PKG_VERSION_XML=1` 参数）；
+3. 使用vnc客户端连接vnc， 地址：`127.0.0.1`，端口: 5901, 密码 xxxx；
+4. 成功连上后你应该能看到 EasyConnect 的登录窗口，填写登录凭据并登录，若需要 web 登录可参看 [web 登录](doc/usage.md#web-登录)。
 
+### 图形界面版 aTrust（amd64、arm64、mips64el 架构）
 
-**注意：如果你要将系统代理设置为127.0.0.1:1080而不是单独配置浏览器，请保证docker engine本身不会通过系统代理联网。**
+1. [安装Docker并运行](https://docs.docker.com/get-docker/)；
+2. 在终端输入： `docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -e URLWIN=1 -v $HOME/.atrust-data:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 -p 127.0.0.1:8888:8888 -p 127.0.0.1:54631:54631 hagb/docker-atrust`；
+3. 使用vnc客户端连接vnc， 地址：127.0.0.1，端口: 5901, 密码 xxxx；
+4. 成功连上后你应该能看到 aTrust 的登录窗口；若需要 web 登录，在宿主机的浏览器打开 aTrust 弹出的网址网址登录即可。
 
-## EasyConnect 版本
-
-[`build-args`](./build-args) 目录中以`版本号-架构.txt`为文件名的文本文件中包含下载链接。（欢迎提交 issue 或 PR）
-
-### 已经过测试的版本
-
-`7.6.3`版（<http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb>）.
-
-`7.6.7`版（<http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_767/EasyConnect_x64_7_6_7_3.deb>）.
-
-`7.6.8`版（仅命令行）（<https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb>）.
-
-如果需要测试其他 EasyConnect 版本，可以将该版本的 deb 安装包下载地址写入到文本文件 `ec_urls/版本号.txt` 中，使用[构建说明](doc/build.md#从-dockerfile-构建)中的方法进行构建。
 
 ## 拉取
 
@@ -70,6 +60,10 @@ docker pull hagb/docker-easyconnect:TAG
 ## 参考资料
 
 登录过程的一个 hack ([docker-root/usr/local/bin/start-sangfor.sh](docker-root/usr/local/bin/start-sangfor.sh))参考了这篇文章：<https://blog.51cto.com/13226459/2476193>。在此对该文作者表示感谢。
+
+## 相关项目
+
+- [@shmilee](https://github.com/shmilee) 的 [easyconnect-in-docker 方案](https://github.com/shmilee/scripts/tree/master/easyconnect-in-docker)（另见 [#35](https://github.com/Hagb/docker-easyconnect/issues/35)）实现了多 EasyConnect 版本共用容器
 
 ## 版权及许可证
 

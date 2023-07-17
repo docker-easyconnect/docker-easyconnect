@@ -10,19 +10,22 @@
 
 ## 构建参数
 
-- `VPN_DEB_PATH`（仅适用于图形界面版）: 默认为空。非空时表示 `VPN_URL` 是一个 zip 包的地址（见<https://github.com/Hagb/docker-easyconnect/issues/25#issuecomment-1233369467>），而 `VPN_DEB_PATH` 则是 zip 包中的 EasyConnect 的 deb 包的路径。
 - `EC_HOST`: EasyConnect deb 包的架构，默认为空表示 deb 包架构与容器运行的架构一致；以 Debian 包管理器的架构名可准，可选项为：`aarch64`、`amd64`、`armel`、`armhf`、`i386`、`misp64el`。
-- `VPN_URL`（仅适用于图形界面版）: EasyConnect 的 deb 包下载地址（`VPN_DEB_PATH` 非空时则是包含 deb 包的 zip 包下载地址），各版本的下载地址可见于 [../build-args/](../build-args/)。
 - `ELECTRON_URL`（仅适用于图形界面版）: [electron](https://github.com/electron/electron/releases) 的下载地址，用于在非 amd64 架构中将 EasyConnect 前端自带的 electron 替换成可原生执行的 electron（使用 qemu 时原生 electron 可以减小翻译开销；来自 EasyConnect 的 electron 在 Debian bookworm 上有段错误的现象），有一些注意事项：
 
     - `armel`、`armhf`、`arm64`、`mips64el`、`amd64`、`i386` 架构无需设定该参数，构建脚本中已经预设（有特殊需要可以使用该参数覆盖预设值）
     - EasyConnect 自带的 electron 为 v1.6.7 版，为确保兼容性应只使用 v1.x.xx 的镜像
+    - 暂不适用于 aTrust
 
 - `EC_763_URL`（仅适用于命令行版）: `7.6.3` 版 EasyConnect 的 deb 包下载地址，默认为 `http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb`，将其设为空值时构建的镜像不包含 `7.6.3` 版的配置文件
 - `EC_767_URL`（仅适用于命令行版）: `7.6.7` 版 EasyConnect 的 deb 包下载地址，默认为 `http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_767/EasyConnect_x64_7_6_7_3.deb`，将其设为空值时构建的镜像不包含 `7.6.7` 版的配置文件
 - `EC_CLI_URL`（仅适用于命令行版）: [@shmilee](https://github.com/shmilee) 提供的命令行 `7.6.8` 版 deb 包的下载地址，默认为 `https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb`
-- `MIRROR_URL`: Debian 镜像站，默认为 <http://ftp.cn.debian.org/debian/>，设为空则不使用镜像站
+- `MIRROR_URL`: Debian 镜像站，默认为 <http://ftp.cn.debian.org/debian/>，设为空则使用默认镜像站
 - `USE_EC_ELECTRON`（仅适用于图形界面版）: 默认为空，是否使用来自 EasyConnect 的 electron，不为空时使用来自 EasyConnect 的 electron.
+- `VPN_DEB_PATH`（仅适用于图形界面版）: 默认为空。非空时表示 `VPN_URL` 是一个 zip 包的地址（见<https://github.com/Hagb/docker-easyconnect/issues/25#issuecomment-1233369467>），而 `VPN_DEB_PATH` 则是 zip 包中的 deb 包的路径。
+- **`VPN_TYPE`**：默认为 `EC_GUI`。构建 aTrust 镜像时，需要将该参数设为 `ATRUST`。
+- **`VPN_URL`**（仅适用于图形界面版）: EasyConnect 的 deb 包下载地址（`VPN_DEB_PATH` 非空时则是包含 deb 包的 zip 包下载地址），各版本的下载地址可见于 [../build-args/](../build-args/)。
+
 
 ### `Dockerfile.build` 构建参数
 

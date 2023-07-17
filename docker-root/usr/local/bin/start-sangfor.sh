@@ -56,9 +56,9 @@ do
 	((MAX_RETRY<0)) && exit
 
 	# 清除的残余进程，它们可能会妨碍下次的启动。
-	killall CSClient svpnservice ECAgent 2> /dev/null
+	killall $VPN_PROCS 2> /dev/null
 	sleep 4
 
 	# 只要杀不死，就往死里杀
-	killall -9 CSClient svpnservice ECAgent 2> /dev/null
+	killall -9 $VPN_PROCS 2> /dev/null
 done
