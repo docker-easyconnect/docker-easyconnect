@@ -118,7 +118,7 @@ jobs:
             done
           done
 
-          for vneless_suffix in "" -vncless; do
+          for vncless_suffix in "" -vncless; do
             for arch in ${{ env.ARCHS }}; do
               if [ -e build-args/atrust-"$arch".txt ]; then
                 docker manifest create ${{ env.ATRUST_IMAGE_NAME }}:${default}${vncless_suffix} --amend ${{ env.ATRUST_IMAGE_NAME }}:${default}${vncless_suffix}-${arch}
