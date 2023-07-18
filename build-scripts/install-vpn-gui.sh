@@ -19,6 +19,8 @@ done &&
 /var/lib/dpkg/info/$package_name.postinst &&
 rm -r /DEBIAN VPN.deb &&
 
+ln -fs /bin/false /usr/sbin/dmidecode &&
+
 if [ "EC_CLI" != "$VPN_TYPE" -a "EC_GUI" != "$VPN_TYPE" ]; then
 	exit 0
 fi &&
