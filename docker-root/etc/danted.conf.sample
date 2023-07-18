@@ -1,6 +1,6 @@
 #logging
-#errorlog: /var/log/sockd.errlog
-logoutput: /var/log/sockd.log
+errorlog: /dev/stderr
+#logoutput: /var/log/sockd.log
 #debug: 2
 
 #server address specification
