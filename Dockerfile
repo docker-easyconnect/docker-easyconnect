@@ -11,7 +11,7 @@ RUN . /tmp/build-scripts/config-apt.sh && \
     apt-get update && \
     if [ "ATRUST" = "$VPN_TYPE" ]; then \
         extra_pkgs="libssl1.1 libatk-bridge2.0-0 libgtk-3-0 libgbm1 libqt5x11extras5 \
-                    libqt5core5a libqt5network5 libqt5widgets5 libldap-2.4-2"; \
+                    libqt5core5a libqt5network5 libqt5widgets5 libldap-2.4-2 stalonetray"; \
     else \
         extra_pkgs="libgtk2.0-0 libdbus-glib-1-2 libgconf-2-4"; \
     fi && \
