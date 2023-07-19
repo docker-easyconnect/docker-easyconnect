@@ -174,12 +174,13 @@ start_danted &
 start_tinyproxy &
 config_vpn_iptables &
 force_open_ports &
-init_vpn_config &
 if [ -z "$DISPLAY" ]
 then
 	export DISPLAY=:1
 	start_tigervncserver &
 fi
+
+init_vpn_config
 wait
 
 [ -n "$EXIT" ] && export MAX_RETRY=0
