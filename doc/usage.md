@@ -78,11 +78,17 @@
 
 ### 代理服务
 
-VPM 登录后，socks5 和 http 代理会分别在容器的 `1080` 和 `8888` 端口开启。这可用 `-p` 参数转发到 `127.0.0.1` 上。
+socks5 和 http 代理会分别在容器的 `1080` 和 `8888` 端口开启，VPN 登录后可用它们来访问 VPN 的网络。这些端口可用 `-p` 参数转发到宿主机的 `127.0.0.1` 上或对外开放（不推荐，对外开放 http、socks5 端口不安全）。
+
+浏览器和一些其他程序可使用这些代理，例如在 python requests 中使用：
+
+```python3
+requests.get('https://www.hao123.com', proxies={'http': '127.0.0.1:8888'})
+```
 
 ### ip forward
 
-默认开启。可供宿主机通过路由表（将容器地址作为下一跳路由）来设置透明代理，mtu 应与容器内的 `tun0`（EasyConnect）或 `utun7`（aTrust）网络接口保持一致。可通过 `docker exec 容器名 cat /sys/class/net/接口名/mtu` 来获取，一般为 1400（EasyConnect）或 1500（aTrust）。
+宿主机可以通过路由表（将容器地址作为下一跳路由）来设置透明代理，mtu 应与容器内的 `tun0`（EasyConnect）或 `utun7`（aTrust）网络接口保持一致。可通过 `docker exec 容器名 cat /sys/class/net/接口名/mtu` 来获取，一般为 1400（EasyConnect）或 1500（aTrust）。
 
 如：
 
@@ -151,26 +157,7 @@ ip rule add iif lo table 3
 
 ``` bash
 touch ~/.easyconn
-docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/root/.easyconn -e EC_VER=7.6.7 -e EXIT=1 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect:cli
-```
-
-### tinyproxy
-下列例子可启动纯命令行的 EasyConnect `7.6.7` 并且对宿主主机提供 http 代理
-
-``` bash
-$ touch ~/.easyconn
-$ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/root/.easyconn -p 127.0.0.1:8888:8888 -e EC_VER=7.6.7 ztongxue/docker-easyconnect-tinyproxy:cli
-```
-
-程序内直接使用代理地址 127.0.0.1:8888 即可。例如在 python requests 中使用：
-
-```
-requests.get('https://www.hao123.com', proxies={'http': '127.0.0.1:8888'})
-```
-
-你也可以改成你需要宿主主机代理端口，例如你想对程序暴露的代理端口为 8118 ，只需要在启动容器的时候，指定一下端口即可。👇
-```
-$ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/root/.easyconn -p 127.0.0.1:8118:8888 -e EC_VER=7.6.7 ztongxue/docker-easyconnect-tinyproxy:cli
+docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/root/.easyconn -e EC_VER=7.6.7 -e EXIT=1 -p 127.0.0.1:1080:1080 -p 127.0.0.1:8888:8888 hagb/docker-easyconnect:cli
 ```
 
 ### X11 socket
@@ -178,9 +165,9 @@ $ docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v $HOME/.easyconn:/r
 在当前桌面环境中启动 EasyConnect 前端，并且该前端退出后不会自动重启（`-e EXIT=1`），EasyConnect 要进行浏览器弹窗时会弹出含链接的文本框（`-e URLWIN=1`）。
 
 ``` bash
-xhost +LOCAL:
-docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/.Xauthority:/root/.Xauthority -e EXIT=1 -e DISPLAY=$DISPLAY -e URLWIN=1 -e TYPE=x11 -v $HOME/.ecdata:/root -p 127.0.0.1:1080:1080 hagb/docker-easyconnect:vncless
-xhost -LOCAL:
+xhost +LOCAL:root
+docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/.Xauthority:/root/.Xauthority -e EXIT=1 -e DISPLAY=$DISPLAY -e URLWIN=1 -e TYPE=x11 -v $HOME/.ecdata:/root -p 127.0.0.1:1080:1080 -p 127.0.0.1:8888:8888 hagb/docker-easyconnect:vncless
+xhost -LOCAL:root
 ```
 
 ### vnc 
@@ -188,6 +175,6 @@ xhost -LOCAL:
 客户端退出会自动重启，VNC 服务器在`127.0.0.1:5901`（`-p 127.0.0.1:5901:5901`），密码为`xxxx`（`-e PASSWORD=xxxx`）。
 
 ``` bash
-docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 hagb/docker-easyconnect
+docker run --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -v $HOME/.ecdata:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 -p 127.0.0.1:8888:8888 hagb/docker-easyconnect
 ```
 
