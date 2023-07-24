@@ -15,7 +15,7 @@ docker exec 容器名 busybox ifconfig
 若输出中没有 `tun0` 网络设备，再尝试以下命令，其中 TAG 替换为实际使用镜像的标签：
 
 ``` bash
-docker run --cap-add NET_ADMIN --device /dev/net/tun -e CHECK_SYSTEM_ONLY=1 hagb/docker-easyconnect:TAG
+docker run --rm --cap-add NET_ADMIN --device /dev/net/tun -e CHECK_SYSTEM_ONLY=1 hagb/docker-easyconnect:TAG
 ```
 
 若出现报错 `Failed to operate tun device! Please check whether /dev/net/tun is available`，参看[下一个问题](#启动容器时输出-docker-error-response-from-daemon-error-gathering-device-information-while-adding-custom-device-devnettun-no-such-file-or-directory)，依然无法解决请提交 [issue](https://github.com/Hagb/docker-easyconnect/issues) 进行反馈。
