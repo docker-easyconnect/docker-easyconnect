@@ -53,3 +53,7 @@ sudo modprobe tun
 这是深信服对 EasyConnect 进行了更新，使得客户端的第四级版本号与服务端不匹配所致。X86/amd64 架构重新构建镜像（不使用旧镜像的缓存）即可更新到最新版的 EasyConnect。遇到此问题请在 [#274](https://github.com/Hagb/docker-easyconnect/issues/274) 中向维护者反馈，以便维护者重新构建并上传镜像。
 
 也可以用 `-e DISABLE_PKG_VERSION_XML=1` 参数绕过版本检测从而正常使用，但这也可能会错过深信服发布的安全更新，存在潜在的安全隐患。Arm64、mips64el 架构的 EasyConnect 原生客户端已经不再更新，因此只能配合 `-e DISABLE_PKG_VERSION_XML=1` 参数来使用。
+
+## VNC 版容器中，中文文本无法正常粘帖
+
+详见 [操作 VNC 的剪贴板](./usage.md#操作-vnc-的剪贴板)。
