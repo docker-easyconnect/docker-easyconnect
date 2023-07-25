@@ -4,7 +4,7 @@
 
 ## 环境变量
 
-- `DISABLE_PKG_VERSION_XML`: 默认为空。设为非空时会阻止 EasyConnect 使用 `pkg_version.xml` 配置文件（通过将其设为 `/dev/null` 的软链接），从而绕过一些客户端和服务端版本不匹配的问题
+- `DISABLE_PKG_VERSION_XML`: 默认为空。设为非空时会阻止 EasyConnect 使用 `pkg_version.xml` 配置文件（通过将其设为 `/dev/null` 的软链接），从而绕过一些客户端和服务端版本不匹配的问题。注意这个选项并不能绕过[第三级](#easyconnect-版本选择)（如 `7.6.3` 中的 `3`）不匹配的问题，只能绕过第四级版本（如 `7.6.7.x` 中的 `x`）不匹配的问题。
 
 - `EXIT`: 默认为空，此时前端退出后会自动重连。不为空时，前端退出后不自动重启，并停止容器。
 
@@ -141,11 +141,11 @@ ip rule add iif lo table 3
 
 ## EasyConnect 版本选择
 
-`7.6.3`：适用于连接 <7.6.7 版本的 EasyConnect 服务端。
+EasyConnect 客户端大致有以下三种版本
 
-`7.6.7`：适用于连接 >= 7.6.7 版本的 EasyConnect 服务端。
-
-`cli`：适用于所有版本的 EasyConnect 服务端，但只能使用用户名、密码来登录。
+- `7.6.3`：适用于连接 <7.6.7 版本的 EasyConnect 服务端。
+- `7.6.7`：适用于连接 >= 7.6.7 版本的 EasyConnect 服务端。
+- `cli`：来源于 [@shmille](https://github.com/shmilee) 提供的[命令行版客户端 deb 包](https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb)。适用于所有版本的 EasyConnect 服务端（需配合环境变量参数 `-e EC_VER=7.6.3` 或 `-e EC_VER=7.6.7`），但只有 amd64 版本，只能使用用户名、密码来登录。
 
 ## 用例
 
