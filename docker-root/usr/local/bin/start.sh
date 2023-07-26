@@ -173,8 +173,9 @@ start_tigervncserver() {
 
 # container 再次运行时清除 /tmp 中的锁，使 container 能够反复使用。
 # 感谢 @skychan https://github.com/Hagb/docker-easyconnect/issues/4#issuecomment-660842149
-rm -rf /tmp
-mkdir /tmp
+for f in /tmp/* /tmp/.*; do
+	[ "/tmp/.X11-unix" != "$f"] && rm -rf -- "$f"
+done
 
 forward_ports &
 start_danted &
