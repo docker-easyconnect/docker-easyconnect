@@ -153,8 +153,8 @@ start_tigervncserver() {
 	stalonetray -f 0 2> /dev/null &
 
 	if [ -n "$ECPASSWORD" ]; then
-		echo "ECPASSWORD has been deprecated, because of the confusion of its name." > &2
-		echo "Use CLIP_TEXT instead." > &2
+		echo "ECPASSWORD has been deprecated, because of the confusion of its name." >&2
+		echo "Use CLIP_TEXT instead." >&2
 	fi
 
 	[ -z "$CLIP_TEXT" ] && CLIP_TEXT="$ECPASSWORD"
