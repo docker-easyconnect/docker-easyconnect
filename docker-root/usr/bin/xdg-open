@@ -1,0 +1,4 @@
+#!/bin/bash
+printf '%s\n' "$*" >> /root/open-urls
+([ -n "$URLWIN" ] && xmessage -buttons Copy:0,Close:1 "$*" && ( printf %s "$*" | xclip -i -selection clipboard )
+)&

@@ -1,11 +1,11 @@
 #logging
-#errorlog: /var/log/sockd.errlog
-logoutput: /var/log/sockd.log
+errorlog: /dev/stderr
+#logoutput: /var/log/sockd.log
 #debug: 2
 
 #server address specification
-internal: eth0 port = 1080
-external: tun0
+internal: $internals # replaced by start.sh
+external: $externals # replaced by start.sh
 external.rotation: route
 
 #server identities (not needed on solaris)

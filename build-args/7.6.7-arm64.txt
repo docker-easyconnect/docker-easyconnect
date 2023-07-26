@@ -1,0 +1,1 @@
+--build-arg VPN_URL=https://download.sangfor.com.cn/download/product/sslvpn/SSLVPN%E4%BF%A1%E5%88%9B%E5%AE%A2%E6%88%B7%E7%AB%AF/%E7%BB%9F%E4%BF%A1UOS%20%E6%B5%B7%E6%80%9D%E9%BA%92%E9%BA%9F990%20SSL%20VPN%E5%AE%A2%E6%88%B7%E7%AB%AF.zip --build-arg VPN_DEB_PATH=02-升级包及安装文件/EasyConnect_UOS_arm64-20220302.deb

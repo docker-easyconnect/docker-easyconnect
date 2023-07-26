@@ -1,33 +1,39 @@
-FROM debian:buster-slim
+FROM debian:bookworm-slim
 
-ARG BUILD_ENV=local
+ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST
 
-RUN if [ "${BUILD_ENV}" = "local" ]; then sed -i s/deb.debian.org/mirrors.aliyun.com/ /etc/apt/sources.list; fi && \
+COPY ["./build-scripts/config-apt.sh", "./build-scripts/get-echost-names.sh",  "./build-scripts/add-qemu.sh", \
+      "/tmp/build-scripts/"]
+
+RUN . /tmp/build-scripts/config-apt.sh && \
+    . /tmp/build-scripts/get-echost-names.sh && \
+    . /tmp/build-scripts/add-qemu.sh && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests iptables \
-	dante-server busybox iproute2 tinyproxy-bin socat && \
+        dante-server busybox iproute2 tinyproxy-bin ca-certificates ${qemu_pkgs} socat && \
     for command in ps kill killall; do ln -s "$(which busybox)" /usr/local/bin/"${command}" || exit 1 ; done && \
     rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -r socks && useradd -r -g socks socks
 
 ARG EC_CLI_URL="https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb"
+COPY ./build-scripts/mk-qemu-wrapper.sh /tmp/build-scripts/
 
-RUN EC_DIR=/usr/share/sangfor/EasyConnect/resources && cd tmp && \
+RUN EC_DIR=/usr/share/sangfor/EasyConnect/resources && cd /tmp && \
     busybox wget "${EC_CLI_URL}" -O easyconn.deb && \
     dpkg -x easyconn.deb easyconn && \
-    bash -c " \
-        mkdir -p ${EC_DIR}/{bin,lib64,shell,logs}/ && \
-        cp easyconn/${EC_DIR}/bin/{CSClient,easyconn,ECAgent,svpnservice,ca.crt,cert.crt} \
-                   /${EC_DIR}/bin/ && \
-        chmod +xs ${EC_DIR}/bin/{CSClient,ECAgent,svpnservice} && \
-        cp easyconn/${EC_DIR}/lib64/lib{nspr4,nss3,nssutil3,plc4,plds4,smime3}.so \
-                   /${EC_DIR}/lib64/" && \
+    bash -c "mkdir -p ${EC_DIR}/{bin,lib64,shell,logs}/" && \
+    bash -c "cp easyconn/${EC_DIR}/bin/{CSClient,easyconn,ECAgent,svpnservice,ca.crt,cert.crt} \
+               /${EC_DIR}/bin/" && \
+    bash -c "chmod +xs ${EC_DIR}/bin/{CSClient,ECAgent,svpnservice}" && \
+    extra_bins=easyconn . /tmp/build-scripts/mk-qemu-wrapper.sh && \
+    bash -c "cp easyconn/${EC_DIR}/lib64/lib{nspr4,nss3,nssutil3,plc4,plds4,smime3}.so \
+               /${EC_DIR}/lib64/" && \
     cp easyconn/${EC_DIR}/shell/* \
                /${EC_DIR}/shell/ && \
     chmod +x ${EC_DIR}/shell/* && \
     ln -s ${EC_DIR}/bin/easyconn /usr/local/bin/ && \
-    cp -r easyconn/${EC_DIR}/conf ${EC_DIR}/conf_7.6.8 && rm -r *
+    cp -r easyconn/${EC_DIR}/conf ${EC_DIR}/conf_7.6.8 && rm -r * && echo "EC_CLI" > /etc/vpn-type
 
 ARG EC_763_URL="http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_01/EasyConnect_x64.deb"
 ARG EC_767_URL="http://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_767/EasyConnect_x64_7_6_7_3.deb"
@@ -47,8 +53,10 @@ RUN for i in /usr/share/sangfor/EasyConnect/resources/conf_*/; do \
 
 COPY ./docker-root /
 
-COPY --from=fake-hwaddr fake-hwaddr/fake-hwaddr.so /usr/local/lib/fake-hwaddr.so
+COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /results/tinyproxy-ws/ /
+
+ENV PING_INTERVAL=1800
 
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
-CMD _EC_CLI=1 start.sh
+CMD start.sh

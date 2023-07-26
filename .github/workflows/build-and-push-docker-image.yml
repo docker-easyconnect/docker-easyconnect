@@ -3,7 +3,10 @@ name: Build And Push Docker Image
 on: workflow_dispatch
 
 env:
-  IMAGE_NAME: hagb/docker-easyconnect
+  EC_IMAGE_NAME: hagb/docker-easyconnect
+  ATRUST_IMAGE_NAME: hagb/docker-atrust
+  ARCHS: mips64le arm64 i386 amd64
+  ATRUST_ARCHS: mips64le arm64 amd64
 
 jobs:
   build:
@@ -24,24 +27,107 @@ jobs:
         run: |
           docker-build() {
             #docker pull $1
-            docker build -t $1 --build-arg BUILD_ENV=actions "${@:2}"
+            docker buildx build --build-arg BUILD_ENV=actions "$@"
           }
-          pirefix=""
-          latest_name="latest"
-          if [ "$(git branch --show-current)" = develop ]; then prefix=dev- ; latest_name=dev ; fi
+          branch="$(git branch --show-current)"
+          case "$branch" in
+            master) prefix= ;;
+            develop) prefix=dev- ;;
+            *) prefix="$branch"- ;;
+          esac
 
-          docker-build fake-hwaddr -f Dockerfile.fake-hwaddr .
+          build() {
+            for ver in 7.6.3 7.6.7; do
+              docker-build --platform "$1" -t hagb/docker-easyconnect:build $(cat build-args/$ver-"$1".txt) -f Dockerfile.build .
+              docker-build --platform "$1" -t ${{ env.EC_IMAGE_NAME }}:${prefix}$ver-"$1" $(cat build-args/$ver-"$1".txt) -f Dockerfile .
+              docker-build --platform "$1" -t ${{ env.EC_IMAGE_NAME }}:${prefix}vncless-$ver-"$1" $(cat build-args/$ver-"$1".txt) -f Dockerfile.vncless .
+            done
 
-          docker-build ${{ env.IMAGE_NAME }}:${prefix}cli -f Dockerfile.cli .
+            if [ -e build-args/atrust-"$1".txt ]; then
+              docker-build --platform "$1" -t hagb/docker-easyconnect:build $(cat build-args/atrust-"$1".txt) -f Dockerfile.build .
+              docker-build --platform "$1" -t ${{ env.ATRUST_IMAGE_NAME }}:${prefix}"$1" $(cat build-args/atrust-"$1".txt) -f Dockerfile .
+              docker-build --platform "$1" -t ${{ env.ATRUST_IMAGE_NAME }}:${prefix}vncless-"$1" $(cat build-args/atrust-"$1".txt) -f Dockerfile.vncless .
+            fi
 
-          docker-build ${{ env.IMAGE_NAME }}:${prefix}7.6.3 --build-arg EC_URL=$(cat ec_urls/7.6.3.txt) -f Dockerfile .
-          docker-build ${{ env.IMAGE_NAME }}:${prefix}7.6.7 --build-arg EC_URL=$(cat ec_urls/7.6.7.txt) -f Dockerfile .
+            if [ amd64 = "$1" ]; then
+              docker-build -t ${{ env.EC_IMAGE_NAME }}:${prefix}cli -f Dockerfile.cli .
+            fi
+          }
 
-          docker-build ${{ env.IMAGE_NAME }}:${prefix}vncless-7.6.3 --build-arg EC_URL=$(cat ec_urls/7.6.3.txt) -f Dockerfile.vncless .
-          docker-build ${{ env.IMAGE_NAME }}:${prefix}vncless-7.6.7 --build-arg EC_URL=$(cat ec_urls/7.6.7.txt) -f Dockerfile.vncless .
+          sudo apt-get -y install binfmt-support qemu-user-static
 
-          docker tag ${{ env.IMAGE_NAME }}:${prefix}7.6.3 ${{ env.IMAGE_NAME }}:${latest_name}
+          for arch in ${{ env.ARCHS }}; do
+            build $arch
+          done
+
+          docker image rm hagb/docker-easyconnect:build
 
       - name: Push Docker image
         run: |
-          docker push --all-tags ${{ env.IMAGE_NAME }}
+          branch="$(git branch --show-current)"
+          case "$branch" in
+            master)
+              prefix=
+              default=latest
+              ;;
+            develop)
+              prefix=dev-
+              default=dev
+              ;;
+            *)
+              prefix="$branch"-
+              default="$branch"
+              ;;
+          esac
+
+          token="$( curl -sH "Content-Type: application/json" \
+                      -X POST -d "{\"username\": \"${{ secrets.DOCKERHUB_USERNAME }}\", \"password\": \"${{ secrets.DOCKERHUB_TOKEN }}\"}" \
+                      https://hub.docker.com/v2/users/login/ |
+                    jq -r .token )"
+          delete_tag() {
+              curl -sH "Content-Type: application/json" -X DELETE -H "Authorization: JWT $token" \
+                    https://hub.docker.com/v2/repositories/$1/tags/$2/
+          }
+
+          docker push --all-tags ${{ env.EC_IMAGE_NAME }}
+          docker push --all-tags ${{ env.ATRUST_IMAGE_NAME }}
+
+          for ver in 7.6.3 7.6.7; do
+            for vncless in "" vncless-; do
+              for arch in ${{ env.ARCHS }}; do
+                docker manifest create ${{ env.EC_IMAGE_NAME }}:${prefix}${vncless}${ver} --amend ${{ env.EC_IMAGE_NAME }}:${prefix}${vncless}${ver}-${arch}
+              done
+
+              docker manifest push ${{ env.EC_IMAGE_NAME }}:${prefix}${vncless}${ver}
+
+              if [ 7.6.7 = $ver ]; then
+                if [ -n "$vncless" ]; then
+                  tag=${prefix}vncless
+                else
+                  tag=$default
+                fi
+                for arch in ${{ env.ARCHS }}; do
+                  docker manifest create ${{ env.EC_IMAGE_NAME }}:$tag --amend ${{ env.EC_IMAGE_NAME }}:${prefix}${vncless}${ver}-${arch}
+                done
+                docker manifest push ${{ env.EC_IMAGE_NAME }}:$tag
+              fi
+
+              for arch in ${{ env.ARCHS }}; do
+                delete_tag ${{ env.EC_IMAGE_NAME }} ${prefix}${vncless}${ver}-${arch}
+              done
+            done
+          done
+
+          for vncless_suffix in "" -vncless; do
+            for arch in ${{ env.ARCHS }}; do
+              if [ -e build-args/atrust-"$arch".txt ]; then
+                docker manifest create ${{ env.ATRUST_IMAGE_NAME }}:${default}${vncless_suffix} --amend ${{ env.ATRUST_IMAGE_NAME }}:${default}${vncless_suffix}-${arch}
+              fi
+            done
+
+            docker manifest push ${{ env.ATRUST_IMAGE_NAME }}:${default}${vncless_suffix}
+
+            for arch in ${{ env.ARCHS }}; do
+              [ ! -e build-args/atrust-$arch.txt ] || delete_tag ${{ env.ATRUST_IMAGE_NAME }} ${default}${vncless_suffix}-${arch}
+            done
+          done

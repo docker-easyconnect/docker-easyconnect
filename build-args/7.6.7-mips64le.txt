@@ -1,0 +1,1 @@
+--build-arg VPN_URL=https://download.sangfor.com.cn/download/product/sslvpn/SSLVPN%E4%BF%A1%E5%88%9B%E5%AE%A2%E6%88%B7%E7%AB%AF/%E7%BB%9F%E4%BF%A1UOS%20%E9%BE%99%E8%8A%AF%20SSL%20VPN%E5%AE%A2%E6%88%B7%E7%AB%AF%EF%BC%88M767%E5%8F%8A%E4%BB%A5%E4%B8%8A%E7%89%88%E6%9C%AC%EF%BC%89.zip --build-arg VPN_DEB_PATH=02-升级包及安装文件/EasyConnect_mips64.deb

@@ -1,0 +1,1 @@
+--build-arg VPN_URL=https://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_767/EasyConnect_x64_7_6_7_3.deb --build-arg EC_HOST=amd64

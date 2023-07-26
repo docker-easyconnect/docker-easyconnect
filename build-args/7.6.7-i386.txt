@@ -1,0 +1,1 @@
+--build-arg VPN_URL=https://download.sangfor.com.cn/download/product/sslvpn/pkg/linux_767/EasyConnect_x86_7_6_7_3.deb
