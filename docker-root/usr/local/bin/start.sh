@@ -171,10 +171,16 @@ start_tigervncserver() {
 
 }
 
+keep_pinging() {
+	[ -n "$PING_ADDR" ] && while sleep $PING_INTERVAL; do
+		busybox ping -c1 -W1 -w1 "$PING_ADDR" >/dev/null 2>/dev/null
+	done &
+}
+
 # container 再次运行时清除 /tmp 中的锁，使 container 能够反复使用。
 # 感谢 @skychan https://github.com/Hagb/docker-easyconnect/issues/4#issuecomment-660842149
 for f in /tmp/* /tmp/.*; do
-	[ "/tmp/.X11-unix" != "$f"] && rm -rf -- "$f"
+	[ "/tmp/.X11-unix" != "$f" ] && rm -rf -- "$f"
 done
 
 forward_ports &
@@ -182,6 +188,7 @@ start_danted &
 start_tinyproxy &
 config_vpn_iptables &
 force_open_ports &
+keep_pinging &
 if [ -z "$DISPLAY" ]
 then
 	export DISPLAY=:1

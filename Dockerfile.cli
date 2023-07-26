@@ -55,6 +55,8 @@ COPY ./docker-root /
 
 COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /results/tinyproxy-ws/ /
 
+ENV PING_INTERVAL=1800
+
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
 CMD start.sh

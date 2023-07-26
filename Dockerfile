@@ -38,6 +38,8 @@ COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /results/tinypro
 #ENV DISPLAY
 #ENV USE_NOVNC=""
 
+ENV PING_INTERVAL=1800
+
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
 CMD start.sh

@@ -31,6 +31,10 @@
 
 - `NODANTED`: 默认为空。不为空时提供 socks5 代理的`danted`将不会启动（可用于和`--net host`参数配合，提供全局透明代理）。
 
+- `PING_ADDR`: 默认为空。用于定时 ping 的目的地址（域名、ip 皆可，但需要是 VPN 进行代理的地址），可用于保持 VPN 连接，留空时不做此操作。（服务端可能会配置成无流量通过 VPN 超过一定时间则自动断线，故用此方法可以保持更长时间在线）
+
+- `PING_INTERVAL`: 默认为 1800。单位为秒的 ping `PING_ADDR` 的间隔。
+
 - `SOCKS_USER`: 默认为空，不为空时以此为用户名启用 socks5 代理的密码认证
 
 - `SOCKS_PASSWD`: 默认为空，`SOCKS_USER` 不为空时此变量作为 socks5 代理的密码
