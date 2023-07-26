@@ -28,7 +28,7 @@ apt-get install -y --no-install-recommends --no-install-suggests \
 
 普遍反映的一个问题是，前端登录后，vpn 没有生效就退出了。<https://blog.51cto.com/13226459/2476193>中说明了需要在登录过程中运行（不能提前运行，否则会被识别为已登录）`/usr/share/sangfor/EasyConnect/resources/shell/sslservice.sh`。
 
-进一步观察发现，`sslservice.sh`相关程序（实际上是`/usr/share/sangfor/EasyConnect/resources/bin/`中的`CSClient`和`svpnservice`）在登录时建立虚拟网络设备`tun0`，通过该设备能够访问到 vpn。这些程序未运行时，前端登录后`/usr/share/sangfor/EasyConnect/resources/logs/ECAgent.log`中会不断产生报错直到一会儿后前端退出：
+进一步观察发现，`sslservice.sh`相关程序（实际上是`/usr/share/sangfor/EasyConnect/resources/bin/`中的`CSClient`和`svpnservice`）在登录时建立虚拟网络接口`tun0`，通过该设备能够访问到 vpn。这些程序未运行时，前端登录后`/usr/share/sangfor/EasyConnect/resources/logs/ECAgent.log`中会不断产生报错直到一会儿后前端退出：
 ```
 [YYYY-MM-dd HH:mm:ss][E][  21][ 165][ConnectDomainSock][cms] /usr/share/sangfor/EasyConnect/resources/conf/ECDomainFile domain socket connect failed, errno:2.
 [YYYY-MM-dd HH:mm:ss][E][  21][ 114][Register]cms client connect failed.

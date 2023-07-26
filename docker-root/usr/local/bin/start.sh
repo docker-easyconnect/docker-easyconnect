@@ -65,7 +65,7 @@ start_danted() {
 		/usr/sbin/danted -D -f /run/danted.conf
 		ip tuntap del mode tun $VPN_TUN
 	else
-		echo 'Failed to create tun device! Please check whether /dev/net/tun is available.' >&2
+		echo 'Failed to create tun interface! Please check whether /dev/net/tun is available.' >&2
 		echo 'Also refer to https://github.com/Hagb/docker-easyconnect/blob/master/doc/faq.md.' >&2
 		exit 1
 	fi

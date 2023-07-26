@@ -4,7 +4,7 @@
 
 见 [路由和开放端口说明](route.md)。
 
-## EasyConnect 中登录以后长时间卡在图标明暗变化的界面（7.6.3 图形界面版），或显示登录成功超过十秒但宿主机无法连接 socks（命令行版或 7.6.7 图形界面版）
+## EasyConnect 中登录以后长时间卡在图标明暗变化的界面（7.6.3 图形界面版），或启动容器后超过三秒宿主机无法连接 socks
 
 尝试运行以下命令，其中`容器名`替换为实际的容器名（`docker container ls` 可见）：
 
@@ -12,15 +12,16 @@
 docker exec 容器名 busybox ifconfig
 ```
 
-若输出中没有 `tun0` 网络设备，再尝试以下命令，其中 TAG 替换为实际使用镜像的标签：
+若输出中没有 `tun0`（EasyConnect）或 `utun7`（aTrust）网络接口，检查容器启动时输出的日志（`docker logs 容器名` 可见）中有无如下提示
 
-``` bash
-docker run --rm --cap-add NET_ADMIN --device /dev/net/tun -e CHECK_SYSTEM_ONLY=1 hagb/docker-easyconnect:TAG
+```
+Failed to create tun interface! Please check whether /dev/net/tun is available.
+Also refer to https://github.com/Hagb/docker-easyconnect/blob/master/doc/faq.md.
 ```
 
-若出现报错 `Failed to operate tun device! Please check whether /dev/net/tun is available`，参看[下一个问题](#启动容器时输出-docker-error-response-from-daemon-error-gathering-device-information-while-adding-custom-device-devnettun-no-such-file-or-directory)，依然无法解决请提交 [issue](https://github.com/Hagb/docker-easyconnect/issues) 进行反馈。
+若有，请参照[下一个问题](#user-content-启动容器时输出-docker-error-response-from-daemon-error-gathering-device-information-while-adding-custom-device-devnettun-no-such-file-or-directory-或-failed-to-create-tun-interface)解决；若无，可提交 [issue](https://github.com/Hagb/docker-easyconnect/issues) 中反馈。
 
-## 启动容器时输出 `docker: Error response from daemon: error gathering device information while adding custom device "/dev/net/tun": no such file or directory.` 或 `Failed to create tun device!`
+## 启动容器时输出 `docker: Error response from daemon: error gathering device information while adding custom device "/dev/net/tun": no such file or directory.` 或 `Failed to create tun interface!`
 
 请确保 `tun` 模块编译进内核或加载为内核模块。
 
