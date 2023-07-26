@@ -183,6 +183,7 @@ for f in /tmp/* /tmp/.*; do
 	[ "/tmp/.X11-unix" != "$f" ] && rm -rf -- "$f"
 done
 
+ulimit -n 1048576 # https://github.com/Hagb/docker-easyconnect/issues/245 @rikaunite
 forward_ports &
 start_danted &
 start_tinyproxy &
