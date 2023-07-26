@@ -3,7 +3,12 @@
 if [ -n "${ANDROID_PATCH}" ]; then
 	groupadd -g 3003 inet && usermod -a -G inet root && usermod -g inet -ou 0 daemon && usermod -g inet -ou 0 _apt
 fi &&
-echo "
+echo "APT::Default-Release \"$VERSION_CODENAME\";" > /etc/apt/apt.conf.d/80release &&
+# use qemu-user >= 8.0.0 which fixes https://gitlab.com/qemu-project/qemu/-/issues/866
+echo "Package: qemu-user
+Pin: release n=trixie
+Pin-Priority: 990" > /etc/apt/preferences.d/qemu &&
+echo "deb $MIRROR_URL trixie main
 deb $MIRROR_URL $VERSION_CODENAME main
 deb http://deb.debian.org/debian-security $VERSION_CODENAME-security main
 deb $MIRROR_URL bullseye main

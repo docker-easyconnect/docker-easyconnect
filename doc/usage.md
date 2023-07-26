@@ -31,8 +31,6 @@
 
 - `NODANTED`: 默认为空。不为空时提供 socks5 代理的`danted`将不会启动（可用于和`--net host`参数配合，提供全局透明代理）。
 
-- `QEMU_ECAGENT_MEM_LIMIT`：在非 amd64 架构上用 `qemu-x86_64` 运行 `ECAgent` 时，限制 `ECAgent` 的最大内存（MB），默认为 256。（qemu-user 内存泄漏问题 https://gitlab.com/qemu-project/qemu/-/issues/866 的 workaround）
-
 - `SOCKS_USER`: 默认为空，不为空时以此为用户名启用 socks5 代理的密码认证
 
 - `SOCKS_PASSWD`: 默认为空，`SOCKS_USER` 不为空时此变量作为 socks5 代理的密码

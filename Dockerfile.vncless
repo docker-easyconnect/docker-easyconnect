@@ -35,8 +35,6 @@ COPY ./docker-root /
 
 COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /results/tinyproxy-ws/ /
 
-ENV QEMU_ECAGENT_MEM_LIMIT=256
-
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
 CMD TYPE=x11 start.sh

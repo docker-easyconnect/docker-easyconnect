@@ -34,8 +34,6 @@ COPY ./docker-root /
 
 COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /results/tinyproxy-ws/ /results/novnc/ /
 
-ENV QEMU_ECAGENT_MEM_LIMIT=256
-
 #ENV TYPE="" PASSWORD="" LOOP=""
 #ENV DISPLAY
 #ENV USE_NOVNC=""
