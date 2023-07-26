@@ -57,3 +57,7 @@ sudo modprobe tun
 ## VNC 版容器中，中文文本无法正常粘帖
 
 详见 [操作 VNC 的剪贴板](./usage.md#操作-vnc-的剪贴板)。
+
+## Rootless podman 的 MAC 地址不固定 / 如何设置设备 MAC 地址
+
+Docker 或 root 下的 podman 运行镜像时可用 `--mac-address=MAC地址` 参数设置 MAC 地址，rootless podman 可用 `FAKE_HWADDR` 环境变量来伪装 MAC 地址（参看 [usage.md 环境变量一节](./usage.md#环境变量)）。
