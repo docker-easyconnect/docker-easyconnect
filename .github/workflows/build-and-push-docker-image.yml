@@ -25,6 +25,14 @@ jobs:
 
       - name: Build Docker image
         run: |
+          to-tag() {
+            tag="$( IFS=-; printf %s "$*"; )"
+            if [ -n "$tag" ]; then
+              printf %s "$tag"
+            else
+              echo latest
+            fi
+          }
           docker-build() {
             #docker pull $1
             docker buildx build --build-arg BUILD_ENV=actions "$@"
@@ -32,25 +40,25 @@ jobs:
           branch="$(git branch --show-current)"
           case "$branch" in
             master) prefix= ;;
-            develop) prefix=dev- ;;
-            *) prefix="$branch"- ;;
+            develop) prefix=dev ;;
+            *) prefix="$branch" ;;
           esac
 
           build() {
             for ver in 7.6.3 7.6.7; do
               docker-build --platform "$1" -t hagb/docker-easyconnect:build $(cat build-args/$ver-"$1".txt) -f Dockerfile.build .
-              docker-build --platform "$1" -t ${{ env.EC_IMAGE_NAME }}:${prefix}$ver-"$1" $(cat build-args/$ver-"$1".txt) -f Dockerfile .
-              docker-build --platform "$1" -t ${{ env.EC_IMAGE_NAME }}:${prefix}vncless-$ver-"$1" $(cat build-args/$ver-"$1".txt) -f Dockerfile.vncless .
+              docker-build --platform "$1" -t ${{ env.EC_IMAGE_NAME }}:$(to-tag $prefix $ver $1) $(cat build-args/$ver-"$1".txt) -f Dockerfile .
+              docker-build --platform "$1" -t ${{ env.EC_IMAGE_NAME }}:$(to-tag $prefix vncless $ver $1) $(cat build-args/$ver-"$1".txt) -f Dockerfile.vncless .
             done
 
             if [ -e build-args/atrust-"$1".txt ]; then
               docker-build --platform "$1" -t hagb/docker-easyconnect:build $(cat build-args/atrust-"$1".txt) -f Dockerfile.build .
-              docker-build --platform "$1" -t ${{ env.ATRUST_IMAGE_NAME }}:${prefix}"$1" $(cat build-args/atrust-"$1".txt) -f Dockerfile .
-              docker-build --platform "$1" -t ${{ env.ATRUST_IMAGE_NAME }}:${prefix}vncless-"$1" $(cat build-args/atrust-"$1".txt) -f Dockerfile.vncless .
+              docker-build --platform "$1" -t ${{ env.ATRUST_IMAGE_NAME }}:$(to-tag $prefix $1) $(cat build-args/atrust-"$1".txt) -f Dockerfile .
+              docker-build --platform "$1" -t ${{ env.ATRUST_IMAGE_NAME }}:$(to-tag $prefix vncless $1) $(cat build-args/atrust-"$1".txt) -f Dockerfile.vncless .
             fi
 
             if [ amd64 = "$1" ]; then
-              docker-build -t ${{ env.EC_IMAGE_NAME }}:${prefix}cli -f Dockerfile.cli .
+              docker-build -t ${{ env.EC_IMAGE_NAME }}:$(to-tag $prefix cli) -f Dockerfile.cli .
             fi
           }
 
@@ -64,19 +72,25 @@ jobs:
 
       - name: Push Docker image
         run: |
+          to-tag() {
+            IFS=-
+            tag="$(printf %s "$*")"
+            if [ -n "$tag" ]; then
+              printf %s "$tag"
+            else
+              echo latest
+            fi
+          }
           branch="$(git branch --show-current)"
           case "$branch" in
             master)
               prefix=
-              default=latest
               ;;
             develop)
-              prefix=dev-
-              default=dev
+              prefix=dev
               ;;
             *)
-              prefix="$branch"-
-              default="$branch"
+              prefix="$branch"
               ;;
           esac
 
@@ -93,41 +107,36 @@ jobs:
           docker push --all-tags ${{ env.ATRUST_IMAGE_NAME }}
 
           for ver in 7.6.3 7.6.7; do
-            for vncless in "" vncless-; do
+            for vncless in "" vncless; do
               for arch in ${{ env.ARCHS }}; do
-                docker manifest create ${{ env.EC_IMAGE_NAME }}:${prefix}${vncless}${ver} --amend ${{ env.EC_IMAGE_NAME }}:${prefix}${vncless}${ver}-${arch}
+                docker manifest create ${{ env.EC_IMAGE_NAME }}:$(to-tag $prefix $vncless $ver) --amend ${{ env.EC_IMAGE_NAME }}:$(to-tag $prefix $vncless $ver $arch)
               done
 
-              docker manifest push ${{ env.EC_IMAGE_NAME }}:${prefix}${vncless}${ver}
+              docker manifest push ${{ env.EC_IMAGE_NAME }}:$(to-tag $prefix $vncless $ver)
 
               if [ 7.6.7 = $ver ]; then
-                if [ -n "$vncless" ]; then
-                  tag=${prefix}vncless
-                else
-                  tag=$default
-                fi
                 for arch in ${{ env.ARCHS }}; do
-                  docker manifest create ${{ env.EC_IMAGE_NAME }}:$tag --amend ${{ env.EC_IMAGE_NAME }}:${prefix}${vncless}${ver}-${arch}
+                  docker manifest create ${{ env.EC_IMAGE_NAME }}:$(to-tag $prefix $vncless) --amend ${{ env.EC_IMAGE_NAME }}:$(to-tag $prefix $vncless $ver $arch)
                 done
-                docker manifest push ${{ env.EC_IMAGE_NAME }}:$tag
+                docker manifest push ${{ env.EC_IMAGE_NAME }}:$(to-tag $prefix $vncless)
               fi
 
               for arch in ${{ env.ARCHS }}; do
-                delete_tag ${{ env.EC_IMAGE_NAME }} ${prefix}${vncless}${ver}-${arch}
+                delete_tag ${{ env.EC_IMAGE_NAME }} $(to-tag $prefix $vncless $ver $arch)
               done
             done
           done
 
-          for vncless_suffix in "" -vncless; do
+          for vncless in "" vncless; do
             for arch in ${{ env.ARCHS }}; do
               if [ -e build-args/atrust-"$arch".txt ]; then
-                docker manifest create ${{ env.ATRUST_IMAGE_NAME }}:${default}${vncless_suffix} --amend ${{ env.ATRUST_IMAGE_NAME }}:${default}${vncless_suffix}-${arch}
+                docker manifest create ${{ env.ATRUST_IMAGE_NAME }}:$(to-tag $prefix $vncless) --amend ${{ env.ATRUST_IMAGE_NAME }}:$(to-tag $prefix $vncless $arch)
               fi
             done
 
-            docker manifest push ${{ env.ATRUST_IMAGE_NAME }}:${default}${vncless_suffix}
+            docker manifest push ${{ env.ATRUST_IMAGE_NAME }}:$(to-tag $prefix $vncless)
 
             for arch in ${{ env.ARCHS }}; do
-              [ ! -e build-args/atrust-$arch.txt ] || delete_tag ${{ env.ATRUST_IMAGE_NAME }} ${default}${vncless_suffix}-${arch}
+              [ ! -e build-args/atrust-$arch.txt ] || delete_tag ${{ env.ATRUST_IMAGE_NAME }} $(to-tag $prefix $vncless $arch)
             done
           done
