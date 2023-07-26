@@ -29,7 +29,7 @@ docker-easyconnect
 │     │  └─ xdg-open: 用于记录、弹出深信服 VPN 弹出的 URL
 │     ├─ local
 │     │  └─ bin
-│     │     ├─ detect-iptables.sh:  检测 iptables 使用 ntf 还是 legacy
+│     │     ├─ detect-iptables.sh:  检测 iptables 应该使用 ntf 还是 legacy
 │     │     ├─ detect-route.sh:     确定策略路由的方式
 │     │     ├─ get-vnc-clip.sh:     供用户调用以获取 VNC 剪贴板内容
 │     │     ├─ novnc-easy-novnc.sh: 用 easy-novnc 启动 novnc（见 build.md）
@@ -54,3 +54,9 @@ docker-easyconnect
 │  └─ Makefile
 └─ ...
 ```
+
+## 路由的处理
+
+深信服的 VPN 启动后会启动一个 tun 并设置它的路由表。其中这些路由有可能覆盖我们访问容器端口（socks5 代理、vnc 等）的源地址，导致这些服务向我们回复的数据包被路由到 tun，从而使得这些服务不可用。
+
+为了解决这个问题，容器启动时（此时 VPN 尚未启动）会将路由表备份到路由表 2，之后使用策略路由来让上面提到的数据包走路由表 2，即正确路由到宿主机网络而非 VPN。（见于 [`docker-root/usr/local/bin/detect-route.sh`](../docker-root/usr/local/bin/detect-route.sh)）
