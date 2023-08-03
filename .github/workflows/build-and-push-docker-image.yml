@@ -3,8 +3,8 @@ name: Build And Push Docker Image
 on: workflow_dispatch
 
 env:
-  EC_IMAGE_NAME: fefx/docker-easyconnect
-  ATRUST_IMAGE_NAME: fefx/docker-atrust
+  EC_IMAGE_NAME: hagb/docker-easyconnect
+  ATRUST_IMAGE_NAME: hagb/docker-atrust
   ARCHS: mips64le arm64 i386 amd64
   ATRUST_ARCHS: mips64le arm64 amd64
 
@@ -28,11 +28,6 @@ jobs:
           fi
         shell: bash
 
-      - name: TEST
-        run: 
-          echo "${{ steps.compare.outputs.different }}"
-        shell: bash
-    
       - name: Login to Docker registry
         uses: docker/login-action@v1
         with:
