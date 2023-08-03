@@ -29,8 +29,8 @@ jobs:
           wget http:download.sangfor.com.cn/download/product/sslvpn/pkg/pkg_version.xml -O pkg_version_remote.xml
           diff pkg_version.xml pkg_version_remote.xml > /dev/null
           if [ $? -ne 0 ]; then
-         echo 'DIFFERENT=true' >> $GITHUB_ENV
-    fi&& echo "different=true" >> $GITHUB_OUTPUT
+              echo "different=true" >> $GITHUB_OUTPUT
+          fi
         shell: bash
 
 
