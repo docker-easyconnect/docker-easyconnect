@@ -25,7 +25,6 @@ jobs:
         shell: bash
 
       - name: TEST
-        id: compare
         run: |
           echo "${{ steps.compare.outputs.PKG_UPDATE }}"
         shell: bash
