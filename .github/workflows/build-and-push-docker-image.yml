@@ -1,5 +1,363 @@
 name: Build And Push Docker Image
 
+
+on: workflow_dispatch
+
+
+env:
+  EC_IMAGE_NAME: fefx/docker-easyconnect
+  ATRUST_IMAGE_NAME: fefx/docker-atrust
+  ARCHS: mips64le arm64 i386 amd64
+  ATRUST_ARCHS: mips64le arm64 amd64
+
+
+jobs:
+  build:
+
+
+    runs-on: ubuntu-latest
+
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+
+      - name: Compare pkg_version.xml
+        id: compare
+        run: |
+          wget http:download.sangfor.com.cn/download/product/sslvpn/pkg/pkg_version.xml -O pkg_version_remote.xml
+          diff pkg_version.xml pkg_version_remote.xml > /dev/null
+          if [ $? -ne 0 ]; then
+         echo 'DIFFERENT=true' >> $GITHUB_ENV
+    fi&& echo "different=true" >> $GITHUB_OUTPUT
+        shell: bash
+
+
+      - name: TEST
+        run: 
+          echo "${{ steps.compare.outputs.different }}"
+        shell: bash
+
+      - name: Login to Docker registry
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets. DOCKERHUB_USERNAME }}
+          password: ${{ secrets. DOCKERHUB_TOKEN }}
+        if: steps.compare.outputs.different == 'true'
+
+
+      - name: Build Docker image
+        run: |
+          to-tag() {
+            tag="$( IFS=-; printf %s "$*"; )"
+            if [ -n "$tag" ]; then
+              printf %s "$tag"
+            else
+              echo latest
+            fi
+          }
+          docker-build() {
+            #docker pull $1
+            docker buildx build --build-arg BUILD_ENV=actions "$@"
+          }
+          branch="$(git branch --show-current)"
+          case "$branch" in
+            master) prefix= ;;
+            develop) prefix=dev ;;
+            *) prefix="$branch" ;;
+          esac
+
+
+          build() {
+            for ver in 7.6.3 7.6.7; doname: Build And Push Docker Image
+
+
+on: workflow_dispatch
+
+
+env:
+  EC_IMAGE_NAME: fefx/docker-easyconnect
+  ATRUST_IMAGE_NAME: fefx/docker-atrust
+  ARCHS: mips64le arm64 i386 amd64
+  ATRUST_ARCHS: mips64le arm64 amd64
+
+
+jobs:
+  build:
+
+
+    runs-on: ubuntu-latest
+
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+
+      - name: Compare pkg_version.xml
+        id: compare
+        run: |
+          wget http:download.sangfor.com.cn/download/product/sslvpn/pkg/pkg_version.xml -O pkg_version_remote.xml
+          diff pkg_version.xml pkg_version_remote.xml > /dev/null
+          if [ $? -ne 0 ]; then
+         echo "different=true" >> $GITHUB_OUTPUT
+            fi
+          }
+          docker-build() {
+            #docker pull $1
+            docker buildx build --build-arg BUILD_ENV=actions "$@"
+          }
+          branch="$(git branch --show-current)"
+          case "$branch" in
+            master) prefix= ;;
+            develop) prefix=dev ;;
+            *) prefix="$branch" ;;
+          esac
+
+
+
+
+          build() {
+            for ver in 7.6.3 7.6.7; doname: Build And Push Docker Image
+
+
+
+
+on: workflow_dispatch
+
+
+
+
+env:
+  EC_IMAGE_NAME: fefx/docker-easyconnect
+  ATRUST_IMAGE_NAME: fefx/docker-atrust
+  ARCHS: mips64le arm64 i386 amd64
+  ATRUST_ARCHS: mips64le arm64 amd64
+
+
+
+
+jobs:
+  build:
+
+
+
+
+    runs-on: ubuntu-latest
+
+
+
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+
+
+
+      - name: Compare pkg_version.xml
+        id: compare
+        run: |
+          wget http:download.sangfor.com.cn/download/product/sslvpn/pkg/pkg_version.xml -O pkg_version_remote.xml
+          diff pkg_version.xml pkg_version_remote.xml > /dev/null
+          if [ $? -ne 0 ]; then
+         echo "different=true" >> $GITHUB_OUTPUT
+      fi&& 
+        shell: bash
+
+
+
+
+      - name: TEST
+        run: 
+          echo "${{ steps.compare.outputs.different }}"
+        shell: bash
+
+
+      - name: Login to Docker registry
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets. DOCKERHUB_USERNAME }}
+          password: ${{ secrets. DOCKERHUB_TOKEN }}
+        if: steps.compare.outputs.different == 'true'
+
+
+
+
+      - name: Build Docker image
+        run: |
+          to-tag() {
+            tag="$( IFS=-; printf %s "$*"; )"
+            if [ -n "$tag" ]; then
+              printf %s "$tag"
+            else
+              echo latest
+            fi
+          }
+          docker-build() {
+            #docker pull $1
+            docker buildx build --build-arg BUILD_ENV=actions "$@"
+          }
+          branch="$(git branch --show-current)"
+          case "$branch" in
+            master) prefix= ;;
+            develop) prefix=dev ;;
+            *) prefix="$branch" ;;
+          esac
+
+
+
+
+          build() {            fi
+          }
+          docker-build() {
+            #docker pull $1
+            docker buildx build --build-arg BUILD_ENV=actions "$@"
+          }
+          branch="$(git branch --show-current)"
+          case "$branch" in
+            master) prefix= ;;
+            develop) prefix=dev ;;
+            *) prefix="$branch" ;;
+          esac
+
+
+
+
+          build() {
+            for ver in 7.6.3 7.6.7; doname: Build And Push Docker Image
+
+
+
+
+on: workflow_dispatch
+
+
+
+
+env:
+  EC_IMAGE_NAME: fefx/docker-easyconnect
+  ATRUST_IMAGE_NAME: fefx/docker-atrust
+  ARCHS: mips64le arm64 i386 amd64
+  ATRUST_ARCHS: mips64le arm64 amd64
+
+
+
+
+jobs:
+  build:
+
+
+
+
+    runs-on: ubuntu-latest
+
+
+
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+
+
+
+      - name: Compare pkg_version.xml
+        id: compare
+        run: |
+          wget http:download.sangfor.com.cn/download/product/sslvpn/pkg/pkg_version.xml -O pkg_version_remote.xml
+          diff pkg_version.xml pkg_version_remote.xml > /dev/null
+          if [ $? -ne 0 ]; then
+              echo "different=true" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+
+
+
+      - name: TEST
+        run: 
+          echo "${{ steps.compare.outputs.different }}"
+        shell: bash
+
+
+      - name: Login to Docker registry
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets. DOCKERHUB_USERNAME }}
+          password: ${{ secrets. DOCKERHUB_TOKEN }}
+        if: steps.compare.outputs.different == 'true'
+
+
+
+
+      - name: Build Docker image
+        run: |
+          to-tag() {
+            tag="$( IFS=-; printf %s "$*"; )"
+            if [ -n "$tag" ]; then
+              printf %s "$tag"
+            else
+              echo latest
+            fi
+          }
+          docker-build() {
+            #docker pull $1
+            docker buildx build --build-arg BUILD_ENV=actions "$@"
+          }
+          branch="$(git branch --show-current)"
+          case "$branch" in
+            master) prefix= ;;
+            develop) prefix=dev ;;
+            *) prefix="$branch" ;;
+          esac
+
+
+
+
+          build() {
+        shell: bash
+
+
+      - name: TEST
+        run: 
+          echo "${{ steps.compare.outputs.different }}"
+        shell: bash
+
+      - name: Login to Docker registry
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets. DOCKERHUB_USERNAME }}
+          password: ${{ secrets. DOCKERHUB_TOKEN }}
+        if: steps.compare.outputs.different == 'true'
+
+
+      - name: Build Docker image
+        run: |
+          to-tag() {
+            tag="$( IFS=-; printf %s "$*"; )"
+            if [ -n "$tag" ]; then
+              printf %s "$tag"
+            else
+              echo latest
+            fi
+          }
+          docker-build() {
+            #docker pull $1
+            docker buildx build --build-arg BUILD_ENV=actions "$@"
+          }
+          branch="$(git branch --show-current)"
+          case "$branch" in
+            master) prefix= ;;
+            develop) prefix=dev ;;
+            *) prefix="$branch" ;;
+          esac
+
+
+          build() {
+            for ver in 7.6.3 7.6.7; do: Build And Push Docker Image
+
 on: workflow_dispatch
 
 env:
@@ -21,7 +379,10 @@ jobs:
         id: compare
         run: |
           wget http://download.sangfor.com.cn/download/product/sslvpn/pkg/pkg_version.xml -O pkg_version_remote.xml
-          diff pkg_version.xml pkg_version_remote.xml && echo "different=true" >> $GITHUB_OUTPUT
+          diff pkg_version.xml pkg_version_remote.xml > /dev/null
+          if [ $? -ne 0 ]; then
+              echo 'DIFFERENT=true' >> $GITHUB_ENV
+    fi&& echo "different=true" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: TEST
