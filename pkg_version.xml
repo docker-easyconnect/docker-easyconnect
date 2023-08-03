@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+1.mac_01或linux_01等为系列号，也是URL路径中文件夹名，里面的版本兼容该系列所有VPN版本；
+2.系列号（文件夹名）下面只有一个安装包，version为该安装包的版本号；
+3.force_update_le表示，同系列号下已安装的客户端，若其版本号小于等于这个版本，都需要进行强制升级；
+4.mac节点表示为mac安装包信息；
+5.linux节点表示为linux安装包信息，deb/rpm表示安装包格式，x86/x64表示系统架构。
+-->
+<root>
+    <mac>
+        <mac_ec_sp>
+            <version>7.5.2.6</version>
+            <force_update_le>7.5.2.5</force_update_le>
+        </mac_ec_sp>
+        <mac_01>
+            <version>7.6.6.6</version>
+            <force_update_le>7.6.6.5</force_update_le>
+        </mac_01>
+        <mac_765>
+            <version>7.6.5.0</version>
+            <force_update_le>7.6.3.0</force_update_le>
+        </mac_765>
+        <mac_767>
+            <version>7.6.7.9</version>
+            <force_update_le>7.6.7.8</force_update_le>
+        </mac_767>
+    </mac>
+    <linux>
+        <linux_01>
+            <deb>
+                <x86>
+                    <version>7.6.3.7</version>
+                    <force_update_le>7.6.3.6</force_update_le>
+                </x86>
+                <x64>
+                    <version>7.6.3.7</version>
+                    <force_update_le>7.6.3.6</force_update_le>
+                </x64>
+                </deb>
+            <rpm>
+                <x86>
+                    <version>7.6.3.7</version>
+                    <force_update_le>7.6.3.6</force_update_le>
+                </x86>
+                <x64>
+                    <version>7.6.3.7</version>
+                    <force_update_le>7.6.3.6</force_update_le>
+                </x64>
+            </rpm>
+        </linux_01>
+        <linux_767>
+            <deb>
+                <x86>
+                    <version>7.6.7.7</version>
+                    <force_update_le>7.6.7.6</force_update_le>
+                </x86>
+                <x64>
+                    <version>7.6.7.7</version>
+                    <force_update_le>7.6.7.6</force_update_le>
+                </x64>
+            </deb>
+            <rpm>
+                <x86>
+                    <version>7.6.7.7</version>
+                    <force_update_le>7.6.7.6</force_update_le>
+                </x86>
+                <x64>
+                    <version>7.6.7.7</version>
+                    <force_update_le>7.6.7.6</force_update_le>
+                </x64>
+            </rpm>
+        </linux_767>
+    </linux>
+</root>
