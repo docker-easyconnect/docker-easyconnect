@@ -24,7 +24,6 @@ jobs:
           wget http://download.sangfor.com.cn/download/product/sslvpn/pkg/pkg_version.xml -O pkg_version.xml
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          cp pkg_version_remote.xml pkg_version.xml
           git add pkg_version.xml
           git commit -m "Update pkg_version.xml"
           git push
