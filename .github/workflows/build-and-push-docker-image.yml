@@ -3,10 +3,12 @@ name: Build And Push Docker Image
 on: workflow_dispatch
 
 env:
-  EC_IMAGE_NAME: hagb/docker-easyconnect
-  ATRUST_IMAGE_NAME: hagb/docker-atrust
+  EC_IMAGE_NAME: fefx/docker-easyconnect
+  ATRUST_IMAGE_NAME: fefx/docker-atrust
   ARCHS: mips64le arm64 i386 amd64
   ATRUST_ARCHS: mips64le arm64 amd64
+  GITHUB_USER: redjumper
+  GITHUB_REPO: docker-easyconnect
 
 jobs:
   build:
@@ -158,5 +160,5 @@ jobs:
           cp pkg_version_remote.xml pkg_version.xml
           git add pkg_version.xml
           git commit -m "Update pkg_version.xml"
-          git push
+          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ env.GITHUB_USER }}/${{ env.GITHUB_REPO }}.git
         if: steps.compare.outputs.different == 'true'
