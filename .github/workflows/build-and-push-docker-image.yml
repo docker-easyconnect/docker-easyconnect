@@ -78,7 +78,7 @@ jobs:
           done
 
           docker image rm hagb/docker-easyconnect:build
-        if: env.PKG_UPDATE == 'true'
+        if: steps.compare.outputs.PKG_UPDATE == 'true'
 
       - name: Push Docker image
         run: |
