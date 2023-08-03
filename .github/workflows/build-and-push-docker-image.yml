@@ -26,6 +26,22 @@ jobs:
           diff pkg_version.xml pkg_version_remote.xml || echo "::set-output name=different::true"
         shell: bash
 
+      - name: Replace pkg_version.xml
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          cp pkg_version_remote.xml pkg_version.xml
+          git add pkg_version.xml
+          git commit -m "Update pkg_version.xml"
+          git push
+
+      - name: Compare pkg_version.xml
+        id: compare
+        run: |
+          wget http://download.sangfor.com.cn/download/product/sslvpn/pkg/pkg_version.xml -O pkg_version_remote.xml
+          diff pkg_version.xml pkg_version_remote.xml || echo "::set-output name=different::true"
+        shell: bash
+
       - name: Login to Docker registry
         uses: docker/login-action@v1
         with:
