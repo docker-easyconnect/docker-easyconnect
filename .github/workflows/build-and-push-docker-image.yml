@@ -160,5 +160,5 @@ jobs:
           cp pkg_version_remote.xml pkg_version.xml
           git add pkg_version.xml
           git commit -m "Update pkg_version.xml"
-          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ env.GITHUB_USER }}/${{ env.GITHUB_REPO }}.git
+          git push https://${{ secrets.ACCESS_TOKEN }}@github.com/${{ env.GITHUB_USER }}/${{ env.GITHUB_REPO }}.git
         if: steps.compare.outputs.different == 'true'
