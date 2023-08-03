@@ -22,7 +22,7 @@ jobs:
         run: |
           wget http://download.sangfor.com.cn/download/product/sslvpn/pkg/pkg_version.xml -O pkg_version_remote.xml
           diff pkg_version.xml pkg_version_remote.xml && echo "PKG_UPDATE=true" >> $GITHUB_OUTPUT
-          echo "${{ env.PKG_UPDATE }}"
+          echo "${{ steps.compare.outputs.PKG_UPDATE }}"
         shell: bash
 
       - name: Login to Docker registry
@@ -30,7 +30,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-        if: env.PKG_UPDATE == 'true'
+        if: steps.compare.outputs.PKG_UPDATE == 'true'
 
       - name: Build Docker image
         run: |
@@ -150,7 +150,7 @@ jobs:
               [ ! -e build-args/atrust-$arch.txt ] || delete_tag ${{ env.ATRUST_IMAGE_NAME }} $(to-tag $prefix $vncless $arch)
             done
           done
-        if: env.PKG_UPDATE == 'true'
+        if: steps.compare.outputs.PKG_UPDATE == 'true'
 
       - name: Replace pkg_version.xml
         run: |
@@ -160,4 +160,4 @@ jobs:
           git add pkg_version.xml
           git commit -m "Update pkg_version.xml"
           git push
-        if: env.PKG_UPDATE == 'true'
+        if: steps.compare.outputs.PKG_UPDATE == 'true'
