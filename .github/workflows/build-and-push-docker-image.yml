@@ -21,7 +21,7 @@ jobs:
         id: compare
         run: |
           wget http://download.sangfor.com.cn/download/product/sslvpn/pkg/pkg_version.xml -O pkg_version_remote.xml
-          if pkg_version.xml pkg_version_remote.xml >/dev/null; then
+          if diff pkg_version.xml pkg_version_remote.xml >/dev/null; then
             echo "different=true" >> $GITHUB_OUTPUT
           else
             echo "different=false" >> $GITHUB_OUTPUT
