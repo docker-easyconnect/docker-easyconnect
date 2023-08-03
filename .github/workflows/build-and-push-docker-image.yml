@@ -7,8 +7,6 @@ env:
   ATRUST_IMAGE_NAME: fefx/docker-atrust
   ARCHS: mips64le arm64 i386 amd64
   ATRUST_ARCHS: mips64le arm64 amd64
-  GITHUB_USER: redjumper
-  GITHUB_REPO: docker-easyconnect
 
 jobs:
   build:
@@ -19,20 +17,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Replace pkg_version.xml
-        run: |
-          wget http://download.sangfor.com.cn/download/product/sslvpn/pkg/pkg_version.xml -O pkg_version.xml
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git add pkg_version.xml
-          git commit -m "Update pkg_version.xml"
-          git push
-
       - name: Compare pkg_version.xml
         id: compare
         run: |
           wget http://download.sangfor.com.cn/download/product/sslvpn/pkg/pkg_version.xml -O pkg_version_remote.xml
-          diff pkg_version.xml pkg_version_remote.xml || echo "::set-output name=different::true"
+          diff pkg_version.xml pkg_version_remote.xml || echo "PKG_UPDATE=true" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Login to Docker registry
@@ -40,7 +29,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-        if: steps.compare.outputs.different == 'true'
+        if: env.PKG_UPDATE == 'true'
 
       - name: Build Docker image
         run: |
@@ -88,7 +77,7 @@ jobs:
           done
 
           docker image rm hagb/docker-easyconnect:build
-        if: steps.compare.outputs.different == 'true'
+        if: env.PKG_UPDATE == 'true'
 
       - name: Push Docker image
         run: |
@@ -160,7 +149,7 @@ jobs:
               [ ! -e build-args/atrust-$arch.txt ] || delete_tag ${{ env.ATRUST_IMAGE_NAME }} $(to-tag $prefix $vncless $arch)
             done
           done
-        if: steps.compare.outputs.different == 'true'
+        if: env.PKG_UPDATE == 'true'
 
       - name: Replace pkg_version.xml
         run: |
@@ -169,5 +158,5 @@ jobs:
           cp pkg_version_remote.xml pkg_version.xml
           git add pkg_version.xml
           git commit -m "Update pkg_version.xml"
-          git push https://${{ secrets.ACCESS_TOKEN }}@github.com/${{ env.GITHUB_USER }}/${{ env.GITHUB_REPO }}.git
-        if: steps.compare.outputs.different == 'true'
+          git push
+        if: env.PKG_UPDATE == 'true'
