@@ -17,23 +17,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Compare pkg_version.xml
-        id: compare
-        run: |
-          wget http://download.sangfor.com.cn/download/product/sslvpn/pkg/pkg_version.xml -O pkg_version_remote.xml
-          if diff pkg_version.xml pkg_version_remote.xml >/dev/null; then
-            echo "different=false" >> $GITHUB_OUTPUT
-          else
-            echo "different=true" >> $GITHUB_OUTPUT
-          fi
-        shell: bash
-
       - name: Login to Docker registry
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-        if: steps.compare.outputs.different == 'true'
 
       - name: Build Docker image
         run: |
@@ -81,7 +69,6 @@ jobs:
           done
 
           docker image rm hagb/docker-easyconnect:build
-        if: steps.compare.outputs.different == 'true'
 
       - name: Push Docker image
         run: |
@@ -153,14 +140,3 @@ jobs:
               [ ! -e build-args/atrust-$arch.txt ] || delete_tag ${{ env.ATRUST_IMAGE_NAME }} $(to-tag $prefix $vncless $arch)
             done
           done
-        if: steps.compare.outputs.different == 'true'
-
-      - name: Replace pkg_version.xml
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          cp pkg_version_remote.xml pkg_version.xml
-          git add pkg_version.xml
-          git commit -m "Update pkg_version.xml"
-          git push
-        if: steps.compare.outputs.different == 'true'
