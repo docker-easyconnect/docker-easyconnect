@@ -36,5 +36,4 @@ jobs:
 
       - name: Rebuild EasyConnect
         uses: ./.github/workflows/build-and-push-docker-image.yml
-        secrets: inherit
         if: steps.compare.outputs.different == 'true'
