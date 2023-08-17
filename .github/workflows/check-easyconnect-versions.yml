@@ -2,7 +2,7 @@ name: Check EasyConnect versions
 
 on:
   schedule:
-    - cron:  '30 0 * * *'
+    - cron:  '30 3 * * *'
 
 jobs:
   build:
