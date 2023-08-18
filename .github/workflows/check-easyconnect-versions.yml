@@ -35,6 +35,12 @@ jobs:
           git push
         if: steps.compare.outputs.different == 'true'
 
+  rebuild:
+
+    needs: build
+    runs-on: ubuntu-latest
+    if: needs.build.outputs.different == 'true'
+
+    steps:
       - name: Rebuild EasyConnect
         uses: ./.github/workflows/build-and-push-docker-image.yml
-        if: steps.compare.outputs.different == 'true'
