@@ -35,12 +35,9 @@ jobs:
           git push
         if: steps.compare.outputs.different == 'true'
 
-  rebuild:
-
-    needs: build
-    runs-on: ubuntu-latest
-    if: needs.build.outputs.different == 'true'
-
-    steps:
       - name: Rebuild EasyConnect
-        uses: ./.github/workflows/build-and-push-docker-image.yml
+        uses: ./.github/actions/build-and-push-docker-image
+        with:
+          registry_username: ${{secrets.DOCKERHUB_USERNAME}}
+          registry_password: ${{secrets.DOCKERHUB_TOKEN}}
+        if: steps.compare.outputs.different == 'true'
