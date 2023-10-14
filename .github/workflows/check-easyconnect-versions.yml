@@ -1,0 +1,6 @@
+name: Check EasyConnect versions
+
+on:
+  workflow_dispatch:
+
+jobs:
