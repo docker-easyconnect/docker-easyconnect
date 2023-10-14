@@ -5,6 +5,9 @@ on:
   schedule:
     - cron:  '30 3 * * *'
 
+permissions:
+  contents: write
+
 jobs:
   build:
 
