@@ -11,6 +11,7 @@ RUN . /tmp/build-scripts/config-apt.sh && \
         * ) go=gccgo-go ;; \
     esac && \
     apt-get update && \
+    apt-cache policy libc6-dev libc6 && \
     apt-get install -y --no-install-recommends --no-install-suggests ca-certificates \
                     busybox libssl-dev automake $go $ecgccpkg build-essential
 
