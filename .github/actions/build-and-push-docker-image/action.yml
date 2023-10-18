@@ -18,11 +18,11 @@ inputs:
   archs:
     description: 'Archs of the easyconnect image to push'
     required: true
-    default: 'mips64le arm64 i386 amd6'
+    default: 'amd64'
   atrust_archs:
     description: 'Archs of the atrust image to push'
     required: true
-    default: 'mips64le arm64 amd64'
+    default: 'amd64'
 runs:
   using: 'composite'
   steps:
