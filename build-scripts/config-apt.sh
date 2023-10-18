@@ -5,7 +5,12 @@ if [ -n "${ANDROID_PATCH}" ]; then
 fi &&
 echo "APT::Default-Release \"$VERSION_CODENAME\";" > /etc/apt/apt.conf.d/80release &&
 # use qemu-user >= 8.0.0 which fixes https://gitlab.com/qemu-project/qemu/-/issues/866
-echo "Package: qemu-user
+echo "\
+Package: *
+Pin: release n=trixie
+Pin-Priority: 1
+
+Package: qemu-user
 Pin: release n=trixie
 Pin-Priority: 990" > /etc/apt/preferences.d/qemu &&
 echo "deb $MIRROR_URL trixie main
