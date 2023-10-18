@@ -15,6 +15,7 @@ RUN . /tmp/build-scripts/config-apt.sh && \
     else \
         extra_pkgs="libgtk2.0-0 libdbus-glib-1-2 libgconf-2-4 libnspr4:$EC_HOST libnss3:$EC_HOST"; \
     fi && \
+    apt-cache policy libc6-dev libc6 && \
     apt-get install -y --no-install-recommends --no-install-suggests \
         libx11-xcb1 libnss3 libasound2 iptables xclip libxtst6 \
         dante-server tigervnc-standalone-server tigervnc-tools psmisc flwm x11-utils \
