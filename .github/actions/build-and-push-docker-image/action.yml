@@ -1,0 +1,152 @@
+name: Build and Push Docker Image
+description: Build and Push Docker Image
+inputs:
+  registry_username:
+    description: "Username for image registry"
+    required: true
+  registry_password:
+    description: "Password for image registry"
+    required: true
+  ec_image_name:
+    description: 'Name of the easyconnect image to push'
+    required: true
+    default: 'hagb/docker-easyconnect'
+  atrust_image_name:
+    description: 'Name of the atrust image to push'
+    required: true
+    default: 'hagb/docker-atrust'
+  archs:
+    description: 'Archs of the easyconnect image to push'
+    required: true
+    default: 'mips64le arm64 i386 amd64'
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Login to Docker registry
+      uses: docker/login-action@v1
+      with:
+        username: ${{ inputs.registry_username }}
+        password: ${{ inputs.registry_password }}
+
+    - name: Build Docker image
+      shell: bash
+      run: |
+        to-tag() {
+          tag="$( IFS=-; printf %s "$*"; )"
+          if [ -n "$tag" ]; then
+            printf %s "$tag"
+          else
+            echo latest
+          fi
+        }
+        docker-build() {
+          #docker pull $1
+          docker buildx build --build-arg BUILD_ENV=actions "$@"
+        }
+        branch="$(git branch --show-current)"
+        case "$branch" in
+          master) prefix= ;;
+          develop) prefix=dev ;;
+          *) prefix="$branch" ;;
+        esac
+
+        build() {
+          for ver in 7.6.3 7.6.7; do
+            docker-build --platform "$1" -t hagb/docker-easyconnect:build $(cat build-args/$ver-"$1".txt) -f Dockerfile.build .
+            docker-build --platform "$1" -t ${{ inputs.ec_image_name }}:$(to-tag $prefix $ver $1) $(cat build-args/$ver-"$1".txt) -f Dockerfile .
+            docker-build --platform "$1" -t ${{ inputs.ec_image_name }}:$(to-tag $prefix vncless $ver $1) $(cat build-args/$ver-"$1".txt) -f Dockerfile.vncless .
+          done
+
+          if [ -e build-args/atrust-"$1".txt ]; then
+            docker-build --platform "$1" -t hagb/docker-easyconnect:build $(cat build-args/atrust-"$1".txt) -f Dockerfile.build .
+            docker-build --platform "$1" -t ${{ inputs.atrust_image_name }}:$(to-tag $prefix $1) $(cat build-args/atrust-"$1".txt) -f Dockerfile .
+            docker-build --platform "$1" -t ${{ inputs.atrust_image_name }}:$(to-tag $prefix vncless $1) $(cat build-args/atrust-"$1".txt) -f Dockerfile.vncless .
+          fi
+
+          if [ amd64 = "$1" ]; then
+            docker-build -t ${{ inputs.ec_image_name }}:$(to-tag $prefix cli) -f Dockerfile.cli .
+          fi
+        }
+
+        sudo apt-get -y install binfmt-support qemu-user-static
+
+        for arch in ${{ inputs.archs }}; do
+          build $arch
+        done
+
+        docker image rm hagb/docker-easyconnect:build
+
+    - name: Push Docker image
+      shell: bash
+      run: |
+        to-tag() {
+          IFS=-
+          tag="$(printf %s "$*")"
+          if [ -n "$tag" ]; then
+            printf %s "$tag"
+          else
+            echo latest
+          fi
+        }
+        branch="$(git branch --show-current)"
+        case "$branch" in
+          master)
+            prefix=
+            ;;
+          develop)
+            prefix=dev
+            ;;
+          *)
+            prefix="$branch"
+            ;;
+        esac
+
+        token="$( curl -sH "Content-Type: application/json" \
+                    -X POST -d "{\"username\": \"${{ inputs.registry_username }}\", \"password\": \"${{ inputs.registry_password }}\"}" \
+                    https://hub.docker.com/v2/users/login/ |
+                  jq -r .token )"
+        delete_tag() {
+            curl -sH "Content-Type: application/json" -X DELETE -H "Authorization: JWT $token" \
+                  https://hub.docker.com/v2/repositories/$1/tags/$2/
+        }
+
+        docker push --all-tags ${{ inputs.ec_image_name }}
+        docker push --all-tags ${{ inputs.atrust_image_name }}
+
+        for ver in 7.6.3 7.6.7; do
+          for vncless in "" vncless; do
+            for arch in ${{ inputs.archs }}; do
+              docker manifest create ${{ inputs.ec_image_name }}:$(to-tag $prefix $vncless $ver) --amend ${{ inputs.ec_image_name }}:$(to-tag $prefix $vncless $ver $arch)
+            done
+
+            docker manifest push ${{ inputs.ec_image_name }}:$(to-tag $prefix $vncless $ver)
+
+            if [ 7.6.7 = $ver ]; then
+              for arch in ${{ inputs.archs }}; do
+                docker manifest create ${{ inputs.ec_image_name }}:$(to-tag $prefix $vncless) --amend ${{ inputs.ec_image_name }}:$(to-tag $prefix $vncless $ver $arch)
+              done
+              docker manifest push ${{ inputs.ec_image_name }}:$(to-tag $prefix $vncless)
+            fi
+
+            for arch in ${{ inputs.archs }}; do
+              delete_tag ${{ inputs.ec_image_name }} $(to-tag $prefix $vncless $ver $arch)
+            done
+          done
+        done
+
+        for vncless in "" vncless; do
+          for arch in ${{ inputs.archs }}; do
+            if [ -e build-args/atrust-"$arch".txt ]; then
+              docker manifest create ${{ inputs.atrust_image_name }}:$(to-tag $prefix $vncless) --amend ${{ inputs.atrust_image_name }}:$(to-tag $prefix $vncless $arch)
+            fi
+          done
+
+          docker manifest push ${{ inputs.atrust_image_name }}:$(to-tag $prefix $vncless)
+
+          for arch in ${{ inputs.archs }}; do
+            [ ! -e build-args/atrust-$arch.txt ] || delete_tag ${{ inputs.atrust_image_name }} $(to-tag $prefix $vncless $arch)
+          done
+        done

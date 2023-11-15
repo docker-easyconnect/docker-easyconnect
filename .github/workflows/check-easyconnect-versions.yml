@@ -2,5 +2,42 @@ name: Check EasyConnect versions
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron:  '30 3 * * *'
 
 jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Compare pkg_version.xml
+        id: compare
+        run: |
+          wget http://download.sangfor.com.cn/download/product/sslvpn/pkg/pkg_version.xml -O pkg_version_remote.xml
+          if diff pkg_version.xml pkg_version_remote.xml >/dev/null; then
+            echo "different=false" >> $GITHUB_OUTPUT
+          else
+            echo "different=true" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Replace pkg_version.xml
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          cp pkg_version_remote.xml pkg_version.xml
+          git add pkg_version.xml
+          git commit -m "Update pkg_version.xml"
+          git push
+        if: steps.compare.outputs.different == 'true'
+
+      - name: Rebuild EasyConnect
+        uses: ./.github/actions/build-and-push-docker-image
+        with:
+          registry_username: ${{secrets.DOCKERHUB_USERNAME}}
+          registry_password: ${{secrets.DOCKERHUB_TOKEN}}
+        if: steps.compare.outputs.different == 'true'
