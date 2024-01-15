@@ -71,6 +71,7 @@ runs:
           fi
         }
 
+        sudo apt-get update
         sudo apt-get -y install binfmt-support qemu-user-static
 
         for arch in ${{ inputs.archs }}; do
