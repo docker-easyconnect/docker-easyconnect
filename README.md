@@ -4,6 +4,8 @@
 
 本项目基于 EasyConnect 官方“Linux”版的 deb 包、[@shmille](https://github.com/shmilee) 提供的[命令行版客户端 deb 包](https://github.com/shmilee/scripts/releases/download/v0.0.1/easyconn_7.6.8.2-ubuntu_amd64.deb)、aTrust 官方“Linux”版 deb 包，这些 deb 包的版权归深信服（Sangfor）所有，请不要滥用本项目。本项目**不是**深信服官方项目。
 
+**招募项目维护者，有兴趣可在 [#275](https://github.com/docker-easyconnect/docker-easyconnect/issues/275) 下回复。**
+
 欢迎批评、指正，提交 issue、PR，包括但不仅限于 bug、各种疑问、代码和文档的改进。
 
 详细用法见于 [doc/usage.md](doc/usage.md)，常见问题见于 [doc/faq.md](doc/faq.md)，自行构建可参照构建说明 [doc/build.md](doc/build.md)。
