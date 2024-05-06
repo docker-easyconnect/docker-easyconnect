@@ -21,8 +21,8 @@
             <force_update_le>7.6.3.0</force_update_le>
         </mac_765>
         <mac_767>
-            <version>7.6.7.9</version>
-            <force_update_le>7.6.7.8</force_update_le>
+            <version>7.6.7.10</version>
+            <force_update_le>7.6.7.9</force_update_le>
         </mac_767>
     </mac>
     <linux>
