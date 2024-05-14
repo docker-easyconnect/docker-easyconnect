@@ -49,8 +49,14 @@ start_danted() {
 
 	internals=""
 	externals=""
+        ipv6=$(ip a | grep inet6)
+        if [[ $ipv6 ]]; then
+                internals="internal: 0.0.0.0 port = 1080\\ninternal: :: port = 1080"
+        else
+
+                internals="internal: 0.0.0.0 port = 1080"
+        fi
 	for iface in $(ip -o addr | sed -E 's/^[0-9]+: ([^ ]+) .*/\1/' | sort | uniq | grep -v "lo\|sit\|vir"); do
-		internals="${internals}internal: $iface port = 1080\\n"
 		externals="${externals}external: $iface\\n"
 	done
 	externals="${externals}external: $VPN_TUN\\n"
