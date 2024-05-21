@@ -49,7 +49,7 @@ start_danted() {
 
 	internals=""
 	externals=""
-        ipv6=$(ip a | grep inet6)
+        ipv6=$(ip -6 a)
         if [[ $ipv6 ]]; then
                 internals="internal: 0.0.0.0 port = 1080\\ninternal: :: port = 1080"
         else
