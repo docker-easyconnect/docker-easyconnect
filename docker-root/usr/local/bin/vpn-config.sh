@@ -71,7 +71,12 @@ case "$_VPN_TYPE" in
 		FORCE_OPEN_PORTS=54631
 		VPN_PROCS=aTrustAgent
 		vpn_daemon() {
-			fake-hwaddr-run $VPN_BIN/aTrustAgent --plugin plugin-daemon --plugin-cmd \| >/dev/null &
+			# aTrust 用 getlogin_r 或者 loginctl 来获取用于运行 54531 http 服务的非 root 用户：
+			# - 先尝试 getlogin_r，若获取到 root 则失败，服务无法启动（这是 podman 上无法启动服务的原因）；
+			# - 若获取不到则，使用 loginctl 等工具（已经过 hook，可以提供普通用户供 aTrust 使用，此为原本 docker 上的行为）。
+			# 此处使用 LD_PRELOAD 来让 getlogin_r 直接返回该普通用户，从而使 podman 也能够正常启动服务。
+			FAKE_LOGIN=sangfor LD_PRELOAD=/usr/local/lib/fake-getlogin.so LD_LIBRARY_PATH="$VPN_ROOT:$VPN_BIN:${LD_LIBRARY_PATH}" \
+				fake-hwaddr-run $VPN_BIN/aTrustAgent --plugin plugin-daemon --plugin-cmd \| >/dev/null &
 		}
 		vpn_ui() {
 			$VPN_UI --no-sandbox

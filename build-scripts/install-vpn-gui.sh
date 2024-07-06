@@ -14,10 +14,18 @@ package_name=$(echo $(grep -Po '(?<=Package:).*' /DEBIAN/control)) &&
 { /DEBIAN/preinst || true ; } &&
 mkdir /var/lib/dpkg/info/$package_name &&
 for file in /DEBIAN/*; do
-	mv $file /var/lib/dpkg/info/$package_name.$(basename $file)
+	cp "$file" /var/lib/dpkg/info/"$package_name.$(basename $file)" &&
+	# workaround for aTrust scripts
+	cp "$file" /var/lib/dpkg/info/"$(basename $file)"
 done &&
 /var/lib/dpkg/info/$package_name.postinst &&
+for file in /DEBIAN/*; do
+	rm /var/lib/dpkg/info/"$(basename $file)"
+done &&
 rm -r /DEBIAN VPN.deb &&
+if [ -e /home/sangfor/ ]; then
+	chown sangfor:sangfor -R /home/sangfor/
+fi &&
 
 ln -fs /bin/false /usr/sbin/dmidecode &&
 

@@ -14,12 +14,14 @@ RUN . /tmp/build-scripts/config-apt.sh && \
     apt-get install -y --no-install-recommends --no-install-suggests ca-certificates \
                     busybox libssl-dev automake $go $ecgccpkg build-essential
 
-RUN mkdir results && cd results && mkdir fake-hwaddr tinyproxy-ws novnc
+RUN mkdir results && cd results && mkdir fake-hwaddr tinyproxy-ws novnc fake-getlogin && mkdir /tmp/src -p
 
 COPY fake-hwaddr /tmp/src/fake-hwaddr/
+COPY fake-getlogin /tmp/src/fake-getlogin/
 
 RUN . /tmp/build-scripts/get-echost-names.sh && \
-    cd /tmp/src/fake-hwaddr && CC=${ec_cc} make clean all && install -D fake-hwaddr.so /results/fake-hwaddr/usr/local/lib/fake-hwaddr.so
+    cd /tmp/src/fake-hwaddr && CC=${ec_cc} make clean all && install -D fake-hwaddr.so /results/fake-hwaddr/usr/local/lib/fake-hwaddr.so && \
+    cd /tmp/src/fake-getlogin && CC=${ec_cc} make clean all && install -D fake-getlogin.so /results/fake-getlogin/usr/local/lib/fake-getlogin.so
 
 # https://github.com/tinyproxy/tinyproxy/pull/211#issue-382736027
 ARG TINYPROXY_COMMIT=991e47d8ebd4b12710828b2b486535e4c25ba26c

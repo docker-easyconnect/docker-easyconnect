@@ -26,13 +26,15 @@ RUN groupadd -r socks && useradd -r -g socks socks
 
 COPY ["./build-scripts/install-vpn-gui.sh", "./build-scripts/mk-qemu-wrapper.sh", "/tmp/build-scripts/"]
 
+COPY ./docker-root-preinst /
+
 ARG VPN_URL ELECTRON_URL USE_VPN_ELECTRON VPN_DEB_PATH
 
 RUN /tmp/build-scripts/install-vpn-gui.sh
 
 COPY ./docker-root /
 
-COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /results/tinyproxy-ws/ /results/novnc/ /
+COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /results/fake-getlogin/ /results/tinyproxy-ws/ /results/novnc/ /
 
 #ENV TYPE="" PASSWORD="" LOOP=""
 #ENV DISPLAY
