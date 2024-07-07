@@ -1,0 +1,10 @@
+#!/bin/sh
+if [ x"-w net.ipv4.conf.utun7.route_localnet=1" = x"$*" ]; then
+	echo "WARNING: you are calling the sysctl wrapper with the workaround to make aTrust happy when it calls \`sysctl -w net.ipv4.conf.utun7.route_localnet=1\`." >&2
+	if [ 1 = "$(/usr/sbin/sysctl.real -n net.ipv4.conf.utun7.route_localnet)" ] || /usr/sbin/sysctl.real "$@" ; then
+		echo "Fortunately it succeeded or has been set." >&2
+		exit 0
+	fi
+	exit 1
+fi
+exec /usr/sbin/sysctl.real "$@"

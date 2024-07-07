@@ -1,4 +1,6 @@
 #!/bin/bash
+mv /usr/sbin/sysctl{,.real} &&
+ln -s /usr/sbin/sysctl{-hook,} &&
 echo "$VPN_TYPE" > /etc/vpn-type &&
 cd /tmp &&
 . ./build-scripts/get-echost-names.sh &&

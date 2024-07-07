@@ -56,7 +56,7 @@ start_danted() {
 
                 internals="internal: 0.0.0.0 port = 1080"
         fi
-	for iface in $(ip -o addr | sed -E 's/^[0-9]+: ([^ ]+) .*/\1/' | sort | uniq | grep -v "lo\|sit\|vir"); do
+	for iface in $(ip -o addr | sed -E 's/^[0-9]+: ([^ ]+) .*/\1/' | sort | uniq | grep -v "sit\|vir"); do
 		externals="${externals}external: $iface\\n"
 	done
 	externals="${externals}external: $VPN_TUN\\n"
