@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ "ATRUST" = "$VPN_TYPE" ]; the
+if [ "ATRUST" = "$VPN_TYPE" ]; then
 	mv /usr/sbin/sysctl{,.real} &&
 	ln -s /usr/sbin/sysctl{-hook,}
 fi &&
