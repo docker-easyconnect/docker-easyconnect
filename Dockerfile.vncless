@@ -10,7 +10,7 @@ RUN . /tmp/build-scripts/config-apt.sh && \
     . /tmp/build-scripts/add-qemu.sh && \
     apt-get update && \
     if [ "ATRUST" = "$VPN_TYPE" ]; then \
-        extra_pkgs="libssl1.1 libatk-bridge2.0-0 libgtk-3-0 libgbm1 libqt5x11extras5 \
+        extra_pkgs="libssl1.1 libatk-bridge2.0-0 libgtk-3-0 libgbm1 libqt5x11extras5 procps \
                     libqt5core5a libqt5network5 libqt5widgets5 libldap-2.4-2"; \
     else \
         extra_pkgs="libgtk2.0-0 libdbus-glib-1-2 libgconf-2-4 libnspr4:$EC_HOST libnss3:$EC_HOST"; \
@@ -27,13 +27,15 @@ RUN groupadd -r socks && useradd -r -g socks socks
 
 COPY ["./build-scripts/install-vpn-gui.sh", "./build-scripts/mk-qemu-wrapper.sh", "/tmp/build-scripts/"]
 
+COPY ./docker-root-preinst /
+
 ARG VPN_URL ELECTRON_URL USE_VPN_ELECTRON VPN_DEB_PATH
 
 RUN /tmp/build-scripts/install-vpn-gui.sh
 
 COPY ./docker-root /
 
-COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /results/tinyproxy-ws/ /
+COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /results/fake-getlogin/ /results/tinyproxy-ws/ /
 
 ENV PING_INTERVAL=1800
 

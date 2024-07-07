@@ -1,6 +1,8 @@
 #!/bin/bash
-mv /usr/sbin/sysctl{,.real} &&
-ln -s /usr/sbin/sysctl{-hook,} &&
+if [ "ATRUST" = "$VPN_TYPE" ]; the
+	mv /usr/sbin/sysctl{,.real} &&
+	ln -s /usr/sbin/sysctl{-hook,}
+fi &&
 echo "$VPN_TYPE" > /etc/vpn-type &&
 cd /tmp &&
 . ./build-scripts/get-echost-names.sh &&
