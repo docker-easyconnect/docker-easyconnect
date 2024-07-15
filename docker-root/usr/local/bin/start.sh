@@ -186,7 +186,7 @@ keep_pinging() {
 # 部分服务器禁ping，用wget一个网页的url代替
 keep_pinging_url() {
 	[ -n "$PING_ADDR_URL" ] && while sleep $PING_INTERVAL; do
-		busybox wget -O /dev/null "$PING_ADDR_URL"
+		busybox wget -q -T 10 --spider "$PING_ADDR_URL"
 	done &
 }
 
