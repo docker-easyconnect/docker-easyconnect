@@ -183,6 +183,13 @@ keep_pinging() {
 	done &
 }
 
+# 部分服务器禁ping，用wget一个网页的url代替
+keep_pinging_url() {
+	[ -n "$PING_ADDR_URL" ] && while sleep $PING_INTERVAL; do
+		busybox wget -O /dev/null "$PING_ADDR_URL"
+	done &
+}
+
 # container 再次运行时清除 /tmp 中的锁，使 container 能够反复使用。
 # 感谢 @skychan https://github.com/Hagb/docker-easyconnect/issues/4#issuecomment-660842149
 for f in /tmp/* /tmp/.*; do
@@ -196,6 +203,7 @@ start_tinyproxy &
 config_vpn_iptables &
 force_open_ports &
 keep_pinging &
+keep_pinging_url &
 if [ -z "$DISPLAY" ]
 then
 	export DISPLAY=:1
