@@ -44,4 +44,4 @@ ENV PING_INTERVAL=1800
 
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
-CMD start.sh
+CMD ["start.sh"]
