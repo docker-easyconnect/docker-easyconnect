@@ -1,0 +1,1 @@
+--build-arg VPN_URL=https://atrustcdn.sangfor.com/standard/linux/2.3.10.65/uos/mips64el/aTrustInstaller_mips64el.deb --build-arg VPN_TYPE=ATRUST
