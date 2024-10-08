@@ -41,4 +41,4 @@ ENV PING_INTERVAL=1800
 
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
-CMD TYPE=x11 start.sh
+CMD ["env", "TYPE=x11", "start.sh"]
