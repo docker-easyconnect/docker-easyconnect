@@ -62,3 +62,8 @@ sudo modprobe tun
 ## Rootless podman 的 MAC 地址不固定 / 如何设置设备 MAC 地址
 
 Docker 或 root 下的 podman 运行镜像时可用 `--mac-address=MAC地址` 参数设置 MAC 地址，rootless podman 可用 `FAKE_HWADDR` 环境变量来伪装 MAC 地址（参看 [usage.md 环境变量一节](./usage.md#环境变量)）。
+
+## EasyConnect GUI 版登录过一会就疑似自动登出
+
+- 场景1 参考 [普遍反映的一个问题是，前端登录后，vpn 没有生效就退出了。中说明了需要在登录过程中运行（不能提前运行，否则会被识别为已登录）`/usr/share/sangfor/EasyConnect/resources/shell/sslservice.sh`。](https://github.com/docker-easyconnect/docker-easyconnect/blob/51617fe6209c5fbe34844375003922aa6d64c6dd/doc/run-linux-easyconnect-how-to.md?plain=1#L29)
+- 场景2 将vpn的链接域名ip解析配置到容器 hosts 文件，参考 [深信那边工程师最后排查是easyconnect客户端的问题，客户端内部会改hosts，但hosts改了不会立马刷新到内核，导致系统接口拿不到数据。](https://github.com/docker-easyconnect/docker-easyconnect/issues/83#issuecomment-1096451040)
