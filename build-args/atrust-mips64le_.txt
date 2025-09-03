@@ -1,1 +1,1 @@
-atrust-2.4.10.50-mips64le.txt
+atrust-2.5.10.40-mips64le.txt
