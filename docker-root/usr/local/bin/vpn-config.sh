@@ -50,10 +50,10 @@ case "$_VPN_TYPE" in
 			VPN_UI=$VPN_BIN/easyconn
 			vpn_ui() {
 				"$VPN_UI" login -t autologin
-				pidof svpnservice > /dev/null || bash -c "exec easyconn login $CLI_OPTS"
+				pidof -x svpnservice > /dev/null || bash -c "exec easyconn login $CLI_OPTS"
 				# # 重启一下 tinyproxy
 				# service tinyproxy restart
-				while pidof svpnservice > /dev/null ; do
+				while pidof -x svpnservice > /dev/null ; do
 				       sleep 1
 				done
 				echo svpn stop!
