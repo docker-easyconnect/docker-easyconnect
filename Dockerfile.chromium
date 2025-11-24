@@ -18,11 +18,12 @@ RUN . /tmp/build-scripts/config-apt.sh && \
     else \
         extra_pkgs="libgtk2.0-0 libdbus-glib-1-2 libgconf-2-4 libnspr4:$EC_HOST libnss3:$EC_HOST"; \
     fi && \
+    browser_pkgs="wget chromium chromium-l10n"; \
     apt-get install -y --no-install-recommends --no-install-suggests \
         libx11-xcb1 libnss3 libasound2 iptables xclip libxtst6 \
         dante-server tigervnc-standalone-server tigervnc-tools psmisc flwm x11-utils \
         busybox libssl-dev iproute2 tinyproxy-bin libxss1 ca-certificates \
-        fonts-wqy-microhei socat $qemu_pkgs $extra_pkgs && \
+        fonts-wqy-microhei socat $qemu_pkgs $extra_pkgs $browser_pkgs && \
     rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -r socks && useradd -r -g socks socks
@@ -44,9 +45,9 @@ COPY --from=hagb/docker-easyconnect:build /results/fake-hwaddr/ /results/fake-ge
 #ENV USE_NOVNC=""
 
 ENV PING_INTERVAL=1800
-ENV http_proxy""
+ENV http_proxy=""
 ENV https_proxy=""
 
 VOLUME /root/ /usr/share/sangfor/EasyConnect/resources/logs/
 
-CMD ["start.sh"]
+CMD ["start_with_chromium.sh"]
