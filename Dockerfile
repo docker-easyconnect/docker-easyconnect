@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim
 
-ARG ANDROID_PATCH MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST VPN_TYPE=EC_GUI
+ARG ANDROID_PATCH MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST VPN_TYPE=EC_GUI HTTP_PROXY HTTPS_PROXY CHROMIUM
 
 COPY ["./build-scripts/config-apt.sh", "./build-scripts/get-echost-names.sh",  "./build-scripts/add-qemu.sh", \
       "/tmp/build-scripts/"]
@@ -19,8 +19,12 @@ RUN . /tmp/build-scripts/config-apt.sh && \
         libx11-xcb1 libnss3 libasound2 iptables xclip libxtst6 \
         dante-server tigervnc-standalone-server tigervnc-tools psmisc flwm x11-utils \
         busybox libssl-dev iproute2 tinyproxy-bin libxss1 ca-certificates \
-        fonts-wqy-microhei socat $qemu_pkgs $extra_pkgs && \
-    rm -rf /var/lib/apt/lists/*
+        fonts-wqy-microhei socat wget $qemu_pkgs $extra_pkgs && \
+    if [ -n "$CHROMIUM" ]; then \
+        apt-get install -y --no-install-recommends --no-install-suggests chromium; \
+    fi && \
+    rm -rf /var/lib/apt/lists/* && \
+    wget -h
 
 RUN groupadd -r socks && useradd -r -g socks socks
 

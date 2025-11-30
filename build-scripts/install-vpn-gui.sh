@@ -7,9 +7,9 @@ echo "$VPN_TYPE" > /etc/vpn-type &&
 cd /tmp &&
 . ./build-scripts/get-echost-names.sh &&
 if [ -z "${VPN_DEB_PATH}" ]; then
-	busybox wget "${VPN_URL}" -O VPN.deb
+	wget "${VPN_URL}" -O VPN.deb
 else
-	busybox wget "${VPN_URL}" -O VPN.zip &&
+	wget "${VPN_URL}" -O VPN.zip &&
 	busybox unzip -p VPN.zip "${VPN_DEB_PATH}" > VPN.deb &&
 	rm VPN.zip
 fi &&
@@ -60,7 +60,7 @@ ELECTRON_URLS=(
 if [ -z "${ELECTRON_URL}" ]; then
 	ELECTRON_URL="${ELECTRON_URLS[$(dpkg --print-architecture)]}"
 fi &&
-busybox wget "${ELECTRON_URL}" -O electron.zip &&
+wget "${ELECTRON_URL}" -O electron.zip &&
 busybox unzip electron.zip -od /usr/share/sangfor/EasyConnect/ &&
 rm electron.zip &&
 mv /usr/share/sangfor/EasyConnect/{electron,EasyConnect}
