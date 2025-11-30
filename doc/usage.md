@@ -78,6 +78,8 @@
 
 - `VNC_SIZE`: 默认为空，为空时 VNC 服务分辨率为 `1110x620`（7.6.7 版 EasyConnect 登录后的默认窗口尺寸），可设置为自定义的 VNC 分辨率。
 
+- `CHROMIUM`: 默认为空，不为空时需运行装有 chromium 的镜像，详见 [build](./build.md#构建带有-chromium-的-VNC-镜像)
+
 ## 服务说明
 
 ### 代理服务

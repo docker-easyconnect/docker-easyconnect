@@ -1,9 +1,6 @@
 FROM debian:bookworm-slim AS build
 
-ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST http_proxy
-
-ENV http_proxy=${http_proxy}
-ENV https_proxy=${http_proxy}
+ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST http_proxy https_proxy
 
 COPY ["./build-scripts/config-apt.sh", "./build-scripts/get-echost-names.sh", "/tmp/build-scripts/"]
 
@@ -54,5 +51,3 @@ RUN cd /tmp/src/ && \
       * ) printf "Not a vaild value of NOVNC_METHOD: %s\n" "${NOVNC_METHOD}" >&2 && false ;; \
     esac && ln -s novnc-${NOVNC_METHOD}.sh /results/novnc/usr/local/bin/novnc
 
-ENV http_proxy=""
-ENV https_proxy=""
