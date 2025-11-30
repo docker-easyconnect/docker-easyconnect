@@ -39,7 +39,7 @@
 2. 在终端输入： `docker run --rm --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=xxxx -e URLWIN=1 -v $HOME/.atrust-data:/root -p 127.0.0.1:5901:5901 -p 127.0.0.1:1080:1080 -p 127.0.0.1:8888:8888 -p 127.0.0.1:54631:54631 --sysctl net.ipv4.conf.default.route_localnet=1 hagb/docker-atrust`；
 3. 使用vnc客户端连接vnc， 地址：127.0.0.1，端口: 5901, 密码 xxxx；
 4. 成功连上后你应该能看到 aTrust 的登录窗口；若需要 web 登录，在宿主机的浏览器打开 aTrust 弹出的网址网址登录即可；若需要无人值守的自动化登录和保活，请[参见此处](https://github.com/kenvix/aTrustLogin)。
-5. 若必须经过 web 界面登录或 web 端需要唤起 `atrust://browserstart` 详见 [#433](https://github.com/docker-easyconnect/docker-easyconnect/issues/443)，你可以使用内置 chromium 版镜像，启动命令需加上 `-e CHROMIUM=1`，详见 [chromium](doc/build.md#构建带有-chromium-的-VNC-镜像)。
+5. 若必须经过 web 界面登录或 web 端需要唤起 `atrust://browserstart` 详见 [#433](https://github.com/docker-easyconnect/docker-easyconnect/issues/443)，你可以使用内置 chromium 版镜像，启动命令需加上 `-e CHROMIUM=1`，详见 [构建带有chromium的VNC镜像](doc/build.md#构建带有-chromium-的-VNC-镜像)。
 
 ## 拉取
 
