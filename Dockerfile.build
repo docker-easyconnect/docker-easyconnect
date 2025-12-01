@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim AS build
 
-ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST HTTP_PROXY HTTPS_PROXY
+ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST http_proxy https_proxy
 
 COPY ["./build-scripts/config-apt.sh", "./build-scripts/get-echost-names.sh", "/tmp/build-scripts/"]
 

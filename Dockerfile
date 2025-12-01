@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim
 
-ARG ANDROID_PATCH MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST VPN_TYPE=EC_GUI HTTP_PROXY HTTPS_PROXY CHROMIUM
+ARG ANDROID_PATCH MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST VPN_TYPE=EC_GUI http_proxy https_proxy CHROMIUM
 
 COPY ["./build-scripts/config-apt.sh", "./build-scripts/get-echost-names.sh",  "./build-scripts/add-qemu.sh", \
       "/tmp/build-scripts/"]
