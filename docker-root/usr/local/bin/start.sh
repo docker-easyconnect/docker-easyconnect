@@ -213,7 +213,7 @@ fi
 # 环境变量 CHROMIUM 不为空时，删除可能存在的锁，并启动 chromium
 if [ -n "$CHROMIUM" ]; then
     rm -rf /root/.config/chromium/
-    bash -c "export DISPLAY=:1; chromium --no-sandbox" &
+    bash -c "chromium --no-sandbox" &
     disown
 fi
 

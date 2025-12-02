@@ -23,8 +23,7 @@ RUN . /tmp/build-scripts/config-apt.sh && \
     if [ -n "$CHROMIUM" ]; then \
         apt-get install -y --no-install-recommends --no-install-suggests chromium; \
     fi && \
-    rm -rf /var/lib/apt/lists/* && \
-    wget -h
+    rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -r socks && useradd -r -g socks socks
 

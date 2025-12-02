@@ -23,8 +23,8 @@
 - `MIRROR_URL`: Debian 镜像站，默认为 <http://ftp.cn.debian.org/debian/>，设为空则使用默认镜像站
 - `USE_EC_ELECTRON`（仅适用于图形界面版）: 默认为空，是否使用来自 EasyConnect 的 electron，不为空时使用来自 EasyConnect 的 electron.
 - `VPN_DEB_PATH`（仅适用于图形界面版）: 默认为空。非空时表示 `VPN_URL` 是一个 zip 包的地址（见<https://github.com/Hagb/docker-easyconnect/issues/25#issuecomment-1233369467>），而 `VPN_DEB_PATH` 则是 zip 包中的 deb 包的路径。
-- `http_proxy`: 默认为空，不为空时走该代理，注意若代理 ip 为本机 `127.0.0.1` 时，需要在 build 命令后加上参数 `--network host` 。
-- `https_proxy`: 同上。
+- `http_proxy`: 默认为空，不为空时 http 协议的连接走该代理，注意若代理 ip 为本机 `127.0.0.1` 时，需要在 build 命令后加上参数 `--network host` 。
+- `https_proxy`: 同上，不为空时 https 协议走该代理。
 - `CHROMIUM`: 默认为空，不为空时，将安装 chromium，用于 web 认证。
 - **`VPN_TYPE`**：默认为 `EC_GUI`。构建 aTrust 镜像时，需要将该参数设为 `ATRUST`。
 - **`VPN_URL`**（仅适用于图形界面版）: EasyConnect 的 deb 包下载地址（`VPN_DEB_PATH` 非空时则是包含 deb 包的 zip 包下载地址），各版本的下载地址可见于 [../build-args/](../build-args/)。
@@ -35,6 +35,7 @@
 - `EC_HOST`: EasyConnect deb 包的架构，同上文
 - `MIRROR_URL`: Debian 镜像站，同上文
 - `http_proxy`: 同上文
+- `https_proxy`: 同上文
 - `TINYPROXY_COMMIT`: 构建支持 websocket 的 [tinyproxy](https://github.com/tinyproxy/tinyproxy) 的 commit.
 - `NOVNC_METHOD`: 提供 noVNC 服务的方式，默认为 `min-size`，可选选项有
 
