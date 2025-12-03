@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim AS build
 
-ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST
+ARG ANDROID_PATCH BUILD_ENV=local MIRROR_URL=http://ftp.cn.debian.org/debian/ EC_HOST http_proxy https_proxy
 
 COPY ["./build-scripts/config-apt.sh", "./build-scripts/get-echost-names.sh", "/tmp/build-scripts/"]
 
@@ -12,7 +12,7 @@ RUN . /tmp/build-scripts/config-apt.sh && \
     esac && \
     apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests ca-certificates \
-                    busybox libssl-dev automake $go $ecgccpkg build-essential
+                    busybox libssl-dev automake $go $ecgccpkg build-essential wget
 
 RUN mkdir results && cd results && mkdir fake-hwaddr tinyproxy-ws novnc fake-getlogin && mkdir /tmp/src -p
 
@@ -27,7 +27,7 @@ RUN . /tmp/build-scripts/get-echost-names.sh && \
 ARG TINYPROXY_COMMIT=991e47d8ebd4b12710828b2b486535e4c25ba26c
 
 RUN cd /tmp/src/ && \
-    busybox wget https://github.com/tinyproxy/tinyproxy/archive/${TINYPROXY_COMMIT}.zip -O tinyproxy.zip && \
+    wget https://github.com/tinyproxy/tinyproxy/archive/${TINYPROXY_COMMIT}.zip -O tinyproxy.zip && \
     busybox unzip tinyproxy.zip && mv tinyproxy-${TINYPROXY_COMMIT} tinyproxy && cd tinyproxy && \
     ./autogen.sh --prefix=/usr && make && install -D src/tinyproxy /results/tinyproxy-ws/usr/bin/tinyproxy
 
@@ -36,17 +36,18 @@ ARG NOVNC_METHOD=min-size GOPROXY=http://proxy.golang.com.cn,direct
 RUN cd /tmp/src/ && \
     case "${NOVNC_METHOD}" in \
       min-size ) \
-        busybox wget https://github.com/novnc/noVNC/archive/refs/heads/master.zip -O novnc.zip && \
-        busybox wget https://github.com/novnc/websockify-other/archive/refs/heads/master.zip -O novnc-websockify.zip && \
+        wget https://github.com/novnc/noVNC/archive/refs/heads/master.zip -O novnc.zip && \
+        wget https://github.com/novnc/websockify-other/archive/refs/heads/master.zip -O novnc-websockify.zip && \
         busybox unzip novnc.zip && mv noVNC-master novnc && ln -s vnc.html novnc/index.html && \
         sed -i "s#UI.initSetting('path', 'websockify')#UI.initSetting('path','websockify/websockify')#" novnc/app/ui.js && \
         mkdir -p /results/novnc/usr/local/share/ && mv novnc /results/novnc/usr/local/share/novnc && \
         busybox unzip novnc-websockify.zip && mv websockify-other-master novnc-websockify && \
         cd novnc-websockify/c/ && make && install -D websockify /results/novnc/usr/local/bin/websockify ;; \
       easy-novnc ) \
-        busybox wget https://github.com/pgaskin/easy-novnc/archive/refs/heads/master.zip -O easy-novnc.zip && \
+        wget https://github.com/pgaskin/easy-novnc/archive/refs/heads/master.zip -O easy-novnc.zip && \
         busybox unzip easy-novnc.zip && mv easy-novnc-master easy-novnc && cd easy-novnc && \
         go build -ldflags "-s -w" -gccgoflags "-Wl,-s,-gc-sections -fdata-sections -ffunction-sections -static-libgo" && \
         install -D easy-novnc /results/novnc/usr/local/bin/easy-novnc ;; \
       * ) printf "Not a vaild value of NOVNC_METHOD: %s\n" "${NOVNC_METHOD}" >&2 && false ;; \
     esac && ln -s novnc-${NOVNC_METHOD}.sh /results/novnc/usr/local/bin/novnc
+
