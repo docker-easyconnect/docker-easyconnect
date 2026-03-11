@@ -67,7 +67,7 @@ docker pull hagb/docker-easyconnect:TAG
 
 - [@shmilee](https://github.com/shmilee) 的 [easyconnect-in-docker 方案](https://github.com/shmilee/scripts/tree/master/easyconnect-in-docker)（另见 [#35](https://github.com/Hagb/docker-easyconnect/issues/35)）实现了多 EasyConnect 版本共用容器
 - [ultranity/minimal-EasyConnect](https://github.com/ultranity/minimal-EasyConnect): minimal EasyConnect CLI in docker-alpine
-- [Mythologyli/ZJU-Connect](https://github.com/Mythologyli/ZJU-Connect): ZJU RVPN 客户端的 Go 语言实现
+- [Mythologyli/ZJU-Connect](https://github.com/Mythologyli/ZJU-Connect): EasyConnect 和 aTrust 客户端的开源实现
 - [zhangt2333/actions-easyconnect](https://github.com/zhangt2333/actions-easyconnect): Github Actions: run code with EasyConnect VPN
 - [CoolSpring8/rwppa](https://github.com/CoolSpring8/rwppa): 将浙江大学网页版 RVPN 模拟为本地 HTTP 代理 - (ZJU) RVPN Web Portal Proxy Adapter
 
