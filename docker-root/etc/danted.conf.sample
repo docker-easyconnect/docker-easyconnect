@@ -10,7 +10,7 @@ external.rotation: route
 
 #server identities (not needed on solaris)
 user.privileged: root
-user.notprivileged: socks
+user.notprivileged: root
 #user.libwrap: libwrap
 
 #authentication methods

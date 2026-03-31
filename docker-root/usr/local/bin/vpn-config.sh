@@ -75,6 +75,9 @@ case "$_VPN_TYPE" in
 			# - 先尝试 getlogin_r，若获取到 root 则失败，服务无法启动（这是 podman 上无法启动服务的原因）；
 			# - 若获取不到则，使用 loginctl 等工具（已经过 hook，可以提供普通用户供 aTrust 使用，此为原本 docker 上的行为）。
 			# 此处使用 LD_PRELOAD 来让 getlogin_r 直接返回该普通用户，从而使 podman 也能够正常启动服务。
+			# 添加 uid 策略路由，使 sangfor(uid=1234) 进程的流量走原始路由表（table 2），
+			# 绕过 VPN 隧道，避免 aTrustCore 连接 VPN 服务器时被 xtunnel 捕获导致 SSL 错误循环。
+			ip rule add uidrange 1234-1234 table 2 2>/dev/null || true
 			FAKE_LOGIN=sangfor LD_PRELOAD=/usr/local/lib/fake-getlogin.so LD_LIBRARY_PATH="$VPN_ROOT:$VPN_BIN:${LD_LIBRARY_PATH}" \
 				fake-hwaddr-run $VPN_BIN/aTrustAgent --plugin plugin-daemon --plugin-cmd \| >/dev/null &
 		}
